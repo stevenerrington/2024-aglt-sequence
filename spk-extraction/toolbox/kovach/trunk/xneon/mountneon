@@ -1,0 +1,50 @@
+#!/bin/bash
+# Script to create folder if it doesn't exist and mount helium store
+
+
+NEONURL=neon-home.hpc.uiowa.edu
+LOCALUSER=$(whoami)
+DEFAULT_MOUNTDIR=~/neon
+
+echo 
+echo "    $0" 
+echo
+echo mounts $NEONURL/[hawkID] to the folder $MOUNTDIR
+echo
+echo "    $0 mountdir user" 
+echo
+echo mounts to mountdir with owndership set to user. 
+echo
+echo 'This script requires root (sudoer) privileges' 
+echo
+echo 
+
+#[ $1 ] || LOCALUSER=$1
+#[ $2 ] || MOUNTDIR=$2;
+
+MOUNTDIR=${1:-$DEFAULT_MOUNTDIR}
+
+ [ -d $MOUNTDIR ] || mkdir $MOUNTDIR
+
+echo "Please enter your HawkID: "
+
+read hawkid
+
+echo $MOUNTDIR
+echo "Next enter your local user password (for sudo) followed by your hawkid password"
+sudo printf "\nSuccesfully sudoing...\n"
+
+
+if [ $? -gt 0 ]
+then
+	
+	printf "\nIt looks like something went wrong. Perhaps you're not a sudoer? If so talk to the server admin.\n"
+	exit 1
+fi
+
+
+echo sudo mount -t cifs -o vers=1.0,domain=iowa,user=$hawkid,uid=$LOCALUSER,gid=$LOCALUSER //$NEONURL/$hawkid $MOUNTDIR
+sudo mount -t cifs -o vers=1.0,domain=iowa,user=$hawkid,uid=$LOCALUSER,gid=$LOCALUSER,sec=ntlm //$NEONURL/$hawkid $MOUNTDIR
+
+[ $? -eq 0 ] && echo "Your neon share was succesfully mounted at  $MOUNTDIR"
+

@@ -1,0 +1,39 @@
+#!/bin/bash
+# Script to create folder if it doesn't exist and mount helium store
+
+
+HELIUMURL=helium-storage.hpc.uiowa.edu
+LOCALUSER=$(whoami)
+MOUNTDIR=~/helium
+
+echo 
+echo "    $0" 
+echo
+echo mounts $HELIUMURL/[hawkID] to the folder $MOUNTDIR
+echo
+echo "    $0 user mountdir" 
+echo
+echo mounts to mountdir with owndership set to user. 
+echo
+echo 'This script requires root (sudoer) privileges' 
+echo
+echo 
+
+[ $1 ] || LOCALUSER=$1
+[ $2 ] || MOUNTDIR=$2;
+
+
+ [ -d $MOUNTDIR ] || mkdir $MOUNTDIR
+
+echo "Please enter your HawkID: "
+
+read hawkid
+
+
+
+echo "Next enter your local user password (for sudo) followed by your hawkid password"
+
+echo sudo mount -t cifs -o user=$hawkid,uid=$LOCALUSER,gid=$LOCALUSER //$HELIUMURL/$hawkid $MOUNTDIR
+sudo mount -t cifs -o user=$hawkid,uid=$LOCALUSER,gid=$LOCALUSER //$HELIUMURL/$hawkid $MOUNTDIR
+
+[ $? -eq 0 ] && echo "Your helium share was succesfully mounted at  $MOUNTDIR"

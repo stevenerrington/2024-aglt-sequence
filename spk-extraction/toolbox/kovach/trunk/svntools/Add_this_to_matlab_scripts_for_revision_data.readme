@@ -1,0 +1,25 @@
+
+% In order to include automaticaly generated revision info in your m-files,
+% first enable svn key word replacement on all m-files with command
+%
+% !svn propset svn:keywords "Author Date Revision URL" *.m
+%
+% at the matlab command prompt.
+%
+% Next add the following block of commented lines at an appropriate
+% place in your m-files:
+%
+%
+% ----------- SVN REVISION INFO ------------------
+% $URL$     
+% $Revision$
+% $Date$
+% $Author$
+% ------------------------------------------------
+%
+%
+%
+% Or alternatively, for a shortened summary of the above, use:
+%
+% SVN $Id$
+%
