@@ -2,7 +2,7 @@
 names = fieldnames( spikes.time );
 
 
-for ch_i = 15:25
+for ch_i = 1:length(names)
 
     ch = names{ch_i}(end-2:end);
 
@@ -55,6 +55,7 @@ for ch_i = 15:25
         'margin_width',[0.0 0.00],...
         'redraw',false);
 
+    test.set_title(['DSP' ch])
     figure('Position',[100 100 700 600]);
     test.draw();
 

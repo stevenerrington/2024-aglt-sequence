@@ -5,7 +5,7 @@ timeWin = ops.timewin;
 for ch_i = 1:size(lfp_ncs_out,1)
     ch_lfp = [];
     ch_lfp = lfp_ncs_out(ch_i,:);
-    filt_ch_lfp = lfp_filter(ch_lfp,4, 40, 1000);
+    filt_ch_lfp = lfp_filter(ch_lfp,4, 30, 1000);
 
 
     lfp_aligned = nan(length(alignTimes),range(timeWin)+1);

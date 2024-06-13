@@ -1,4 +1,4 @@
-clear all; warning off
+clear all; clc; warning off
 
 %% Configuration & setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Admin --------------------------------------------------------------
@@ -8,9 +8,9 @@ monkey = 'troy'; % Monkey name [troy, chief]
 n_channels = 32; % Number of channels recorded in session
 
 % Key setup variables
-exp_filename = '2021-07-05-09-56-06_Opto'; % Experimental raw data
-task = 'opto'; % Experiment type [agl, opto]
-session_n = '0011'; % Experimental file tag
+exp_filename = '2021-09-15-AGLt'; % Experimental raw data
+task = 'agl_t'; % Experiment type [agl, opto]
+session_n = '0002'; % Experimental file tag
 
 % Define experimental/data directories -------------------------------
 outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
@@ -22,12 +22,12 @@ set_extract_dirs % Set experimental directories (i.e. data, scripts, etc...)
 % Loop through all recorded channels, get the ncs, and process it.
 % - Restructure data as nCh x nSample array
 
-spike_status = 'phy_import';
+spike_status = 'bin';
 
 switch spike_status
     
     % Convert .ncs files into a binary file for use in Kilosort --------/
-    case 'bin' 
+    case 'phy_import' 
         for ch_n = 1:n_channels
             clear filepart_name NCSpath spk_ncs_in
 
@@ -62,37 +62,50 @@ switch spike_status
 end
 
 % Local field potential data -------------------------------------------------------
-for ch_n = 1:n_channels
-    clear filepart_name NCSpath lfp_ncs_in 
+filelabels_lfp = get_ncs_filelabel(fullfile(raw_dir,[exp_filename '\']), ['LFP1_' session_n '.ncs'],32);
+lfp_ncs_out = ft_read_neuralynx_interp(filelabels_lfp);
+lfp_ncs_out = lfp_ncs_out.trial{1};
 
-    filepart_name = ['LFP' int2str(ch_n) '_' session_n];
-    NCSpath = [fullfile(raw_dir,exp_filename,filepart_name) '.ncs'];
-
-    lfp_ncs_in = readncs([filepart_name '.ncs'],fullfile(raw_dir,exp_filename));
-    lfp_ncs_out(ch_n,:) = lfp_ncs_in.dat';
-end
 
 % Behavioral data -------------------------------------------------------
 % Read in events
-ops.raw_dir = raw_dir; ops.filename = exp_filename;
-ops.session_n = session_n; 
-ops.event_code = 1;
+ops.raw_dir = raw_dir; ops.filename = exp_filename; ops.session_n = session_n; 
 
-aligntime = get_event_aligntime(ops);
+clear event_table aligntime
+event_table = get_event_table(ops);
+
+agl_t_event = get_agl_t_trials(event_table, ops);
+
+
+
+
+
+ops.event_code = 1; ops.exp_type = task;
+aligntime = get_event_aligntime(ops,event_table);
+
+
 
 
 %% Data preprocessing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Align data to event
 % Define parameters
 ops.timewin = -1000:5000;
-ops.sdf_filter = 'Gauss';
+ops.sdf_filter = 'PSP';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 lfp = get_lfp_aligned(lfp_ncs_out,aligntime,ops);
 
 
 
+
 %% DEVLEOPMENT
+
+
+test_figure_spk
+test_figure_lfp
+
+
+
 raw_dir = ops.raw_dir;
 raw_filename = ops.filename;
 session_n = ops.session_n;
@@ -100,10 +113,15 @@ session_n = ops.session_n;
 [evnt_raw] = ft_read_event_BA(fullfile(raw_dir,raw_filename,['Events_' session_n '.nev']));
 
 
+aligntime(1), spikes.time.DSP02a(1)
+
+
+
+
+
 [lfp_ncs_in.TimeStamp(1), spk_ncs_in.TimeStamp(1) evnt_raw(1).timestamp]
 
 
-test_figure
 expmat_dir = 'T:\EPHYS\RAWDATA\NHP\Neuralynx\AGL\Troy\data';
 exp_mat = load(fullfile(expmat_dir,'AGL_test_Run#1_05_Jul_2021_11_08_07'));
 
