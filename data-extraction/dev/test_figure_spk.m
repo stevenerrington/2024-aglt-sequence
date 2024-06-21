@@ -2,21 +2,21 @@
 names = fieldnames( spikes.time );
 
 xlim_vals = [-1000 5000];
-ylim_vals = [0 100];
-
+ylim_vals = [0 25];
+close all
 clear test
-for ch_i = 33
+for ch_i = 1:10
 
     ch = names{ch_i}(end-2:end);
 
     clear test
 
-    test(1,1)=gramm('x',raster.(['DSP' ch]),'color',events.cond_label);
+    test(1,1)=gramm('x',raster.(['DSP' ch]),'color',opto_event.cond_label);
     test(1,1).geom_raster('geom',{'line'});
     test(1,1).axe_property('XLim',xlim_vals,'YLim',[0 size(raster.(['DSP' ch]),1)]);
 
 
-    test(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',events.cond_label);
+    test(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',opto_event.cond_label);
     test(2,1).stat_summary();
     test(2,1).axe_property('XLim',xlim_vals,'YLim',ylim_vals);
 
@@ -62,6 +62,10 @@ for ch_i = 33
     test.draw();
 
 end
+
+
+
+
 
 
 %%

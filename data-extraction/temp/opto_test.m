@@ -1,6 +1,13 @@
 
-% Check workspace to see if items are clear. If needed re-run workspace
-% setup in kikuchi_main.m
+%% Workspace configuration and setup
+% This series of commands and scripts must be ran prior to any other
+% scripts, as they serve as dependencies.
+
+% Clear environment
+clear all; clc; warning off
+
+% Setup data directories for use throughout scripts
+dirs = set_directories();
 
 %% Configuration & setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Admin --------------------------------------------------------------
@@ -10,12 +17,13 @@ monkey = 'troy'; % Monkey name [troy, chief]
 n_channels = 32; % Number of channels recorded in session
 
 % Key setup variables
-exp_filename = '2021-11-05-AGLt'; % Experimental raw data
-task = 'agl_t'; % Experiment type [agl, opto]
-session_n = '0001'; % Experimental file tag
+exp_filename = '2021-09-29-Opto'; % Experimental raw data
+task = 'opto-40hz-blue'; % Experiment type [agl, opto]
+session_n = '0012'; % Experimental file tag
 
 % Define experimental/data directories -------------------------------
 outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
+
 
 
 %% Data extraction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,10 +46,6 @@ switch spike_status
             spk_ncs_in = readncs([filepart_name '.ncs'],fullfile(dirs.raw_data,exp_filename));
             spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
         end
-
-        % Re-referencing signal
-        spk_ncs_out(1:16,:) = spk_ncs_out(1:16,:) - mean(spk_ncs_out(1:16,:)); % Re-reference to electrode mean
-        spk_ncs_out(17:32,:) = spk_ncs_out(17:32,:) - mean(spk_ncs_out(17:32,:)); % Re-reference to electrode mean
 
         % Create a binary file and export the restructure broadband data
         clear bin_out_file
@@ -71,20 +75,30 @@ filelabels_lfp = get_ncs_filelabel(fullfile(dirs.raw_data,[exp_filename '\']), [
 lfp = ft_read_neuralynx_interp(filelabels_lfp);
 lfp = lfp.trial{1};
 
-
 % Behavioral data -------------------------------------------------------
 % Read in events
 ops.dirs.raw_data = dirs.raw_data; ops.filename = exp_filename; ops.session_n = session_n; 
-clear event_table events
+clear event_table opto_event
 event_table = get_event_table(ops);
 
+% Event extraction
+clear opto_event aligntime
+ops.event_port = 2;
+opto_event = get_opto_trials(event_table, ops);
 
-%% Save extracted data
+aligntime = opto_event.rewardOnset_ms;
 
-save(fullfile(dirs.mat_data,[outfile_name '.mat']),'event_table','spikes','spk_info','lfp','-v7.3')
-fprintf('Extracted data successfully saved to %s    \n', fullfile(dirs.mat_data,[outfile_name '.mat']))
-fprintf(' - Events  ✓   \n')
-fprintf(' - Spikes  ✓   \n')
-fprintf(' - LFP     ✓   \n')
 
+% Figure ----------------------------------------------------------------
+figuren;
+histogram(spikes.time.DSP01a,100)
+vline(aligntime)
+
+
+% Get aligned neural activity ------------------------------------------
+ops.timewin = -1000:5000;
+ops.sdf_filter = 'PSP';
+
+[sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
+lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
 

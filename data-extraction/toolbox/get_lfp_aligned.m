@@ -1,12 +1,20 @@
 function lfp = get_lfp_aligned(lfp_ncs_out,alignTimes,ops)
 
+if isfield(ops,'freq')
+    lowFreq = ops.freq(1);
+    highFreq = ops.freq(2);
+else
+    lowFreq = 3;
+    highFreq = 40;
+end
+
 timeWin = ops.timewin;
 
 for ch_i = 1:size(lfp_ncs_out,1)
     ch_lfp = [];
     ch_lfp = lfp_ncs_out(ch_i,:);
     filt_ch_lfp = [];
-    filt_ch_lfp = lfp_filter(ch_lfp,3, 180, 1000);
+    filt_ch_lfp = lfp_filter(ch_lfp,lowFreq, highFreq, 1000);
 
 
     lfp_aligned = nan(length(alignTimes),range(timeWin)+1);
