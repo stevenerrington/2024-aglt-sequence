@@ -75,9 +75,10 @@ lfp = lfp.trial{1};
 % Behavioral data -------------------------------------------------------
 % Read in events
 ops.dirs.raw_data = dirs.raw_data; ops.filename = exp_filename; ops.session_n = session_n; 
-clear event_table events
-event_table = get_event_table(ops);
-
+clear event_table_raw event_table
+event_table_raw = get_event_table(ops);
+ops.event_port = 2;
+event_table = get_agl_t_trials(event_table, ops);
 
 %% Save extracted data
 

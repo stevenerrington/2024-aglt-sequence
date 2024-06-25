@@ -10,8 +10,8 @@ if strcmp(session_n,'')
     hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1.ncs'],32));
     [event] = ft_read_event_BA(fullfile(dirs.raw_data,raw_filename,['Events.nev']));
 else
-    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1_' session_n '.ncs'],32));
-    [event] = ft_read_event_BA(fullfile(dirs.raw_data,raw_filename,['Events_' session_n '.nev']));
+    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1' session_n '.ncs'],32));
+    [event] = ft_read_event_BA(fullfile(dirs.raw_data,raw_filename,['Events' session_n '.nev']));
 end
 
 

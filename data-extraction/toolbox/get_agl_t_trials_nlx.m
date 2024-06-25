@@ -1,4 +1,4 @@
-function agl_t_event = get_agl_t_trials(event_table, ops)
+function agl_t_event = get_agl_t_trials_nlx(event_table, ops)
 
 clear event_code
 
