@@ -5,7 +5,7 @@ if isfield(ops,'freq')
     highFreq = ops.freq(2);
 else
     lowFreq = 3;
-    highFreq = 30;
+    highFreq = 200;
 end
 
 timeWin = ops.timewin;

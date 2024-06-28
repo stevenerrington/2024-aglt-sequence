@@ -29,44 +29,20 @@ outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
 % Loop through all recorded channels, get the ncs, and process it.
 % - Restructure data as nCh x nSample array
 
-spike_status = 'phy';
+for ch_n = 1:n_channels
+    clear filepart_name NCSpath spk_ncs_in
 
-switch spike_status
-    
-    % Convert .ncs files into a binary file for use in Kilosort --------/
-    case 'bin' 
-        for ch_n = 1:n_channels
-            clear filepart_name NCSpath spk_ncs_in
+    filepart_name = ['CSC' int2str(ch_n)];
+    NCSpath = [fullfile(dirs.raw_data,exp_filename,filepart_name) '.ncs'];
 
-            filepart_name = ['CSC' int2str(ch_n)];
-            NCSpath = [fullfile(dirs.raw_data,exp_filename,filepart_name) '.ncs'];
-
-            spk_ncs_in = readncs([filepart_name '.ncs'],fullfile(dirs.raw_data,exp_filename));
-            spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
-        end
-
-        % Create a binary file and export the restructure broadband data
-        clear bin_out_file
-        bin_out_file = fopen([dirs.bin_data outfile_name '.dat'],'wb');
-        fwrite(bin_out_file,spk_ncs_out,'int16');
-        fclose(bin_out_file);
-
-        % Run kilosort
-        mkdir(fullfile(dirs.kilosort,outfile_name));
-        % - Run in python: to be integrated here.
-
-    % Import data phy-curated Kilosort data ---------------------------/   
-    case 'phy'  
-        % Import phy curated data
-        ops = struct();
-        ops.rootZ = fullfile(dirs.kilosort,outfile_name);
-        ops.bin_file = [dirs.bin_data outfile_name '.dat'];
-        ops.nCh = n_channels;
-        ops.fs = 32000;
-
-        [spikes] = phy2mat(ops);
-        [spk_info] = phyinfo2mat(ops);
+    spk_ncs_in = readncs([filepart_name '.ncs'],fullfile(dirs.raw_data,exp_filename));
+    spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
 end
+
+% Here we can get mua by imposing a threshold SD*3 and extracting spike
+% times that way.
+% We will then need to set the spikes struct up appropriately
+
 
 % Local field potential data -------------------------------------------------------
 filelabels_lfp = get_ncs_filelabel(fullfile(dirs.raw_data,[exp_filename '\']), ['LFP1' '.ncs'],32);
@@ -90,24 +66,6 @@ ops.timewin = [-1000:5000];
 ops.freq = [1 100];
 lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
 
-% Run time-frequency power extraction limited to trials of interest
-ops.tf_trials = find(~isnan(agl_t_event.rewardOnset_ms) & strcmp(agl_t_event.cond_label,'nonviol'));
-ops.ch_extract = [1:16];
-tf_data = get_timefrequency(lfp_aligned, ops);
-
-%% Figure
-
-figuren('Renderer', 'painters', 'Position', [100 100 900 400]);
-ax1 = nsubplot(1,1,1,1);
-contourf(ops.timewin,tf_data.frequencies,nanmean(tf_data.power,3),40,'linecolor','none');
-set(gca,'ytick',round(logspace(log10(tf_data.frequencies(1)),log10(tf_data.frequencies(end)),10)*100)/100,'yscale','log','xlim',[min(ops.timewin) max(ops.timewin)],'clim',[-10 10])
-
-colorscale = flipud(cbrewer('div','RdBu',100));
-colorscale(colorscale<0) = 0;
-colormap(colorscale)
-colorbar
-
-
 
 %%
 aligntime = agl_t_event.stimulusOnset_ms;
@@ -120,7 +78,7 @@ ops.freq = [2 30];
 
 lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
 
-stimuli_i = 3;
+stimuli_i = 2;
 
 trials = [];
 trials = find(agl_t_event.cond_value == stimuli_i)    
@@ -146,8 +104,8 @@ hline(16.5*20,'k')
 vline(0,'k')
 xlabel('Time from sound onset (ms)')
 clear electrode_mean
-xlim([-500 3000])
-title(exp_filename)
+title(outfile_name)
+
 %% Align spikes
 ops.timewin = -1000:5000;
 ops.sdf_filter = 'PSP';

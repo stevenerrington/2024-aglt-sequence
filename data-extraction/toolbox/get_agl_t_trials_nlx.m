@@ -4,6 +4,8 @@ clear event_code
 
 event_code.trialStart = 1;
 event_code.stimulusOnset = 2;
+event_code.laser = 9;
+
 event_code.rewardOnset = 4;
 event_code.rewardOffset = 5;
 
@@ -42,7 +44,7 @@ for i = 1:length(trial_start_codes)
 end
 
 event_labels = fieldnames(event_code);
-event_labels = event_labels(1:4);
+event_labels = event_labels(1:5);
 
 % Timestamps
 clear trial_codeblock event_time_ms
@@ -74,8 +76,8 @@ end
 agl_t_event = table(trial_n, cond_value, cond_label,...
     trial_codeblock,...
     event_time_ms.trialStart,event_time_ms.stimulusOnset,...
-    event_time_ms.rewardOnset,event_time_ms.rewardOffset,...
+    event_time_ms.laser, event_time_ms.rewardOnset,event_time_ms.rewardOffset,...
     'VariableNames',{'trial_n','cond_value','cond_label',...
     'trial_codeblock','trialStart_ms','stimulusOnset_ms',...
-    'rewardOnset_ms','rewardOffset_ms'});
+    'laser_ms','rewardOnset_ms','rewardOffset_ms'});
 

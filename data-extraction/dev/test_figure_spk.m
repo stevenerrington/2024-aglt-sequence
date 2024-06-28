@@ -5,7 +5,7 @@ xlim_vals = [-1000 5000];
 ylim_vals = [0 25];
 close all
 clear test
-for ch_i = 1:length(names)
+for ch_i = 6:12
 
     ch = names{ch_i}(end-2:end);
 

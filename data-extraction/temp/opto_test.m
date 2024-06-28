@@ -17,9 +17,9 @@ monkey = 'troy'; % Monkey name [troy, chief]
 n_channels = 32; % Number of channels recorded in session
 
 % Key setup variables
-exp_filename = '2021-09-29-Opto'; % Experimental raw data
-task = 'opto-40hz-blue'; % Experiment type [agl, opto]
-session_n = '0012'; % Experimental file tag
+exp_filename = '2022-02-09-Opto'; % Experimental raw data
+task = 'opto-agl_t'; % Experiment type [agl, opto]
+session_n = '0002'; % Experimental file tag
 
 % Define experimental/data directories -------------------------------
 outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
@@ -86,14 +86,17 @@ clear opto_event aligntime
 ops.event_port = 2;
 opto_event = get_opto_trials(event_table, ops);
 
-aligntime = opto_event.rewardOnset_ms;
+aligntime = opto_event.stimOn;
 
 
 % Figure ----------------------------------------------------------------
 figuren;
-histogram(spikes.time.DSP01a,100)
-vline(aligntime)
+histogram(spikes.time.DSP09a,100)
+vline(aligntime,'r')
 
+
+median(spikes.time.DSP09a)
+median(aligntime)
 
 % Get aligned neural activity ------------------------------------------
 ops.timewin = -1000:5000;
@@ -101,4 +104,6 @@ ops.sdf_filter = 'PSP';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
+
+
 

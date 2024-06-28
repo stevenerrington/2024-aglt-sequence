@@ -18,7 +18,7 @@ for area_i = 1:2
         case 'auditory'
             channels = 1:16;
         case 'vlpfc'
-            channels = [17:22,24:32];
+            channels = [17:32];
     end
 
     %% Subplots
@@ -63,4 +63,4 @@ for area_i = 1:2
 end
 
 
-    sgtitle( outfile_name , 'interpreter', 'none')
+    sgtitle( datafile , 'interpreter', 'none')

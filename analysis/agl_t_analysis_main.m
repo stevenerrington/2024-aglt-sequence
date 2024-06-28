@@ -1,29 +1,40 @@
-clear all; clc
-dirs = set_directories();
-datafile = 'troy-agl_t-2021-11-05.mat';
+%% 
+%{ 
+///////////////////////////////////////////////////////////////////////////
+----- AGLt analysis main  -------------------------------------------------
+      S P Errington, 2024
+
+This script houses analysis pertaining to the analysis of pre-processed
+AGLt data.
+
+///////////////////////////////////////////////////////////////////////////
+%} 
+
+%% Setup workspace
+% Load in matlab data
+datafile = 'troy-agl_t-2021-07-21.mat';
 load(fullfile(dirs.mat_data,datafile))
 
 % Data preprocessing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Find event information to align data on
-aligntime = event_table.stimulusOnset_ms;
-
-% Run alignment algorithms
-ops.timewin = -1000:5000;
-ops.sdf_filter = 'PSP';
-[sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
-lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
+% Patch faulty channel
+record_idx = find(strcmp(ephysLog.session,datafile(1:end-4)),1);
+fault_ch_idx = ephysLog.faulty_ch(record_idx);
+lfp = patch_fault_ch(lfp,fault_ch_idx);
 
 %%  Local field potential analyses
-% Time frequency -----------------------
-% This script will cycle through the LFP 
-agl_t_analysis_timeFreq
+% Time frequency & ERSP -----------------------
+agl_t_analysis_ERSP
 
-% Intertrial phase clustering ----------
-agl_t_analysis_intertrialphasecoherence
+
+
+
+
+
+
 
 %% Laminar analyses
 
 laminar_info.auditory = get_laminar_info([1:16], lfp_aligned, event_table);
-laminar_info.vlpfc = get_laminar_info([17:22,24:32], lfp_aligned, event_table);
+laminar_info.vlpfc = get_laminar_info([17:32], lfp_aligned, event_table);
 
 get_laminar_plotSummary
