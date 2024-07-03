@@ -33,7 +33,7 @@ for unitIdx = 1:nUnits
     unitWAV{unitIdx,1} = [wavString clustLetter];
    
     
-    spkTimes = []; spkTimes  = round((spikeTimes(sp.clu == unitList(unitIdx))./24414.14).*1000);  
+    spkTimes = []; spkTimes  = round((spikeTimes(sp.clu == unitList(unitIdx))./ops.fs).*1000);  
     ISI = []; ISI = diff(spkTimes);
     
     

@@ -1,3 +1,12 @@
+aligntime = event_table.stimulusOnset_ms;
+
+ops.timewin = -1000:5000;
+ops.sdf_filter = 'PSP';
+
+[sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
+
+
+
 
 names = fieldnames( spikes.time );
 
@@ -5,7 +14,7 @@ xlim_vals = [-1000 5000];
 ylim_vals = [0 25];
 close all
 clear test
-for ch_i = 6:12
+for ch_i = 30:40
 
     ch = names{ch_i}(end-2:end);
 

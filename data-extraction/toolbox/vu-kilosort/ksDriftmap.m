@@ -1,6 +1,6 @@
 % Inputs/outputs: mostly self explanatory 
 % localizedSpikesOnly (false by default) - if true, only spikes with no discrepancy between depth and site are returned. 
-function [spikeTimes, spikeAmps, spikeDepths, spikeSites] = ksDriftmap(ksDir, localizedSpikesOnly)
+function [spikeTimes, spikeAmps, spikeDepths, spikeSites, spikeTemplates] = ksDriftmap(ksDir, localizedSpikesOnly)
 
 if nargin < 2
   localizedSpikesOnly = false;
@@ -27,6 +27,7 @@ if localizedSpikesOnly % go over all templates and check which are not localized
   sp.clu = sp.clu(i);
   sp.tempScalingAmps = sp.tempScalingAmps(i);
   sp.pcFeat = sp.pcFeat(i,:,:);
+
   clear i localizedTemplates M ch t
 end
 
@@ -80,3 +81,7 @@ if localizedSpikesOnly  % above we already removed non-localized templates, but 
   spikeSites  = spikeSites(i);
 end
 spikeSites = uint16(spikeSites);
+
+spikeTemplates = temps;
+
+

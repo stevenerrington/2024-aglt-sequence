@@ -8,7 +8,8 @@ if ismember(fault_ch_idx,[1,16,17,32])
     fprint('!Check function before use')
 end
 
-lfp(fault_ch_idx,:) = mean([lfp(fault_ch_idx-1,:); lfp(fault_ch_idx+1,:)]);
-
+if ~isempty(fault_ch_idx)
+    lfp(fault_ch_idx,:) = mean([lfp(fault_ch_idx-1,:); lfp(fault_ch_idx+1,:)]);
+end
 
 end

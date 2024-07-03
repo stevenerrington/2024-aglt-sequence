@@ -36,10 +36,6 @@ for ch_n = 1:n_channels
     spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
 end
 
-% Re-referencing signal
-spk_ncs_out(1:16,:) = spk_ncs_out(1:16,:) - mean(spk_ncs_out(1:16,:)); % Re-reference to electrode mean
-spk_ncs_out(17:32,:) = spk_ncs_out(17:32,:) - mean(spk_ncs_out(17:32,:)); % Re-reference to electrode mean
-
 % Create a binary file and export the restructure broadband data
 clear bin_out_file
 bin_out_file = fopen([dirs.bin_data outfile_name '.dat'],'wb');

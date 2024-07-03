@@ -2,7 +2,7 @@ function [spikes] = phy2mat(ops)
 %% Import spike information from Phy
 ops.rootZ = ops.rootZ;
 sp = loadKSdir(ops.rootZ);
-[spikeTimes, spikeAmps, ~, spikeSites] = ksDriftmap(ops.rootZ);
+[spikeTimes, spikeAmps, ~, spikeSites, spikeTemplates] = ksDriftmap(ops.rootZ);
 
 %% Waveform extraction
 %  Get Parameters

@@ -12,7 +12,7 @@ AGLt data.
 
 %% Setup workspace
 % Load in matlab data
-datafile = 'troy-agl_t-2021-07-21.mat';
+datafile = 'troy-agl_t-2021-11-05';
 load(fullfile(dirs.mat_data,datafile))
 
 % Data preprocessing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

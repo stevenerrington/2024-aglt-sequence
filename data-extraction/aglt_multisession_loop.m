@@ -16,7 +16,7 @@ extracted for data recorded on both NeuraLynx and TDT.
 % 
 
 % Get session number
-for session_i = 1:size(ephysLog,1)
+for session_i = 37
     % Clear workspace to reduce clutter
     clearvars -except C session_i dirs ephysLog
 
@@ -40,14 +40,21 @@ end
 %% Import spike sorted data and add to processed data file
 % Once Kilosort has been run
 
-for session_i = 1:size(ephysLog,1)
+for session_i = 1:33 % size(ephysLog,1)
+    tic
     outfile_name = ephysLog.session{session_i}; % Processed file name
     exp_system = ephysLog.sys{session_i}; % Experiment type [agl, opto]
 
+    % Provide user update
+    %h = waitbar(session_i/size(ephysLog,1),{['Processing session ' int2str(session_i) ' of ' int2str(size(ephysLog,1))], ephysLog.session{session_i}});
+
     switch exp_system
-        case 'plex' % For Neuralynx (32kHz sampling)
+        case 'plex' % For Neuralynx (32000Hz sampling)
             kikuchi_phy_import(outfile_name, dirs, 32000)
-        case 'tdt' % For TDT  (20kHz sampling, resampled during initial extraction)
-            kikuchi_phy_import(outfile_name, dirs, 20000)
+        case 'tdt' % For TDT  (24414.0625Hz sampling)
+            kikuchi_phy_import(outfile_name, dirs, 24414.0625)
     end
+
+    %close(h)
+    toc
 end

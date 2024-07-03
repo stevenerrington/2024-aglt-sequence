@@ -50,14 +50,7 @@ end
 clear spk_ncs_out
 spk_ncs_out = [tdt_data.streams.Raws.data; tdt_data.streams.Raw1.data]*1e6;
 
-% Re-referencing signal
-spk_ncs_out(1:16,:) = spk_ncs_out(1:16,:) - mean(spk_ncs_out(1:16,:)); % Re-reference to electrode mean
-spk_ncs_out(17:32,:) = spk_ncs_out(17:32,:) - mean(spk_ncs_out(17:32,:)); % Re-reference to electrode mean
-
-% Resample signal
-for channel = 1:n_channels
-    spk_ncs_out_rs(channel,:) = resample(spk_ncs_out(channel,:),20000,round(tdt_data.streams.Raws.fs));
-end
+spk_ncs_out_rs = spk_ncs_out;
 
 % Create a binary file and export the restructure broadband data
 clear bin_out_file
