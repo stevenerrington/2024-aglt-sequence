@@ -31,9 +31,10 @@ outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
 % Loop through all recorded channels, get the ncs, and process it.
 % - Restructure data as nCh x nSample array
 
+dirs.raw_data = 'T:\EPHYS\RAWDATA\NHP\TDT\WALT\ephys\Tank\';
 clear tdt_data 
 tdtFun = @TDTbin2mat;
-tdt_data = tdtFun(fullfile(dirs.raw_data,exp_filename));
+tdt_data = tdtFun(fullfile(dirs.raw_data,'Walter-201130-132046'));
 
 % Neural data -----------------------------------------------------------
 % LFP (resampled to 1kHz) ///////////////////////////////////////////////

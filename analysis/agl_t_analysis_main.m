@@ -11,30 +11,15 @@ AGLt data.
 %} 
 
 %% Setup workspace
-% Load in matlab data
-datafile = 'troy-agl_t-2021-11-05';
-load(fullfile(dirs.mat_data,datafile))
-
-% Data preprocessing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Patch faulty channel
-record_idx = find(strcmp(ephysLog.session,datafile(1:end-4)),1);
-fault_ch_idx = ephysLog.faulty_ch(record_idx);
-lfp = patch_fault_ch(lfp,fault_ch_idx);
+% Common parameters and settings
 
 %%  Local field potential analyses
 % Time frequency & ERSP -----------------------
 agl_t_analysis_ERSP
 
+% Laminar analyses
+agl_t_analysis_lfp_laminar
 
+%% Sequence violation (spike analysis)
+agl_t_analysis_spk_seqViol
 
-
-
-
-
-
-%% Laminar analyses
-
-laminar_info.auditory = get_laminar_info([1:16], lfp_aligned, event_table);
-laminar_info.vlpfc = get_laminar_info([17:32], lfp_aligned, event_table);
-
-get_laminar_plotSummary

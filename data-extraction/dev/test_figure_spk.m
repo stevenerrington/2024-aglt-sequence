@@ -1,4 +1,4 @@
-aligntime = event_table.stimulusOnset_ms;
+aligntime = event_table.violation_ms;
 
 ops.timewin = -1000:5000;
 ops.sdf_filter = 'PSP';
@@ -10,22 +10,22 @@ ops.sdf_filter = 'PSP';
 
 names = fieldnames( spikes.time );
 
-xlim_vals = [-1000 5000];
+xlim_vals = [-100 350];
 ylim_vals = [0 25];
 close all
 clear test
-for ch_i = 30:40
+for ch_i = 66
 
     ch = names{ch_i}(end-2:end);
 
     clear test
 
-    test(1,1)=gramm('x',raster.(['DSP' ch]));
+    test(1,1)=gramm('x',raster.(['DSP' ch]),'color',event_table.cond_label);
     test(1,1).geom_raster('geom',{'line'});
     test(1,1).axe_property('XLim',xlim_vals,'YLim',[0 size(raster.(['DSP' ch]),1)]);
 
 
-    test(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]));
+    test(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',event_table.cond_label);
     test(2,1).stat_summary();
     test(2,1).axe_property('XLim',xlim_vals,'YLim',ylim_vals);
 

@@ -18,10 +18,10 @@ clear all; clc; warning off
 dirs = set_directories();
 
 % Import and curate experimental log
-ephysLog_all = import_exp_map();
+[ephysLog_all, stimulusLog] = import_exp_map();
 ephysLog = clean_exp_map(ephysLog_all);
 
-session_i = 1;
+session_i = 22;
 
 outfile_name = ephysLog.session{session_i}; % Processed file name
 data_in = load(fullfile(dirs.mat_data,[outfile_name '.mat']));
@@ -39,11 +39,13 @@ ops.sdf_filter = 'PSP';
 trial_idx_stim_nonviol = find(strcmp(data_in.event_table.cond_label,'nonviol'));
 trial_idx_stim_viol = find(strcmp(data_in.event_table.cond_label,'viol'));
 trial_idx_reward = find(~isnan(aligntime_c));
+trial_idx_stim_id = find(data_in.event_table.cond_value == 1);
 
 session_allidx = find(strcmp(ephysLog.session{session_i},ephysLog_all.session));
 
+onset_times = [ 0         563        1126        1689        2252]+60;
 
-for spike_i = 1:length(fieldnames(data_in.spikes.time))
+for spike_i = 1:10 %length(fieldnames(data_in.spikes.time))
 
     sdf_session = SpkConvolver (round(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})),...
     round(max(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i}))+5000), ops.sdf_filter);
@@ -85,7 +87,7 @@ for spike_i = 1:length(fieldnames(data_in.spikes.time))
     xlim([0 max(movmean(time,10000))])
 
     a = nsubplot(5,4,[ 4 5],[1]);
-    plot(ops.timewin, smooth(nanmean(sdf_trialStart.(data_in.spk_info.unitDSP{spike_i})(trial_idx_reward,:)),50),'linewidth',1,'Color',[220 9 34]./255)
+    plot(ops.timewin, smooth(nanmean(sdf_trialStart.(data_in.spk_info.unitDSP{spike_i})(trial_idx_reward,:)),20),'linewidth',1,'Color',[220 9 34]./255)
     xlim([-200 1000]); xlabel('Time from Trial Start (ms)'); ylabel('Firing rate (spk/sec)')
     vline(0,'k');
 
@@ -95,23 +97,24 @@ for spike_i = 1:length(fieldnames(data_in.spikes.time))
 
     colorscale_all = [colorscale_blue; colorscale_red];
 
-    for trial_type = 1:16
-        trial_idx = []; trial_idx = find(data_in.event_table.cond_value == trial_type);
-        plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx,:)),50),'linewidth',1,'Color',[colorscale_all(trial_type,:) 0.2])
-    end
-
-    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_nonviol,:)),50),'linewidth',2,'Color',[colorscale_all(1,:) 1.0])
-    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_viol,:)),50),'linewidth',2,'Color',[colorscale_all(9,:) 1.0])
+    % for trial_type = 1:16
+    %     trial_idx = []; trial_idx = find(data_in.event_table.cond_value == trial_type);
+    %     plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx,:)),50),'linewidth',1,'Color',[colorscale_all(trial_type,:) 0.2])
+    % end
+    % plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_viol,:)),50),'linewidth',2,'Color',[colorscale_all(9,:) 1.0])
     
+    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_id,:)),20),'linewidth',2,'Color',[colorscale_all(1,:) 1.0])
+    vline(onset_times,'r-')
+
     xlim([-200 3500]); xlabel('Time from stimulus on (ms)'); ylabel('Firing rate (spk/sec)')
     vline(0,'k');
 
     c = nsubplot(5,4,[ 4 5],[4]);
-    plot(ops.timewin, smooth(nanmean(sdf_reward.(data_in.spk_info.unitDSP{spike_i})(trial_idx_reward,:)),50),'linewidth',1,'Color',[41 47 86]./255)
+    plot(ops.timewin, smooth(nanmean(sdf_reward.(data_in.spk_info.unitDSP{spike_i})(trial_idx_reward,:)),20),'linewidth',1,'Color',[41 47 86]./255)
     xlim([-200 1000]); xlabel('Time from reward (ms)'); ylabel('Firing rate (spk/sec)')
     vline(0,'k');
 
     linkaxes([a b c],'y')
-    ylim([prctile(sdf_session, 25) prctile(sdf_session, 75)])
+    % ylim([prctile(sdf_session, 25) prctile(sdf_session, 75)])
 end
 

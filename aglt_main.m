@@ -18,7 +18,7 @@ clear all; clc; warning off
 dirs = set_directories();
 
 % Import and curate experimental log
-ephysLog = import_exp_map();
+[ephysLog, stimulusLog] = import_exp_map();
 ephysLog = clean_exp_map(ephysLog);
 
 %% Data extraction ////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ ephysLog = clean_exp_map(ephysLog);
 % trials. They will then be saved to the matlab directory defined in
 % set_directories().
 
-aglt_multisession_loop
+% [! main extraction] aglt_multisession_loop
 
 
 %% Data curation /////////////////////////////////////////////////////////
