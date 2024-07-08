@@ -37,20 +37,23 @@ ops.sdf_filter = 'PSP';
 [sdf_reward, raster_reward] = get_spikes_aligned(data_in.spikes,aligntime_c,ops);
 
 trial_idx_stim_nonviol = find(strcmp(data_in.event_table.cond_label,'nonviol'));
+trial_idx_stim_viol = find(strcmp(data_in.event_table.cond_label,'viol'));
 trial_idx_reward = find(~isnan(aligntime_c));
 
 session_allidx = find(strcmp(ephysLog.session{session_i},ephysLog_all.session));
 
-sdf_session = SpkConvolver (round(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})),...
+
+for spike_i = 1:length(fieldnames(data_in.spikes.time))
+
+    sdf_session = SpkConvolver (round(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})),...
     round(max(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i}))+5000), ops.sdf_filter);
 
-for spike_i = 40:50
 
     figuren('Renderer', 'painters', 'Position', [100 100 1500 800]); hold on;
 
-    if ismember(data_in.spk_info.site(spike_i),[1:16])
+    if ismember(data_in.spk_info.site(spike_i),[1:16]);
         area = ephysLog_all.area_label{session_allidx(1)};
-    else ismember(data_in.spk_info.site(spike_i),[17:32])
+    else ismember(data_in.spk_info.site(spike_i),[17:32]);
         area = ephysLog_all.area_label{session_allidx(2)};
     end
 
@@ -64,26 +67,42 @@ for spike_i = 40:50
     text(-0.4,0.3,['Date: ' datestr(ephysLog.data(session_i))]);
     text(-0.4,0.2,['AP: ' int2str(ephysLog.nan_y(session_i))]);
     text(-0.4,0.1,['ML: ' int2str(ephysLog.nan_x(session_i))]);
-    set ( title_ax, 'visible', 'off')
+    set ( title_ax, 'visible', 'off');
 
     % Waveform
-    nsubplot(5,4,[1 2],[2])
+    nsubplot(5,4,[1 2],[2]);
     plot(nanmean(data_in.spikes.waveform.(data_in.spk_info.unitWAV{spike_i})),'linewidth',2,'Color','k')
-    set(gca,'xcolor','none','ycolor','none')
+    set(gca,'xcolor','none','ycolor','none');
 
-    nsubplot(5,4,[1 2],3)
+    nsubplot(5,4,[1 2],3);
     histogram(diff(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})),1:1:50,'LineStyle','None','FaceColor',[14 80 102]./255)
     xlim([-5 50])
     xlabel('Time since last spike (ms)'); ylabel('Frequency')
 
+    nsubplot(5,4,[1 2],4);
+    time = []; time = 1:1:length(sdf_session);
+    plot(movmean(time,10000), movmean(sdf_session,10000),'k')
+    xlim([0 max(movmean(time,10000))])
 
     a = nsubplot(5,4,[ 4 5],[1]);
     plot(ops.timewin, smooth(nanmean(sdf_trialStart.(data_in.spk_info.unitDSP{spike_i})(trial_idx_reward,:)),50),'linewidth',1,'Color',[220 9 34]./255)
     xlim([-200 1000]); xlabel('Time from Trial Start (ms)'); ylabel('Firing rate (spk/sec)')
     vline(0,'k');
 
-    b = nsubplot(5,4,[ 4 5],[2 3]);
-    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_nonviol,:)),50),'linewidth',1,'Color',[144 27 112]./255)
+    b = nsubplot(5,4,[ 4 5],[2 3]); hold on
+    colorscale_blue = flipud(cbrewer('seq','Blues',8));
+    colorscale_red = flipud(cbrewer('seq','Reds',8));
+
+    colorscale_all = [colorscale_blue; colorscale_red];
+
+    for trial_type = 1:16
+        trial_idx = []; trial_idx = find(data_in.event_table.cond_value == trial_type);
+        plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx,:)),50),'linewidth',1,'Color',[colorscale_all(trial_type,:) 0.2])
+    end
+
+    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_nonviol,:)),50),'linewidth',2,'Color',[colorscale_all(1,:) 1.0])
+    plot(ops.timewin, smooth(nanmean(sdf_stimulus.(data_in.spk_info.unitDSP{spike_i})(trial_idx_stim_viol,:)),50),'linewidth',2,'Color',[colorscale_all(9,:) 1.0])
+    
     xlim([-200 3500]); xlabel('Time from stimulus on (ms)'); ylabel('Firing rate (spk/sec)')
     vline(0,'k');
 
@@ -93,5 +112,6 @@ for spike_i = 40:50
     vline(0,'k');
 
     linkaxes([a b c],'y')
-
+    ylim([prctile(sdf_session, 25) prctile(sdf_session, 75)])
 end
+
