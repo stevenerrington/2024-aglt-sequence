@@ -5,11 +5,14 @@ function lfp = patch_fault_ch(lfp,fault_ch_idx)
 % sides (i.e. the top most and bottom most electrode contacts).
 
 if ismember(fault_ch_idx,[1,16,17,32])
-    fprint('!Check function before use')
+    fprintf('!Check function before use')
 end
 
-if ~isempty(fault_ch_idx)
-    lfp(fault_ch_idx,:) = mean([lfp(fault_ch_idx-1,:); lfp(fault_ch_idx+1,:)]);
+if any(fault_ch_idx ~= -999)
+    for fault_i = 1:length(fault_ch_idx)
+        fault_ch = fault_ch_idx(fault_i);
+        lfp(fault_ch,:) = mean([lfp(fault_ch-1,:); lfp(fault_ch+1,:)]);
+    end
 end
 
 end

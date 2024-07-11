@@ -1,37 +1,40 @@
 
 %% Setup environment
-% Clear environment
-clear all; clc; warning off
-
-% Setup data directories for use throughout scripts
-dirs = set_directories();
-
 % Admin --------------------------------------------------------------
-monkey = 'troy'; % Monkey name [troy, chief]
+session = 1;
+monkey = ephysLog.monkey{session}; % Monkey name [troy, chief]
+outfile_name = ephysLog.session{session}; % Processed file name
+session_label = ephysLog.file_n{session};
 
 % Experimental parameters -------------------------------------------
 n_channels = 32; % Number of channels recorded in session
 
-% Key setup variables
-exp_filename = '2021-11-05-AGLt'; % Experimental raw data
-task = 'agl_t'; % Experiment type [agl, opto]
-session_n = '0001'; % Experimental file tag
+data_dir = ephysLog.data_dir{session};
+data_file = ephysLog.data_folder{session};
 
 % Define experimental/data directories -------------------------------
-outfile_name = [monkey '-' task '-' exp_filename(1:10)]; % Processed file name
 
 %% Extract broadband signal
 
-for ch_n = 1:n_channels
-    clear filepart_name NCSpath spk_ncs_in
+switch ephysLog.sys{session}
+    case 'plex'
+        for ch_n = 1:n_channels
+            clear filepart_name NCSpath spk_ncs_in
 
-    filepart_name = ['CSC' int2str(ch_n) '_' session_n];
-    NCSpath = [fullfile(dirs.raw_data,exp_filename,filepart_name) '.ncs'];
+            filepart_name = ['CSC' int2str(ch_n) session_label];
+            NCSpath = [fullfile(data_dir,data_file,filepart_name) '.ncs'];
 
-    spk_ncs_in = readncs([filepart_name '.ncs'],fullfile(dirs.raw_data,exp_filename));
-    spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
+            spk_ncs_in = readncs([filepart_name '.ncs'],fullfile(data_dir,data_file));
+            spk_ncs_out(ch_n,:) = spk_ncs_in.dat';
+        end
 end
 
+switch ephysLog.sys{session}
+    case 'plex'
+        ops.fs = 32000;
+    case 'tdt'
+        ops.fs = 24414.0625;
+end
 
 %% Run HOSD Spike Detection Algorithm
 
@@ -47,20 +50,22 @@ saveFigFile = 0;
 % Setup data for function
 clear data
 data.dat = spk_ncs_out;
-data.fs = 32000;
+data.fs = ops.fs;
 
 
 % - 2024-06-14: Ran this code and it took an age (stopped after 45 minutes
 % to access MATLAB for other tasks). Will run again over the weekend?
-mat_savefile = fullfile(dirs.mat_data,['troy-agl_t-2021-11-05-HOSD.mat']);
+mat_savefile = fullfile('C:\KIKUCHI-LOCAL\data\ephys\hosd',[outfile_name '-HOSD.mat']);
 
 if exist(mat_savefile) == 2
-    load(fullfile(dirs.mat_data,['troy-agl_t-2021-11-05-HOSD.mat']))
-    fprintf('Loading %s ... \n', 'troy-agl_t-2021-11-05-HOSD.mat')
+    load(mat_savefile)
+    fprintf('Loading %s ... \n', [outfile_name '-HOSD.mat'])
 else
+    tic
     [spikes,hos,znrm] = HOSD_spike_detection(data,params); % Run extraction
     spike_cluster = sort_spikes(spikes); % Sort spikes
-    save(mat_savefile,'spikes','hos','znrm','spike_cluster','-v7.3')
+    save(mat_savefile,'spike_cluster','-v7.3')
+    toc
 end
 
 
@@ -90,15 +95,8 @@ end
 
 % Behavioral data -------------------------------------------------------
 % Read in events
-ops.dirs.raw_data = dirs.raw_data; ops.filename = exp_filename; ops.session_n = session_n; 
-clear event_table events
-event_table = get_event_table(ops);
 
-% Align data to event
-% Define parameters
-ops.event_port = 2;
-events = get_agl_t_trials(event_table, ops);
-aligntime = events.stimulusOnset_ms;
+aligntime = event_table.stimulusOnset_ms;
 
 ops.timewin = -1000:5000;
 ops.sdf_filter = 'PSP';
@@ -112,21 +110,21 @@ names = fieldnames( spikes_out.time );
 
 % Define times for figures
 xlim_vals = [-1000 5000];
-ylim_vals = [0 120];
+ylim_vals = [0 20];
 
-for ch_i = 12
+for ch_i = 1:15
     clear spk_figure_idv fig
 
     % Get channel label
     ch = names{ch_i}(4:end);
 
     % Plot raster
-    spk_figure_idv(1,1)=gramm('x',raster.(['DSP' ch]),'color',events.cond_label);
+    spk_figure_idv(1,1)=gramm('x',raster.(['DSP' ch]),'color',event_table.cond_label);
     spk_figure_idv(1,1).geom_raster('geom',{'line'});
     spk_figure_idv(1,1).axe_property('XLim',xlim_vals,'YLim',[0 size(raster.(['DSP' ch]),1)]);
 
     % Plot SDF
-    spk_figure_idv(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',events.cond_label);
+    spk_figure_idv(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',event_table.cond_label);
     spk_figure_idv(2,1).stat_summary();
     spk_figure_idv(2,1).axe_property('XLim',xlim_vals,'YLim',ylim_vals);
 
@@ -171,9 +169,9 @@ for ch_i = 12
     spk_figure_idv.draw();
 
     % Save figure
-    set(fig,'renderer','painters','Units','Inches');
-    pos = get(fig,'Position');
-    set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-    print(fig,['C:\KIKUCHI-LOCAL\script\kikuchi-data\data-extraction\doc\troy-agl_t-2021-11-05-HOSD-',['DSP' ch],'.pdf'],'-r400','-bestfit','-dpdf')
-    close all
+    % set(fig,'renderer','painters','Units','Inches');
+    % pos = get(fig,'Position');
+    % set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+    % print(fig,['C:\KIKUCHI-LOCAL\script\kikuchi-data\data-extraction\doc\troy-agl_t-2021-11-05-HOSD-',['DSP' ch],'.pdf'],'-r400','-bestfit','-dpdf')
+    % close all
 end

@@ -18,7 +18,7 @@ clear all; clc; warning off
 dirs = set_directories();
 
 % Import and curate experimental log
-[ephysLog, stimulusLog] = import_exp_map();
+[ephysLog, stimulusLog, spike_log] = import_exp_map();
 ephysLog = clean_exp_map(ephysLog);
 
 %% Data extraction ////////////////////////////////////////////////////////

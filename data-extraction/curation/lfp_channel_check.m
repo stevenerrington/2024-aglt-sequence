@@ -1,4 +1,4 @@
-filenames = getDirFilenames('C:\KIKUCHI-LOCAL\data\ephys\mat','troy');
+filenames = getDirFilenames('C:\KIKUCHI-LOCAL\data\ephys\mat','walt');
 
 for file_i = 1:length(filenames)
     try
@@ -9,7 +9,7 @@ for file_i = 1:length(filenames)
         % Patch faulty channel
         record_idx = find(strcmp(ephysLog.session,file_in(1:end-4)),1);
         fault_ch_idx = ephysLog.faulty_ch(record_idx);
-        lfp = patch_fault_ch(lfp,fault_ch_idx);
+        % lfp = patch_fault_ch(lfp,fault_ch_idx);
 
         clear aligntime
         aligntime = event_table.stimulusOnset_ms;
@@ -18,7 +18,7 @@ for file_i = 1:length(filenames)
         lfp_aligned = get_lfp_aligned(lfp,aligntime,ops);
 
         channels = fieldnames(lfp_aligned);
-        channels = channels(1:16);
+        channels = channels(1:32);
 
         clear signal_out
 
@@ -43,9 +43,9 @@ for file_i = 1:length(filenames)
         trial_average_lfp = nanmean(signal_out,3);
 
 
-        figuren('Renderer', 'painters', 'Position', [100 100 1200 400]);
+        figuren('Renderer', 'painters', 'Position', [100 100 400 1200]);
 
-        subplot(1,4,1); hold on
+        subplot(1,1,1); hold on
         for ch_i = 1:length(channels)
             if ismember(ch_i,[1:16])
                 color_line = [204 0 102]./255;
@@ -57,38 +57,38 @@ for file_i = 1:length(filenames)
         end
         set(gca,'ydir', 'reverse')
         ylim([-15 (length(channels)*10)]); yticks([10*([1:32]-1)]); yticklabels(num2cell([1:32]))
-        xlim([-100 500])
+        xlim([-250 1000])
         title(file_in)
 
-
-        subplot(1,4,2); hold on
-        csd_out = D_CSD_BASIC(signal_out, 'spc', 0.2);
-        ops.baseline = [-500:0];
-        csd_out = adjustBaseline(csd_out,ops);
-        data = nanmean(csd_out,3);
-
-        % Plot CSD --------------------------------------------
-        for ch_i = 1:16
-            color_line = [204 0 102]./255;
-            plot(ops.timewin,  data(ch_i,:)+20*(ch_i-1),'color',color_line)
-        end
-        set(gca,'ydir', 'reverse')
-        ylim([-15 (16*20)]); yticks([20*([1:16]-1)]); yticklabels(num2cell([1:16]))
-        xlim([-100 500])
-
-
-        subplot(1,4,[3 4])
-        csd_in = H_2DSMOOTH(data);
-
-        % Get figure
-        imagesc('XData',ops.timewin,'YData',1:size(csd_in,1),'CData',csd_in)
-        xlim([-100 500])
-        ylim([find(~isnan(csd_in(:,1)),1,'first') find(~isnan(csd_in(:,1)),1,'last')])
-        set(gca,'YDir','Reverse')
-        colorscale = flipud(cbrewer('div','RdBu',100));
-        colorscale(colorscale<0) = 0;
-        colormap(colorscale)
-        colorbar
+        % 
+        % subplot(1,4,2); hold on
+        % csd_out = D_CSD_BASIC(signal_out, 'spc', 0.2);
+        % ops.baseline = [-500:0];
+        % csd_out = adjustBaseline(csd_out,ops);
+        % data = nanmean(csd_out,3);
+        % 
+        % % Plot CSD --------------------------------------------
+        % for ch_i = 1:16
+        %     color_line = [204 0 102]./255;
+        %     plot(ops.timewin,  data(ch_i,:)+20*(ch_i-1),'color',color_line)
+        % end
+        % set(gca,'ydir', 'reverse')
+        % ylim([-15 (16*20)]); yticks([20*([1:16]-1)]); yticklabels(num2cell([1:16]))
+        % xlim([-100 500])
+        % 
+        % 
+        % subplot(1,4,[3 4])
+        % csd_in = H_2DSMOOTH(data);
+        % 
+        % % Get figure
+        % imagesc('XData',ops.timewin,'YData',1:size(csd_in,1),'CData',csd_in)
+        % xlim([-100 500])
+        % ylim([find(~isnan(csd_in(:,1)),1,'first') find(~isnan(csd_in(:,1)),1,'last')])
+        % set(gca,'YDir','Reverse')
+        % colorscale = flipud(cbrewer('div','RdBu',100));
+        % colorscale(colorscale<0) = 0;
+        % colormap(colorscale)
+        % colorbar
     end
 end
 

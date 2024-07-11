@@ -7,7 +7,7 @@ color_heatmap = flipud(cbrewer('div','RdBu',100));
 color_heatmap(color_heatmap<0) = 0;
 
 %% Create figure window
-figuren('Renderer', 'painters', 'Position', [100 100 1800 600]); hold on;
+figuren('Renderer', 'painters', 'Position', [100 100 2000 600]); hold on;
 
 area_labels = fieldnames(laminar_info);
 
@@ -26,7 +26,7 @@ for area_i = 1:2
     % LFP -----------------------------------------------------------------
     trial_average_lfp = nanmean(laminar_info.(area_name).lfp,3);
 
-    ax_lfp = nsubplot(2,4,area_i,1);
+    ax_lfp = nsubplot(2,5,area_i,1);
     for ch_i = 1:length(channels)
         plot(ops.timewin,  trial_average_lfp(ch_i,:)+10*(ch_i-1),'k')
     end
@@ -36,14 +36,14 @@ for area_i = 1:2
     ylabel(area_name,'fontsize', 12, 'fontweight', 'bold')
 
     % CSD -----------------------------------------------------------------
-    ax_csd = nsubplot(2,4,area_i,2);
+    ax_csd = nsubplot(2,5,area_i,2);
     plot_csd(nanmean(laminar_info.(area_name).csd,3), ops.timewin, [-100 500], ax_csd)
     set(gca,'ydir', 'reverse')
     cb=colorbar; ylabel(cb, 'nA/mm3');
     xlabel('Time (ms)');ylabel('Depth');
 
     % Spectrolaminar power ------------------------------------------------
-    ax_specpower = nsubplot(2,4,area_i,3);
+    ax_specpower = nsubplot(2,5,area_i,3);
     imagesc(laminar_info.(area_name).power.normalized);set(gca, 'YDir', 'reverse');
     xlim([1 size(laminar_info.(area_name).power.normalized,2)]); ylim([1 size(laminar_info.(area_name).power.normalized,1)]);
     xlabel('Frequency (Hz)');ylabel('Channel Number');
@@ -52,12 +52,22 @@ for area_i = 1:2
     cb=colorbar; ylabel(cb, 'Relative Power');
 
     % Spectrolaminar summary ----------------------------------------------
-    nsubplot(2,4,area_i,4);
+    nsubplot(2,5,area_i,4);
     plot(mean(laminar_info.(area_name).power.normalized(:,10:19),2), 1:length(channels), 'b', 'LineWidth', 2); % alpha/beta
     plot(mean(laminar_info.(area_name).power.normalized(:,75:150),2), 1:length(channels), 'r', 'LineWidth', 2); % gamma
     set(gca, 'ydir', 'reverse')
     xlim([0 1]); ylim([1 length(channels)]); xlabel('Relative Power'); ylabel('Channel Number');
     hline(laminar_info.(area_name).flip.crossoverchannel,'k')
+
+    % Spectrolaminar power ------------------------------------------------
+    ax_specpower = nsubplot(2,5,area_i,5);
+    imagesc(laminar_info.(area_name).xcontact);set(gca, 'YDir', 'reverse');
+    xlim([1 size(laminar_info.(area_name).xcontact,2)]); ylim([1 size(laminar_info.(area_name).xcontact,1)]);
+    xlabel('Frequency (Hz)');ylabel('Channel Number');
+    colormap(color_heatmap)
+    hline(laminar_info.(area_name).flip.crossoverchannel,'k')
+    cb=colorbar; ylabel(cb, 'Relative Power');
+
 
     % Other -----------------------------------------------------------------
 end

@@ -17,6 +17,7 @@ elseif strcmp(ConvType, 'Gauss') == 1
     R2use = (1/sqrt(2*pi*sd.^2))*exp(-t.^2/(2*sd.^2));
 end
 
+SpkData = SpkData(SpkData > 0);
 S2 = zeros(1, SessionEndTime);
 S2(SpkData) = 1;
 
