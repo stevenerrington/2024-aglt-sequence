@@ -7,7 +7,7 @@ ops.sdf_filter = 'PSP';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
-names = fieldnames( spikes.time );
+names = ops.plot_ch;
 
 xlim_vals = [-500 5000];
 ylim_vals = [0 25];

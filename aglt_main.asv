@@ -30,6 +30,7 @@ spike_log = clean_spike_map(spike_log);
 
 % [! main extraction] aglt_multisession_loop
 
+
 %% Data curation /////////////////////////////////////////////////////////
 % First, we will determine which of our sessions may have recordings that
 % are across the cortical sheet.

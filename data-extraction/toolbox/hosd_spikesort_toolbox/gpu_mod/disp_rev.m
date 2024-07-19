@@ -1,4 +1,4 @@
-function disp(obj)
+function disp_rev(obj)
 %DISP Display a Gaussian mixture distribution object.
 %   DISP(OBJ) prints a text representation  of the gmdistribution
 %   OBJ, without printing the object name.  In all other ways it's

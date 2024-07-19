@@ -10,8 +10,9 @@ AGLt data.
 ///////////////////////////////////////////////////////////////////////////
 %} 
 
-%% Setup workspace
-% Common parameters and settings
+
+%% Sequence violation (spike analysis)
+agl_t_analysis_spk_seqViol
 
 %%  Local field potential analyses
 % Time frequency & ERSP -----------------------
@@ -19,7 +20,4 @@ agl_t_analysis_ERSP
 
 % Laminar analyses
 agl_t_analysis_lfp_laminar
-
-%% Sequence violation (spike analysis)
-agl_t_analysis_spk_seqViol
 

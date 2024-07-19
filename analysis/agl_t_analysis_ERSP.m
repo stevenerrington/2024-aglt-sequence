@@ -39,7 +39,6 @@ for session_i = 1:size(ephysLog,1)
     ops.freq = [2 200];
     [~, signal_out] = get_lfp_aligned(lfp,aligntime,ops);
 
-
     data = signal_out(:,:,trials_nonviol);
 
     % EEGlab analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +49,7 @@ for session_i = 1:size(ephysLog,1)
     basemin = -500; % Baseline window start (ms)
     basemax = 0; % Baseline window end (ms)
 
+    clear nTr in
     nTr=size(data,3); % Number of trials
     in(:,1)=[1:nTr]'; % Dummy variable for trial n
     in(:,2)=abs(epochmin)*ones(nTr,1); % Dummy variable for trial n
@@ -89,7 +89,7 @@ for session_i = 1:size(ephysLog,1)
         fprintf('Running analysis on channel %i \n', chan_i)
         [ersp,itc,powbase,times,freqs,erspboot,itcboot,alltfX] = pop_newtimef(EEG, ...
             1, chan_i, [EEG.xmin EEG.xmax]*srate, [3 0.7], 'maxfreq',maxfreq, 'freqs',freq_range,'padratio', padratio, ...
-            'plotphase', 'off', 'timesout', outtimes, 'alpha', alpha_val, 'naccu', 200, 'baseboot',1,'rmerp','off', ...
+            'plotphase', 'off', 'alpha', alpha_val, 'naccu', 200, 'baseboot',1,'rmerp','off', ...
             'erspmax', maxersp, 'plotersp','off', 'plotitc','off','baseline',[basemin basemax],'marktimes',0);
 
         ersp_out{chan_i}.ersp = ersp;
@@ -109,22 +109,22 @@ end
 
 toc
 
-%
-%
-% % Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% colorscale = 'parula';
-%
-% figure;
-% subplot(2,1,1)
-% imagesc('XData',ops.timewin,'YData',freqs,'CData',ersp)
-% xlim([-500 4000]); ylim([min(freqs) 100])
-% vline(0, 'k-');
-% colorbar; colormap(colorscale)
-%
-% subplot(2,1,2)
-% imagesc('XData',ops.timewin,'YData',freqs,'CData',abs(itc))
-% xlim([-500 4000]); ylim([min(freqs) 100]); clim([0 0.5])
-% vline(0, 'k-');
-% colorbar;
-%
+
+
+% Figure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+colorscale = 'parula';
+
+figure;
+subplot(2,1,1)
+imagesc('XData',ops.timewin,'YData',freqs,'CData',ersp)
+xlim([-500 4000]); ylim([min(freqs) 100])
+vline(0, 'k-');
+colorbar; colormap(colorscale)
+
+subplot(2,1,2)
+imagesc('XData',ops.timewin,'YData',freqs,'CData',abs(itc))
+xlim([-500 4000]); ylim([min(freqs) 100]); clim([0 0.5])
+vline(0, 'k-');
+colorbar;
+
