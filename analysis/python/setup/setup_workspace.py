@@ -1,20 +1,33 @@
 
 # Import dependencies -------------------------------------------------------------
 import pandas as pd
-            
+import sys
+       
 # Setup directory structure -------------------------------------------------------------
 def set_directories():
     """
     Setup directories
     """
-    dirs = {
-        "raw_data": r'C:\KIKUCHI-LOCAL\data\ephys\raw',
-        "bin_data": r'C:\KIKUCHI-LOCAL\data\ephys\bin',
-        "kilosort": r'C:\KIKUCHI-LOCAL\data\ephys\ks',
-        "mat_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat',
-        "doc_data": r'C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc'
-    }
-
+    
+    if sys.platform == 'win32':  
+        dirs = {
+            "raw_data": r'C:\KIKUCHI-LOCAL\data\ephys\raw',
+            "bin_data": r'C:\KIKUCHI-LOCAL\data\ephys\bin',
+            "kilosort": r'C:\KIKUCHI-LOCAL\data\ephys\ks',
+            "mat_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat',
+            "doc_data": r'C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc'
+            "py_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat'
+        }
+    elif sys.platform == 'darwin':
+        dirs = {
+            "raw_data": r'C:\KIKUCHI-LOCAL\data\ephys\raw',
+            "bin_data": r'C:\KIKUCHI-LOCAL\data\ephys\bin',
+            "kilosort": r'C:\KIKUCHI-LOCAL\data\ephys\ks',
+            "mat_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat',
+            "doc_data": r'/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/data-extraction/doc'
+            "py_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat'
+       }
+          
     return dirs
 
 # Import experiment details -------------------------------------------------------------
