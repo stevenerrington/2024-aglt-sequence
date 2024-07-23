@@ -1,3 +1,14 @@
+
+example_neuron_aud = 1286;
+example_neuron_frontal = 1182;
+
+example_neuron_in = example_neuron_aud;
+
+example_neuron_data = load(fullfile(dirs.mat_data, spike_log.session{example_neuron_in}));
+ops.plot_ch = spike_log.unitDSP(example_neuron_in);
+
+event_table = example_neuron_data.event_table;
+
 % Get comparison group label
 for trl_i = 1:size(event_table,1)
     if ismember(event_table.cond_value(trl_i), [3 7 14])
@@ -16,7 +27,7 @@ end
 aligntime = event_table.stimulusOnset_ms;
 
 ops.timewin = -1000:5000;
-ops.sdf_filter = 'PSP';
+ops.sdf_filter = 'Gauss';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 names = fieldnames( spikes.time );

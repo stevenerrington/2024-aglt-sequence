@@ -3,7 +3,7 @@ function single_unit_rastersdf_figure(event_table,spikes,ops)
 aligntime = event_table.stimulusOnset_ms;
 
 ops.timewin = -1000:5000;
-ops.sdf_filter = 'PSP';
+ops.sdf_filter = 'Gauss';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
@@ -13,18 +13,20 @@ xlim_vals = [-500 5000];
 ylim_vals = [0 25];
 close all
 clear single_unit_fig
+
+
 for ch_i = 1:length(names)
 
     ch = names{ch_i}(end-2:end);
 
     clear single_unit_fig
 
-    single_unit_fig(1,1)=gramm('x',raster.(['DSP' ch]),'color',event_table.cond_label);
+    single_unit_fig(1,1)=gramm('x',raster.(['DSP' ch]));
     single_unit_fig(1,1).geom_raster('geom',{'line'});
     single_unit_fig(1,1).axe_property('XLim',xlim_vals,'YLim',[0 size(raster.(['DSP' ch]),1)]);
 
 
-    single_unit_fig(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]),'color',event_table.cond_label);
+    single_unit_fig(2,1)=gramm('x',ops.timewin,'y',sdf.(['DSP' ch]));
     single_unit_fig(2,1).stat_summary();
     single_unit_fig(2,1).axe_property('XLim',xlim_vals,'YLim',ylim_vals);
 

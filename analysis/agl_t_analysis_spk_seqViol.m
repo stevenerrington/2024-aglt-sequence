@@ -21,6 +21,9 @@ ops.sound_sdf_window = -200:600;
 sound_onset_ms = [0, 563, 1126, 1689, 2252];
 zero_offset = abs(ops.timewin(1));
 
+% Define neurons
+auditory_neuron_idx = find(strcmp(spike_log.area,'R') | strcmp(spike_log.area,'A1'));
+frontal_neuron_idx = find(strcmp(spike_log.area,'44') | strcmp(spike_log.area,'45'));
 
 %% Extract sound aligned SDF
 % Load data
@@ -35,30 +38,28 @@ for session_i = 1:size(ephysLog,1)
     % Align spikes and generate SDF
     aligntime = event_table.stimulusOnset_ms;
     [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
-    [~, lfp_aligned] = get_lfp_aligned(lfp,aligntime,ops);
 
     % Find all neurons in given session
     neuron_list = spike_log.unitDSP(strcmp(spike_log.session,datafile));
 
-    for ch_i = 1:32
-        sound_lfp = {};
-        count= 0;
-        lfp_count = lfp_count + 1;
-
-        for trial_i = 1:size(event_table,1)
-            if ~strcmp(event_table.cond_label(trial_i),'error')
-                for sound_i = 1:5
-                    count = count + 1;
-                    sound_lfp{count,1} = lfp_aligned(ch_i,zero_offset+ops.sound_sdf_window+sound_onset_ms(sound_i),trial_i);
-                    sound_lfp{count,2} = stimulusLog.(['sound_' int2str(sound_i) '_code']){event_table.cond_value(trial_i)};
-                    sound_lfp{count,3} = ['position_' int2str(sound_i)];
-                    sound_lfp{count,4} = event_table.cond_label(trial_i);
-                end
-            end
+    % Create a violation alignment event for SDF's
+    for trial_i = 1:size(event_table,1)
+        switch event_table.cond_value(trial_i)
+            case {3 7 14}
+                event_table.violation_ms(trial_i) =  event_table.stimulusOnset_ms(trial_i) + 1127;
+            case {4 8 15}
+                event_table.violation_ms(trial_i) =  event_table.stimulusOnset_ms(trial_i) + 2253;
+            case {1 5 13}
+                event_table.violation_ms(trial_i) =  event_table.stimulusOnset_ms(trial_i) + 1127;
+            case {2 6 16}
+                event_table.violation_ms(trial_i) =  event_table.stimulusOnset_ms(trial_i) + 2253;
+            case {9 10 11 12}
+                event_table.violation_ms(trial_i) =  NaN;
         end
-
-        sound_lfp_out{lfp_count} = sound_lfp;
     end
+
+    aligntime_viol = event_table.violation_ms;
+    [sdf_viol, raster_viol] = get_spikes_aligned(spikes,aligntime_viol,ops);
 
     % For each neuron, get the sound aligned SDF, and save relevant information
     % in the sound_sdf variable
@@ -68,6 +69,9 @@ for session_i = 1:size(ephysLog,1)
 
         sound_sdf = {};
         count= 0;
+
+        neuron_sdf_out{neuron_count,1} = sdf.(neuron_label);
+        neuron_sdfviol_out{neuron_count,1} = sdf_viol.(neuron_label);
 
         for trial_i = 1:size(event_table,1)
             if ~strcmp(event_table.cond_label(trial_i),'error')
@@ -90,6 +94,7 @@ end
 
 
 %% Normalize A-sound aligned spike density function
+
 for neuron_i = 1:size(spike_log,1)
     a_trials = strcmp(sound_sdf_out{neuron_i}(:,3),'A');
     c_trials = strcmp(sound_sdf_out{neuron_i}(:,3),'C');
@@ -107,25 +112,84 @@ for neuron_i = 1:size(spike_log,1)
     norm_fr_soundD(neuron_i,:) = (nanmean(cell2mat(sound_sdf_out{neuron_i}(d_trials,1)))-baseline_fr_mu)./baseline_fr_std;
 
     norm_fr_sound_all(neuron_i,:) = (nanmean(cell2mat(sound_sdf_out{neuron_i}(:,1)))-baseline_fr_mu)./baseline_fr_std;
+
+
+    norm_fr_sequence(neuron_i,:) = (nanmean(neuron_sdf_out{neuron_i})-baseline_fr_mu)./baseline_fr_std;
 end
 
+clear norm_fr_violation norm_fr_consistant
+for neuron_i = 1:size(spike_log,1)
+    datafile = spike_log.session{neuron_i};
+    load(fullfile(dirs.mat_data,datafile),'event_table')
+
+    viol_trials = []; viol_trials = find(strcmp(event_table.cond_label,'viol'));
+    cons_trials = []; cons_trials = find(strcmp(event_table.cond_label,'nonviol'));
+    norm_fr_violation{neuron_i,1} = neuron_sdfviol_out{neuron_i}(viol_trials,:);
+    norm_fr_consistant{neuron_i,1} = neuron_sdfviol_out{neuron_i}(cons_trials,:);
+end
+
+%% Figure: Example sound and order aligned spike density function
+example_neuron_aud = 1131;
+example_neuron_frontal = 1182;
+example_neuron_in = example_neuron_aud;
+
+% Align spikes and generate SDF
+clear spk_figure_sound
+
+% Example Auditory SDF | Sound
+spk_figure_sound(1,1)=gramm('x',ops.sound_sdf_window,'y',cell2mat(sound_sdf_out{example_neuron_aud}(:,1)),'color',sound_sdf_out{example_neuron_aud}(:,3));
+spk_figure_sound(1,1).stat_summary();
+spk_figure_sound(1,1).axe_property('XLim',[-200 600],'YLim',[0 25]);
+spk_figure_sound(1,1).geom_vline('xintercept',[0]);
+
+% Example Auditory SDF | Position
+spk_figure_sound(1,2)=gramm('x',ops.sound_sdf_window,'y',cell2mat(sound_sdf_out{example_neuron_aud}(:,1)),'color',sound_sdf_out{example_neuron_aud}(:,4));
+spk_figure_sound(1,2).stat_summary();
+spk_figure_sound(1,2).axe_property('XLim',[-200 600],'YLim',[0 25]);
+spk_figure_sound(1,2).geom_vline('xintercept',[0]);
+
+% Example Frontal SDF | Sound
+spk_figure_sound(2,1)=gramm('x',ops.sound_sdf_window,'y',cell2mat(sound_sdf_out{example_neuron_frontal}(:,1)),'color',sound_sdf_out{example_neuron_frontal}(:,3));
+spk_figure_sound(2,1).stat_summary();
+spk_figure_sound(2,1).axe_property('XLim',[-200 600],'YLim',[0 15]);
+spk_figure_sound(2,1).geom_vline('xintercept',[0]);
+
+% Example Frontal SDF | Position
+spk_figure_sound(2,2)=gramm('x',ops.sound_sdf_window,'y',cell2mat(sound_sdf_out{example_neuron_frontal}(:,1)),'color',sound_sdf_out{example_neuron_frontal}(:,4));
+spk_figure_sound(2,2).stat_summary();
+spk_figure_sound(2,2).axe_property('XLim',[-200 600],'YLim',[0 15]);
+spk_figure_sound(2,2).geom_vline('xintercept',[0]);
+
+% Draw figure
+fig = figure('Renderer', 'painters', 'Position', [100 100 800 800]);
+spk_figure_sound.draw();
+
+%% Figure: violation
+example_neuron_aud = 1131;
+example_neuron_frontal = 1182;
+example_neuron_in = example_neuron_aud;
+
+% Align spikes and generate SDF
+clear spk_figure_sound
 
 
-%%
+% Example Auditory SDF | Sound
+spk_figure_sound(1,1)=gramm('x',ops.timewin,'y',[norm_fr_violation{example_neuron_aud}; norm_fr_consistant{example_neuron_aud}],...
+    'color',[repmat({'violation'},size(norm_fr_violation{example_neuron_aud},1),1); repmat({'consistant'},size(norm_fr_consistant{example_neuron_aud},1),1)]);
+spk_figure_sound(1,1).stat_summary();
+spk_figure_sound(1,1).axe_property('XLim',[-200 600],'YLim',[0 15]);
+spk_figure_sound(1,1).geom_vline('xintercept',[0]);
 
+% Example Auditory SDF | Position
+spk_figure_sound(1,2)=gramm('x',ops.timewin,'y',[norm_fr_violation{example_neuron_frontal}; norm_fr_consistant{example_neuron_frontal}],...
+    'color',[repmat({'violation'},size(norm_fr_violation{example_neuron_frontal},1),1); repmat({'consistant'},size(norm_fr_consistant{example_neuron_frontal},1),1)]);
+spk_figure_sound(1,2).stat_summary();
+spk_figure_sound(1,2).axe_property('XLim',[-200 600],'YLim',[0 15]);
+spk_figure_sound(1,2).geom_vline('xintercept',[0]);
 
-
-
-
-
-
-
-
-
-
-
-
-
+% Draw figure
+fig = figure('Renderer', 'painters', 'Position', [100 100 800 300]);
+spk_figure_sound.draw();
 
 
 
@@ -143,17 +207,67 @@ end
 
 
 % 
+% %%
+% example_neuron_aud = 1131;
+% example_neuron_frontal = 1378;
+% 
+% example_neuron_data = load(fullfile(dirs.mat_data, spike_log.session{example_neuron_aud}));
+% 
+% % Align spikes and generate SDF
+% aligntime = example_neuron_data.event_table.stimulusOnset_ms;
+% ops.sdf_filter = 'Gauss';
+% [sdf, raster] = get_spikes_aligned(example_neuron_data.spikes,aligntime,ops);
+% 
+% clear spk_figure_idv
+% 
+% % Example raster
+% spk_figure_idv(1,1)=gramm('x',raster.(spike_log.unitDSP{example_neuron_frontal}));
+% spk_figure_idv(1,1).geom_raster('geom',{'line'});
+% spk_figure_idv(1,1).axe_property('XLim',[-500 3500],'YLim',[0 size(raster.(spike_log.unitDSP{example_neuron_frontal}),1)]);
+% spk_figure_idv(1,1).geom_vline('xintercept',[0 563 1126 1689 2252]);
+% 
+% % Example SDF
+% spk_figure_idv(2,1)=gramm('x',ops.timewin,'y',sdf.(spike_log.unitDSP{example_neuron_frontal}));
+% spk_figure_idv(2,1).stat_summary();
+% spk_figure_idv(2,1).axe_property('XLim',[-500 3500],'YLim',[0 2]);
+% spk_figure_idv(2,1).geom_vline('xintercept',[0 563 1126 1689 2252]);
+% 
+% % Population
+% spk_figure_idv(3,1)=gramm('x',ops.timewin,'y',norm_fr_sequence,'subset', strcmp(spike_log.area,'44') | strcmp(spike_log.area,'45') | strcmp(spike_log.area,'FOP')  );
+% spk_figure_idv(3,1).stat_summary();
+% spk_figure_idv(3,1).axe_property('XLim',[-500 3500],'YLim',[-0.1 0.1]);
+% spk_figure_idv(3,1).geom_vline('xintercept',[0 563 1126 1689 2252]);
 % 
 % 
+% % Figure layout
+% spk_figure_idv(1,1).set_layout_options...
+%     ('Position',[0.1 0.8 0.8 0.15],... %Set the position in the figure (as in standard 'Position' axe property)
+%     'legend',false,...
+%     'margin_height',[0.00 0.00],... %We set custom margins, values must be coordinated between the different elements so that alignment is maintained
+%     'margin_width',[0.0 0.00],...
+%     'redraw',false);
+% 
+% spk_figure_idv(2,1).set_layout_options...
+%     ('Position',[0.1 0.45 0.8 0.3],... %Set the position in the figure (as in standard 'Position' axe property)
+%     'margin_height',[0.00 0.00],... %We set custom margins, values must be coordinated between the different elements so that alignment is maintained
+%     'margin_width',[0.0 0.00],...
+%     'redraw',false);
+% 
+% spk_figure_idv(3,1).set_layout_options...
+%     ('Position',[0.1 0.1 0.8 0.3],... %Set the position in the figure (as in standard 'Position' axe property)
+%     'margin_height',[0.00 0.00],... %We set custom margins, values must be coordinated between the different elements so that alignment is maintained
+%     'margin_width',[0.0 0.00],...
+%     'redraw',false);
 % 
 % 
-% 
+% % Draw figure
+% fig = figure('Renderer', 'painters', 'Position', [100 100 600 800]);
+% spk_figure_idv.draw();
+
 % 
 % %% Run principal components analysis
-% auditory_neuron_idx = find(strcmp(spike_log.area,'R') | strcmp(spike_log.area,'A1'));
-% frontal_neuron_idx = find(strcmp(spike_log.area,'44') | strcmp(spike_log.area,'45'));
-% 
-% sdf_in_regular = norm_fr_sound_all(auditory_neuron_idx,:);
+% clear sdf_in_regular
+% sdf_in_regular = norm_fr_soundA(auditory_neuron_idx,:);
 % 
 % for neuron_i = 1:size(sdf_in_regular,1)
 %     sdf_in_shuffled(neuron_i,:) = sdf_in_regular(neuron_i,randperm(size(sdf_in_regular,2)));
@@ -177,7 +291,7 @@ end
 % onset2_time_idx = abs(ops.sound_sdf_window(1))+563;
 % 
 % 
-% figuren('Renderer', 'painters', 'Position', [100 100 1300 400]); hold on; 
+% figuren('Renderer', 'painters', 'Position', [100 100 1300 400]); hold on;
 % % Variance explained
 % n_vars = 6;
 % colorscale = flipud(cbrewer('seq','PuRd',n_vars));
@@ -217,20 +331,20 @@ end
 % vline([0 413 563],'k')
 % 
 % % 3D PCA Plot
-% nsubplot(3,10,[1 2 3], [8 9 10]); hold on 
+% nsubplot(3,10,[1 2 3], [8 9 10]); hold on
 % color_line3(pc1, pc2, pc3, ops.sound_sdf_window,'LineWidth',2)
 % scatter3(pc1(onset_time_idx),pc2(onset_time_idx),pc3(onset_time_idx),75,'k','^','filled')
 % scatter3(pc1(offset_time_idx),pc2(offset_time_idx),pc3(offset_time_idx),75,'k','v','filled')
 % scatter3(pc1(onset2_time_idx),pc2(onset2_time_idx),pc3(onset2_time_idx),75,'k','o','filled')
 % view(34.2409,7.6800)
-% xlabel('PC1'); ylabel('PC2'); zlabel('PC3'); 
-% xlim([-40 40]); ylim([-30 30]); zlim([-30 30])
+% xlabel('PC1'); ylabel('PC2'); zlabel('PC3');
+% xlim([-120 120]); ylim([-120 120]); zlim([-120 120])
 % 
 % 
 % grid on
 % 
 % % /////////////////////////////////////
-% figuren('Renderer', 'painters', 'Position', [100 100 500 900]); hold on; 
+% figuren('Renderer', 'painters', 'Position', [100 100 500 900]); hold on;
 % 
 % % PCA x time
 % nsubplot(4,1,[1], [1]); hold on
@@ -254,7 +368,7 @@ end
 % vline([0 413 563],'k')
 % 
 % % /////////////////////////////////////
-% figuren('Renderer', 'painters', 'Position', [100 100 500 400]); hold on; 
+% figuren('Renderer', 'painters', 'Position', [100 100 500 400]); hold on;
 % 
 % % PCA x time
 % nsubplot(1,1,[1], [1]); hold on
@@ -307,6 +421,6 @@ end
 % 
 % 
 % 
-% %%
-% % Determine periods of significant modulation
-% sig_onset_times = get_sig_onset_sound(ops, sound_sdf_out{neuron_i}, neuron_baseline(neuron_i,:));
+% % %%
+% % % Determine periods of significant modulation
+% % sig_onset_times = get_sig_onset_sound(ops, sound_sdf_out{neuron_i}, neuron_baseline(neuron_i,:));
