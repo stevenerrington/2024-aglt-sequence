@@ -15,17 +15,17 @@ def set_directories():
             "bin_data": r'C:\KIKUCHI-LOCAL\data\ephys\bin',
             "kilosort": r'C:\KIKUCHI-LOCAL\data\ephys\ks',
             "mat_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat',
-            "doc_data": r'C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc'
+            "doc_data": r'C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc',
             "py_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat'
         }
     elif sys.platform == 'darwin':
         dirs = {
-            "raw_data": r'C:\KIKUCHI-LOCAL\data\ephys\raw',
-            "bin_data": r'C:\KIKUCHI-LOCAL\data\ephys\bin',
-            "kilosort": r'C:\KIKUCHI-LOCAL\data\ephys\ks',
-            "mat_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat',
-            "doc_data": r'/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/data-extraction/doc'
-            "py_data": r'C:\KIKUCHI-LOCAL\data\ephys\mat'
+            "raw_data": r'', # Analysis not valid on mac
+            "bin_data": r'', # Analysis not valid on mac
+            "kilosort": r'', # Analysis not valid on mac
+            "mat_data": r'/Users/stevenerrington/Library/CloudStorage/OneDrive-NewcastleUniversity/Research/agl_t/mat',
+            "doc_data": r'/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/data-extraction/doc',
+            "py_data": r'/Users/stevenerrington/Library/CloudStorage/OneDrive-NewcastleUniversity/Research/agl_t/py'
        }
           
     return dirs
