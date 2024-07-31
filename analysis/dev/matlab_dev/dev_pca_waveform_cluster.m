@@ -50,7 +50,7 @@ meas=pcs;
 rng('default');  % For reproducibility
 eva = evalclusters(meas,'kmeans','silhouette','KList',[1:20]);
 
-n_cl = eva.OptimalK;
+n_cl = 5;
 idx3 = kmeans(meas,n_cl,'Distance','sqeuclidean');
 
 colorscale = cbrewer('qual','Dark2',n_cl);

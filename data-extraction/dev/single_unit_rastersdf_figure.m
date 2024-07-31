@@ -1,16 +1,16 @@
-function single_unit_rastersdf_figure(event_table,spikes,ops)
+function single_unit_rastersdf_figure(spikes,ops)
 
-aligntime = event_table.stimulusOnset_ms;
+aligntime = ops.aligntime;
 
 ops.timewin = -1000:5000;
-ops.sdf_filter = 'Gauss';
+ops.sdf_filter = 'PSP';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
 names = ops.plot_ch;
 
-xlim_vals = [-500 5000];
-ylim_vals = [0 25];
+xlim_vals = [-200 1200];
+ylim_vals = [0 100];
 close all
 clear single_unit_fig
 

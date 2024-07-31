@@ -186,6 +186,10 @@ for k = 1:length(fnames)
     flds(1,:) = cellfun(@(x)x(ismember(x,fnchars)),flds(1,:),'uniformoutput',false);
     flds(2,:) = cellfun(@(x)deblank(x),flds(2,:),'uniformoutput',false);
         
+
+    % %%% SE: REMOVE
+    % flds{1} = flds{1}(end-6:end);
+
     data(k).header = struct(flds{:});
     data(k).fs = str2double(data(k).header.SamplingFrequency);
 
