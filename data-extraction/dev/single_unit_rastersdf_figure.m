@@ -3,14 +3,14 @@ function single_unit_rastersdf_figure(spikes,ops)
 aligntime = ops.aligntime;
 
 ops.timewin = -1000:5000;
-ops.sdf_filter = 'PSP';
+ops.sdf_filter = 'Gauss';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
 names = ops.plot_ch;
 
 xlim_vals = [-200 1200];
-ylim_vals = [0 100];
+ylim_vals = [0 20];
 close all
 clear single_unit_fig
 

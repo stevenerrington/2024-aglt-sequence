@@ -22,7 +22,6 @@ for ch_i = 1:size(lfp_ncs_out,1)
     for ii = 1:length(alignTimes)
         try
             lfp_aligned(ii,:) = filt_ch_lfp(alignTimes(ii)+timeWin(1):alignTimes(ii)+timeWin(end));
-            
         end
     end
 

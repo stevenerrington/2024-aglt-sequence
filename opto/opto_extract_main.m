@@ -23,7 +23,7 @@ optoLog = webread(sprintf('https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx
 
 %% Configuration & setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Admin --------------------------------------------------------------
-session_i = 243;
+session_i = 175;
 monkey = optoLog.monkey{session_i}; % Monkey name [troy, chief]
 
 % Experimental parameters -------------------------------------------
@@ -99,9 +99,9 @@ clear event_table_raw event_table
 event_table_raw = get_event_table(ops);
 opto_event = get_opto_trials(event_table_raw);
 
-%% Output data
-save(fullfile(dirs.mat_data,[outfile_name '.mat']),'event_table','spikes','spk_info','lfp','-v7.3')
-fprintf('Extracted data successfully saved to %s    \n', fullfile(dirs.mat_data,[outfile_name '.mat']))
-fprintf(' - Events  ✓   \n')
-fprintf(' - Spikes  ✓   \n')
-fprintf(' - LFP     ✓   \n')
+% %% Output data
+% save(fullfile(dirs.mat_data,[outfile_name '.mat']),'event_table','spikes','spk_info','lfp','-v7.3')
+% fprintf('Extracted data successfully saved to %s    \n', fullfile(dirs.mat_data,[outfile_name '.mat']))
+% fprintf(' - Events  ✓   \n')
+% fprintf(' - Spikes  ✓   \n')
+% fprintf(' - LFP     ✓   \n')
