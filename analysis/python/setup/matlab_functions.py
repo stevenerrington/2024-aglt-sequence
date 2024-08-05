@@ -12,26 +12,12 @@ def load_mat_session(dirs, session_name):
         lfp =  mat_file['lfp']
         spikes =  mat_file['spikes']
         spk_info =  mat_file['spk_info']
-        
-        
+
         # Convert 'event_table' and 'spk_info' to pandas DataFrame
         # Assuming they are 2D arrays
         event_table = pd.DataFrame(event_table[:])
         spk_info = pd.DataFrame(spk_info[:])
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         # Convert 'lfp' and 'spikes' to dictionaries
         # Assuming they are 1D arrays or can be converted to dictionaries
         lfp = dict(enumerate(lfp[:]))  # Convert to dict with indices as keys

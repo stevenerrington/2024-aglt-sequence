@@ -1,6 +1,9 @@
 import numpy as np
 from scipy.signal import convolve
 
+
+# ----------------------------------------------------------------------------------------------
+#  /////////////////////////////////////////////////////////////////////////////////////////////
 # ----------------------------------------------------------------------------------------------
 def spk_convolve(spk_data, session_end_time, conv_type):
     """
@@ -45,7 +48,8 @@ def spk_convolve(spk_data, session_end_time, conv_type):
     return session_sdf
 
 # ----------------------------------------------------------------------------------------------
-
+#  /////////////////////////////////////////////////////////////////////////////////////////////
+# ----------------------------------------------------------------------------------------------
 def spk_align(sdf_session, spk_times, align_times, time_win):
     """
     Aligns spike density functions and spike times based on alignment times and time window.
@@ -90,3 +94,93 @@ def spk_align(sdf_session, spk_times, align_times, time_win):
             raster_aligned[ii] = []
 
     return sdf_aligned, raster_aligned
+
+# ----------------------------------------------------------------------------------------------
+#  /////////////////////////////////////////////////////////////////////////////////////////////
+# ----------------------------------------------------------------------------------------------
+def get_sound_aligned_sdf(sdf_aligned, raster_aligned, stimulusLog, event_table):
+    '''
+    The get_sound_aligned_sdf function aligns and extracts data for each sound presented in a trial, 
+    creating a DataFrame that includes aligned SDF values, raster data, sound codes, sound positions, 
+    and condition labels. This is useful for analyzing how neural responses are aligned with sound events 
+    across different experimental conditions.
+    '''
+    
+    # Define the onset times of sounds in milliseconds.
+    sound_onset_ms = [0, 563, 1126, 1689, 2252]
+
+    # Initialize a counter and create an empty DataFrame to store results.
+    count = 0
+    sound_sdf = pd.DataFrame(columns=['SDF_Value', 'Raster_Value', 'Sound_Code', 'Sound_Position', 'Cond_Label'])
+
+    # Iterate over each trial in the event table.
+    for trial_i in range(len(event_table)):
+        # Process only trials that do not have 'error' as their condition label.
+        if event_table['cond_label'][trial_i] != 'error':
+            # For each sound onset time, align the SDF and raster data.
+            for index, sound_i in enumerate(sound_onset_ms):
+                count += 1
+                
+                # Extract the SDF values around the sound onset time.
+                sdf_value = sdf_aligned[trial_i][1000 + np.arange(-500, 500, 1) + sound_i]
+                
+                # Compute the raster values relative to the sound onset time.
+                raster_value = [int(r - sound_i) for r in raster_aligned[trial_i]]
+                
+                # Retrieve the sound code corresponding to the current trial's condition.
+                sound_code = stimulusLog['sound_' + str(index+1) + '_code'][int(event_table['cond_value'][trial_i])-1]
+
+                # Determine the position of the sound (e.g., 'position_0', 'position_1', etc.).
+                sound_position = f'position_{index}'
+                
+                # Get the condition label for the trial.
+                cond_label = event_table['cond_label'][trial_i]     
+                    
+                # Create a new DataFrame row with the extracted values.
+                new_row = pd.DataFrame({
+                    'SDF_Value': [sdf_value],
+                    'Raster_Value': [raster_value],
+                    'Sound_Code': [sound_code],
+                    'Sound_Position': [sound_position],
+                    'Cond_Label': [cond_label]
+                })
+        
+                # Append the new row to the existing DataFrame.
+                sound_sdf = pd.concat([sound_sdf, new_row], ignore_index=True)
+
+    # Return the DataFrame containing aligned SDF and raster data.
+    return sound_sdf
+
+# ----------------------------------------------------------------------------------------------
+#  /////////////////////////////////////////////////////////////////////////////////////////////
+# ----------------------------------------------------------------------------------------------
+
+def zscore_sdf(data, baseline_period):
+    """
+    Z-scores each trial in the data array using a specified baseline period.
+
+    Parameters:
+    - data: 2D numpy array of shape (trials, time).
+    - baseline_period: Tuple specifying the start and end indices of the baseline period.
+
+    Returns:
+    - zscored_data: 2D numpy array of z-scored data with the same shape as input data.
+    """
+    start_idx, end_idx = baseline_period
+    
+    # Initialize the array for z-scored data
+    zscored_data = np.zeros_like(data)
+    
+    # Iterate over each trial to compute the z-scored values
+    for trial in range(data.shape[0]):
+        # Extract the baseline period data for the current trial
+        baseline_data = data[trial, start_idx:end_idx]
+        
+        # Compute the mean and standard deviation of the baseline period
+        baseline_mean = np.nanmean(baseline_data)
+        baseline_std = np.nanstd(baseline_data)
+        
+        # Z-score the entire trial based on the baseline period statistics
+        zscored_data[trial] = (data[trial,:] - baseline_mean) / baseline_std
+    
+    return zscored_data
