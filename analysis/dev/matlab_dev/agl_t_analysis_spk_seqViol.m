@@ -36,7 +36,7 @@ for session_i = 1:size(ephysLog,1)
     fprintf('Session %i of %i | %s \n', session_i, size(ephysLog,1), datafile)
 
     % Align spikes and generate SDF
-    aligntime = event_table.stimulusOnset_ms;
+    aligntime = event_table.trialStart_ms;
     [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
     % Find all neurons in given session

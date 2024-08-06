@@ -184,3 +184,60 @@ def zscore_sdf(data, baseline_period):
         zscored_data[trial] = (data[trial,:] - baseline_mean) / baseline_std
     
     return zscored_data
+
+# ----------------------------------------------------------------------------------------------
+#  /////////////////////////////////////////////////////////////////////////////////////////////
+# ----------------------------------------------------------------------------------------------
+def find_sig_modulation(data, nstds, nsamples, baseline_timewin, timewin):
+    """
+    Identifies periods in which the values of the array go above or below nstds (standard deviations)
+    from the baseline for at least nsamples consecutive samples.
+
+    Parameters:
+    data (numpy array): Input array of shape (1, ntimes)
+    nstds (float): Number of standard deviations from the baseline to consider
+    nsamples (int): Minimum number of consecutive samples to consider as a period
+    baseline_timewin (tuple): Start and end times (in seconds) for baseline period
+    timewin (tuple): Start and end times (in seconds) for the whole data period
+
+    Returns:
+    List of tuples: Each tuple contains the start and end indices of a period
+    """
+    # Example usage
+    # nstds = 2  # Number of standard deviations
+    # nsamples = 50  # Minimum number of consecutive samples
+    
+    baseline_start_time, baseline_end_time = baseline_timewin
+    
+    baseline_indices = np.where((timewin >= baseline_start_time) & (timewin <= baseline_end_time))[0]
+
+    # Calculate the baseline and standard deviation
+    baseline = np.nanmean(data[baseline_indices])
+    std_dev = np.nanstd(data[baseline_indices])
+   
+    # Calculate the upper and lower thresholds
+    upper_threshold = baseline + (nstds * std_dev)
+    lower_threshold = baseline - (nstds * std_dev)
+    
+    # Find the periods above or below the thresholds
+    above_or_below_threshold = (data > upper_threshold) | (data < lower_threshold)
+    
+    # Find periods with at least nsamples consecutive True values
+    mod_epochs = []
+    start = None
+
+    for i in range(len(above_or_below_threshold)):
+        if above_or_below_threshold[i]:
+            if start is None:
+                start = i
+        else:
+            if start is not None:
+                if i - start >= nsamples:
+                    mod_epochs.append((start, i - 1))
+                start = None
+
+    # Check if the last period extends to the end of the array
+    if start is not None and len(above_or_below_threshold) - start >= nsamples:
+        mod_epochs.append((start, len(above_or_below_threshold) - 1))
+    
+    return mod_epochs
