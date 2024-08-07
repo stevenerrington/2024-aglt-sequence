@@ -24,13 +24,17 @@ for trl_i = 1:size(event_table,1)
     end
 end
 
+for trl_i = 1:size(event_table,1)
+    event_table.stimulusOnset_ms(trl_i) = event_table.stimulusOnset_ms(trl_i) + 300;
+end
+
 aligntime = event_table.stimulusOnset_ms;
 
 ops.timewin = -1000:5000;
 ops.sdf_filter = 'Gauss';
 
-[sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
-names = fieldnames( spikes.time );
+[sdf, raster] = get_spikes_aligned(example_neuron_data.spikes,aligntime,ops);
+names = fieldnames( example_neuron_data.spikes.time );
 
 violation_win = [-500:1000];
 xlim_vals = [violation_win(1) violation_win(end)];
@@ -73,6 +77,8 @@ for ch_i = 1:30
 
 end
 
-figuren('Renderer', 'painters', 'Position', [100 100 700 600]); hold on
-plot(violation_win,nanmean(pop_av_viol),'color',[1 0 0],'LineWidth',1.5)
-plot(violation_win,nanmean(pop_av_nonviol),'color',[0 1 0],'LineWidth',1.5)
+for ch_i = 1:30
+    figuren('Renderer', 'painters', 'Position', [100 100 700 600]); hold on
+    plot(violation_win,smooth(pop_av_viol(ch_i,:),50),'color',[1 0 0],'LineWidth',1.5)
+    plot(violation_win,smooth(pop_av_nonviol(ch_i,:),50),'color',[0 1 0],'LineWidth',1.5)
+end

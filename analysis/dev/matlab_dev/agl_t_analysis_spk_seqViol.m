@@ -35,6 +35,11 @@ for session_i = 1:size(ephysLog,1)
     load(fullfile(dirs.mat_data,datafile))
     fprintf('Session %i of %i | %s \n', session_i, size(ephysLog,1), datafile)
 
+    % Adjust onsets based on audio latency measures
+    for trial_i = 1:size(event_table,1)
+        event_table.stimulusOnset_ms(trial_i) = event_table.stimulusOnset_ms(trial_i) + session_audio_latency{session_i}(trial_i,1);
+    end
+
     % Align spikes and generate SDF
     aligntime = event_table.trialStart_ms;
     [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);

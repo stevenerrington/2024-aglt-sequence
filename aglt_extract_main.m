@@ -21,6 +21,7 @@ dirs = set_directories();
 [ephysLog, stimulusLog, spike_log] = import_exp_map();
 ephysLog = clean_exp_map(ephysLog);
 spike_log = clean_spike_map(spike_log);
+load('session_audio_latency.mat')
 
 %% Data extraction ////////////////////////////////////////////////////////
 % This script will extract data from noted recording system, namely:
