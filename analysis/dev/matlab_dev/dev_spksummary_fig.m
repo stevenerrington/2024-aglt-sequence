@@ -20,14 +20,22 @@ dirs = set_directories();
 % Import and curate experimental log
 [ephysLog_all, stimulusLog] = import_exp_map();
 ephysLog = clean_exp_map(ephysLog_all);
+load('session_audio_latency.mat')
 
 tic
 for session_i = 1 :size(ephysLog,1)
 
-
     outfile_name = ephysLog.session{session_i}; % Processed file name
     data_in = load(fullfile(dirs.mat_data,[outfile_name '.mat']));
     fprintf('Session %i of %i | %s \n', session_i, size(ephysLog,1), outfile_name)
+
+    for trial_i = 1:size(data_in.event_table,1)
+        data_in.event_table.stimulusOnset_ms(trial_i) = ...
+            data_in.event_table.stimulusOnset_ms(trial_i) + ...
+            session_audio_latency{session_i}(trial_i);
+    end
+    
+
     aligntime_a = data_in.event_table.trialStart_ms ;
     aligntime_b = data_in.event_table.stimulusOnset_ms;
     aligntime_c = data_in.event_table.rewardOnset_ms;
@@ -45,13 +53,15 @@ for session_i = 1 :size(ephysLog,1)
 
     session_allidx = find(strcmp(ephysLog.session{session_i},ephysLog_all.session));
 
-    onset_times = [ 0         563        1126        1689        2252]+60;
+
+
+
+    onset_times = [ 0         563        1126        1689        2252];
 
     for spike_i = 1:length(fieldnames(data_in.spikes.time))
 
         sdf_session = SpkConvolver (round(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})),...
             round(max(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i}))+5000), ops.sdf_filter);
-
 
         f = figuren('Renderer', 'painters', 'Position', [100 100 1500 800],'visible','off'); hold on;
 
@@ -74,6 +84,9 @@ for session_i = 1 :size(ephysLog,1)
         text(-0.4,0.0,['N Spikes: ' int2str(length(data_in.spikes.time.(data_in.spk_info.unitDSP{spike_i})))]);
         text(-0.4,-0.1,['Average FR: ' num2str(mean(sdf_session)) ' spk/sec']);
         set ( title_ax, 'visible', 'off');
+
+
+        sdf_session = smooth(sdf_session, 50);
 
         % Waveform
         nsubplot(5,4,[1 2],[2]);
@@ -124,7 +137,7 @@ for session_i = 1 :size(ephysLog,1)
 
 
         figure_name = [outfile_name '_' data_in.spk_info.unitDSP{spike_i}];
-        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\spk_summary', [figure_name '.png']),'-dpng','-r1000');
+        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\spk_summary_adjust', [figure_name '.png']),'-dpng','-r1000');
         close all
     end
 end

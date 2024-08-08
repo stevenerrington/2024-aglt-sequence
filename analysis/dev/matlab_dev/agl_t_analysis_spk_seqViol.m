@@ -63,6 +63,9 @@ for session_i = 1:size(ephysLog,1)
         end
     end
 
+    aligntime_viol = event_table.stimulusOnset_ms;
+    [sdf_sequence, raster_sequence] = get_spikes_aligned(spikes,aligntime_viol,ops);
+
     aligntime_viol = event_table.violation_ms;
     [sdf_viol, raster_viol] = get_spikes_aligned(spikes,aligntime_viol,ops);
 
@@ -77,6 +80,8 @@ for session_i = 1:size(ephysLog,1)
 
         neuron_sdf_out{neuron_count,1} = sdf.(neuron_label);
         neuron_sdfviol_out{neuron_count,1} = sdf_viol.(neuron_label);
+        neuron_sdfstimulus_out{neuron_count,1} = sdf_sequence.(neuron_label);
+
 
         for trial_i = 1:size(event_table,1)
             if ~strcmp(event_table.cond_label(trial_i),'error')
@@ -132,6 +137,93 @@ for neuron_i = 1:size(spike_log,1)
     norm_fr_violation{neuron_i,1} = neuron_sdfviol_out{neuron_i}(viol_trials,:);
     norm_fr_consistant{neuron_i,1} = neuron_sdfviol_out{neuron_i}(cons_trials,:);
 end
+
+%%
+
+for neuron_i = 1:size(spike_log,1)
+
+    figuren; hold on
+    plot(ops.sound_sdf_window, smooth(norm_fr_soundA(neuron_i,:),10),'LineWidth',1.5)
+    plot(ops.sound_sdf_window, smooth(norm_fr_soundC(neuron_i,:),10),'LineWidth',1.5)
+    plot(ops.sound_sdf_window, smooth(norm_fr_soundD(neuron_i,:),10),'LineWidth',1.5)
+    plot(ops.sound_sdf_window, smooth(norm_fr_soundF(neuron_i,:),10),'LineWidth',1.5)
+    plot(ops.sound_sdf_window, smooth(norm_fr_soundG(neuron_i,:),10),'LineWidth',1.5)
+    box off
+end
+
+sig_threshold = 3;
+ops.min_sig_time = 25;
+
+clear sig_flag dir_flag
+for neuron_i = 1:size(spike_log,1)
+
+
+    sig_idx_a = abs(norm_fr_soundA(neuron_i,200+[0:400])) >= sig_threshold;
+    sig_idx_c = abs(norm_fr_soundC(neuron_i,200+[0:400])) >= sig_threshold;
+    sig_idx_d = abs(norm_fr_soundD(neuron_i,200+[0:400])) >= sig_threshold;
+    sig_idx_f = abs(norm_fr_soundF(neuron_i,200+[0:400])) >= sig_threshold;
+    sig_idx_g = abs(norm_fr_soundG(neuron_i,200+[0:400])) >= sig_threshold;
+
+
+    fr_idx_a = nanmean(norm_fr_soundA(neuron_i,200+[0:400]));
+    fr_idx_c = nanmean(norm_fr_soundC(neuron_i,200+[0:400]));
+    fr_idx_d = nanmean(norm_fr_soundD(neuron_i,200+[0:400]));
+    fr_idx_f = nanmean(norm_fr_soundF(neuron_i,200+[0:400]));
+    fr_idx_g = nanmean(norm_fr_soundG(neuron_i,200+[0:400]));
+
+    [start_a, len_a] = ZeroOnesCount(sig_idx_a);
+    [start_c, len_c] = ZeroOnesCount(sig_idx_c);
+    [start_d, len_d] = ZeroOnesCount(sig_idx_d);
+    [start_f, len_f] = ZeroOnesCount(sig_idx_f);
+    [start_g, len_g] = ZeroOnesCount(sig_idx_g);
+
+    idx_w_sigTimes_a = any(len_a > ops.min_sig_time);
+    idx_w_sigTimes_c = any(len_c > ops.min_sig_time);
+    idx_w_sigTimes_d = any(len_d > ops.min_sig_time);
+    idx_w_sigTimes_f = any(len_f > ops.min_sig_time);
+    idx_w_sigTimes_g = any(len_g > ops.min_sig_time);
+
+    sig_flag(neuron_i,:) = [idx_w_sigTimes_a, idx_w_sigTimes_c, idx_w_sigTimes_d, idx_w_sigTimes_f, idx_w_sigTimes_g];
+    dir_flag(neuron_i,:) = [fr_idx_a > 0, fr_idx_c > 0, fr_idx_d > 0, fr_idx_f > 0, fr_idx_g > 0];
+
+
+end
+
+
+sig_pos_units = find(sum(sig_flag,2) > 0 & sum(dir_flag,2) > 0);
+sig_neg_units = find(sum(sig_flag,2) > 0 & sum(dir_flag,2) == 0);
+
+
+for unit_i = 1:10; length(sig_pos_units)
+
+figuren('Renderer', 'painters', 'Position', [100 100 1000 400]); hold on;
+a = subplot(1,10,[1 2]);
+plot(ops.bl_win, smooth((neuron_baseline(sig_pos_units(unit_i),:)-nanmean(neuron_baseline(sig_pos_units(unit_i),:)))./...
+    nanstd(neuron_baseline(sig_pos_units(unit_i),:)),20),'LineWidth',1)
+box off
+hline([-sig_threshold sig_threshold],'r--')
+
+b = subplot(1,10,[3:8]);
+plot(ops.timewin, smooth(norm_fr_sequence(sig_pos_units(unit_i),:),20),'LineWidth',1)
+xlim([-500 3000])
+box off
+hline([-sig_threshold sig_threshold],'r--')
+
+c = subplot(1,10,[9 10]); hold on
+plot(ops.sound_sdf_window, smooth(norm_fr_soundA(sig_pos_units(unit_i),:),20),'LineWidth',1)
+plot(ops.sound_sdf_window, smooth(norm_fr_soundC(sig_pos_units(unit_i),:),20),'LineWidth',1)
+plot(ops.sound_sdf_window, smooth(norm_fr_soundD(sig_pos_units(unit_i),:),20),'LineWidth',1)
+plot(ops.sound_sdf_window, smooth(norm_fr_soundF(sig_pos_units(unit_i),:),20),'LineWidth',1)
+plot(ops.sound_sdf_window, smooth(norm_fr_soundG(sig_pos_units(unit_i),:),20),'LineWidth',1)
+box off 
+hline([-sig_threshold sig_threshold],'r--')
+
+linkaxes([a b c],'y')
+end
+
+
+
+
 
 %% Figure: Example sound and order aligned spike density function
 example_neuron_aud = 1131;

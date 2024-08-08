@@ -67,6 +67,7 @@ fclose(bin_out_file);
 mkdir(fullfile(dirs.kilosort,outfile_name));
 
 % - Run in python: to be integrated here.
+% Run ks_notebook.ipynb 
 spikes = 'SPIKE SORTING REQUIRED'; spk_info = 'SPIKE SORTING REQUIRED';
 
 
@@ -101,3 +102,10 @@ end
 % Behavioral data -------------------------------------------------------
 % Read in events
 audio = tdt_data.streams.Audo;
+
+%% Pull in Phy curated data
+
+for session_i = 1:size(ephysLog,1)
+    outfile_name = ephysLog.session{session_i}; % Processed file name
+    kikuchi_phy_import(outfile_name, dirs, 24414.0625)
+end
