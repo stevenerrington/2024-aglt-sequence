@@ -39,7 +39,7 @@ for session_i = 1:size(ephysLog,1)
     end
 
     % Export spike times and waveforms to txt
-    writematrix(lfp ,fullfile(dirs.py_lfp,[ephysLog.session{session_i} '-lfp.txt']))
+    % writematrix(lfp ,fullfile(dirs.py_lfp,[ephysLog.session{session_i} '-lfp.txt']))
 end
 
 

@@ -30,3 +30,6 @@ load('session_audio_latency.mat')
 % set_directories().
 
 % [! main extraction] aglt_multisession_loop
+
+%% Analysis
+agl_t_analysis_spkModulation

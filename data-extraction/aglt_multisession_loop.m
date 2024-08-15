@@ -86,6 +86,11 @@ for session_i = 1:size(ephysLog,1)
     spike_log = [spike_log; [admin_table, spk_info]];
 end
 
+for spike_i = 1:size(spike_log)
+    spike_log.high_isi_viol(spike_i,:) = spike_log.ISI_2ms(spike_i) > 2;
+    spike_log.low_spk_viol(spike_i,:) = spike_log.nSpikes(spike_i) < 1000;
+end
+
 % Save table from import
 writetable(spike_log,fullfile(dirs.doc_data,'spike_log.csv'),'WriteRowNames',true)  
 
