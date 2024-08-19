@@ -1,4 +1,4 @@
-function [glm_output, encoding_flag, encoding_beta] = glm_sound_modulation(sound_info_in)
+function [glm_output, encoding_flag, encoding_beta, z_sdf] = glm_sound_modulation(sound_info_in)
 
 %% Extract: get relevant data for GLM table
 reg_tbl = table;
@@ -12,16 +12,18 @@ reg_tbl.exp_i = [1:size(sound_info_in_sdf,1)]';
 
 
 %% Setup spike data into GLM
-
 mean_fr = nanmean(nanmean(sound_info_in_sdf(:,200+[-100:0])));
 std_fr = std(nanmean(sound_info_in_sdf(:,200+[-100:0])));
+
+%% Setup spike data into GLM
+mean_fr = nanmean(sound_info_in_sdf(:));
+std_fr = nanstd(sound_info_in_sdf(:));
 
 for trial_i = 1:size(sound_info_in_sdf,1)
     z_sdf(trial_i,:) = (sound_info_in_sdf(trial_i,:)-mean_fr)./std_fr;
 end
 
-
-window_size = 100;
+window_size = 50;
 window_shift = 10;
 [window_sdf, window_time] = movaverage_sdf(z_sdf, window_size, window_shift);
 % 2023-08-26, 23h25: I tested this and it does the job correctly. The
@@ -52,7 +54,7 @@ for timepoint_i = 1:n_times
     reg_tbl_trialtype.sound = categorical(reg_tbl_trialtype.sound);
 
     % Reorder categories to make "G" the reference
-    reg_tbl_trialtype.sound = reordercats(reg_tbl_trialtype.sound, {'G', 'A', 'C', 'D', 'F'});
+    reg_tbl_trialtype.sound = reordercats(reg_tbl_trialtype.sound, {'Baseline', 'A', 'C', 'D', 'F','G'});
 
     % Then include all these in your model
     u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ exp_i + sound');
@@ -74,9 +76,9 @@ for timepoint_i = 1:n_times
     glm_output.trial_type.sig_times(4,timepoint_i) = u_t_mdl.Coefficients.pValue(5) < .01; % trial type
     glm_output.trial_type.beta_weights(4,timepoint_i) = u_t_mdl.Coefficients.tStat(5); % trial type
 
-    % - Intercept
-    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(1) < .01; % trial type
-    glm_output.trial_type.beta_weights(5,timepoint_i) = u_t_mdl.Coefficients.tStat(1); % trial type
+    % - Sound G
+    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(6) < .01; % trial type
+    glm_output.trial_type.beta_weights(5,timepoint_i) = u_t_mdl.Coefficients.tStat(6); % trial type
 end
 
 
