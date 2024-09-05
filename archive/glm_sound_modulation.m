@@ -12,18 +12,14 @@ reg_tbl.exp_i = [1:size(sound_info_in_sdf,1)]';
 
 
 %% Setup spike data into GLM
-mean_fr = nanmean(nanmean(sound_info_in_sdf(:,200+[-100:0])));
-std_fr = std(nanmean(sound_info_in_sdf(:,200+[-100:0])));
-
-%% Setup spike data into GLM
-mean_fr = nanmean(sound_info_in_sdf(:));
-std_fr = nanstd(sound_info_in_sdf(:));
-
 for trial_i = 1:size(sound_info_in_sdf,1)
+    mean_fr = nanmean(nanmean(sound_info_in_sdf(strcmp(reg_tbl.sound,reg_tbl.sound{trial_i}),200+[-100:0])));
+    std_fr = std(nanmean(sound_info_in_sdf(strcmp(reg_tbl.sound,reg_tbl.sound{trial_i}),200+[-100:0])));
+
     z_sdf(trial_i,:) = (sound_info_in_sdf(trial_i,:)-mean_fr)./std_fr;
 end
 
-window_size = 50;
+window_size = 100;
 window_shift = 10;
 [window_sdf, window_time] = movaverage_sdf(z_sdf, window_size, window_shift);
 % 2023-08-26, 23h25: I tested this and it does the job correctly. The
@@ -33,7 +29,7 @@ window_shift = 10;
 [n_trials, n_times] = size(window_sdf); % Get the number of windows in the time averaged data
 
 baseline_win_idx = find(window_time >= -200 & window_time <= 0); % Find the relevant indicies for the timepoints of interest
-analysis_win_idx = find(window_time >= 0 & window_time <= 400); % Find the relevant indicies for the timepoints of interest
+analysis_win_idx = find(window_time >= 0 & window_time <= 600); % Find the relevant indicies for the timepoints of interest
 win_fr = nanmean(window_sdf(:,analysis_win_idx),2);
 
 reg_tbl.win_fr = win_fr; % Add the firing rate over this whole window to the GLM table
@@ -43,13 +39,13 @@ glm_output.trial_type.sig_times = [];
 glm_output.trial_type.beta_weights = [];
 u_t_mdl = [];
 
-reg_tbl_trialtype = reg_tbl(strcmp(reg_tbl.condition,'nonviol'),:);
+reg_tbl_trialtype = reg_tbl(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') ,:);
 
 % For each averaged time point
 for timepoint_i = 1:n_times
 
     % Input the timepoint specific firing times
-    reg_tbl_trialtype.firing_rate = window_sdf(strcmp(reg_tbl.condition,'nonviol'),timepoint_i);
+    reg_tbl_trialtype.firing_rate = window_sdf(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline'),timepoint_i);
     % Convert 'sound' to a categorical variable if it's not already
     reg_tbl_trialtype.sound = categorical(reg_tbl_trialtype.sound);
 
@@ -91,18 +87,27 @@ signal_detect_wins = signal_detect_length/window_shift;
 % 50 ms of selectivity following SSD
 
 % Trial-type
-clear sig_len
+clear start sig_len
 for cond_i = 1:5
-    [~, sig_len{cond_i}, ~] = ZeroOnesCount(glm_output.trial_type.sig_times(cond_i,analysis_win_idx)); % choice direction
+    [start{cond_i}, sig_len{cond_i}, ~] = ZeroOnesCount(glm_output.trial_type.sig_times(cond_i,analysis_win_idx)); % choice direction
 end
 
 encoding_flag = []; encoding_beta = [];
 
 for cond_i = 1:5
     encoding_flag(1,cond_i) = any(sig_len{cond_i} >= signal_detect_wins);
-    encoding_beta(1,cond_i) = nanmean(glm_output.trial_type.beta_weights(cond_i,analysis_win_idx));
-end
 
+    if encoding_flag(1,cond_i) == 1
+        sig_range = [];
+        sig_range(1) = analysis_win_idx(1)+start{cond_i}(find(sig_len{cond_i} >= signal_detect_wins,1,'first'));
+        sig_range(2) = sig_range(1)+sig_len{cond_i}(find(sig_len{cond_i} >= signal_detect_wins,1,'first'));
+
+
+        encoding_beta(1,cond_i) = nanmean(glm_output.trial_type.beta_weights(cond_i,sig_range(1):sig_range(2)));
+    else
+        encoding_beta(1,cond_i) = NaN;
+    end
+end
 
 
 end
