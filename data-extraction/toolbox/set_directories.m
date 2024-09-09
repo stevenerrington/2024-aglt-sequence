@@ -15,7 +15,7 @@ elseif ismac
     dirs.raw_data  = 'N/A';
     dirs.bin_data  = 'N/A';
     dirs.kilosort   = 'N/A';
-    dirs.mat_data = '/Users/stevenerrington/Library/CloudStorage/OneDrive-NewcastleUniversity/Research/agl_t/mat';
+    dirs.mat_data = '/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/mat';
     dirs.doc_data = '/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/data-extraction/doc';
     dirs.root = '/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/';
 
