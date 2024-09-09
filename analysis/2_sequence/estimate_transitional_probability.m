@@ -1,3 +1,5 @@
+function transitional_probability = estimate_transitional_probability()
+
 % Define a list of predefined sequences
 seq_list{1} = {'Start','A', 'C', 'F', 'C','X'};
 seq_list{2} = {'Start','A', 'C', 'F', 'C','G','X'};
@@ -98,3 +100,7 @@ ylabel('Element')                            % Y-axis label
 title('Positional probability')              % Title of the plot
 grid off                                     % Disable grid lines
 colormap(positional_heatmap, colorscale_position);  % Apply grey colormap
+
+transitional_probability.backward_prob = round((transitional_prob_array ./ sum(transitional_prob_array, 1))*100,1);
+transitional_probability.forward_prob = round((transitional_prob_array ./ sum(transitional_prob_array, 2))*100,1);
+transitional_probability.elements = elements;

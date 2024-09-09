@@ -1,6 +1,6 @@
 function [glm_output, encoding_flag_ord,...
     encoding_flag_rel, encoding_beta_ord, encoding_beta_rel] =...
-    glm_position_relative(sound_info_in)
+    glm_position_relative(sound_info_in, transitional_probability)
 
 %% Extract: get relevant data for GLM table
 reg_tbl = table;
@@ -12,6 +12,8 @@ reg_tbl.order_pos = string(sound_info_in(:,4));
 reg_tbl.prev_element = string(sound_info_in(:,6));
 reg_tbl.condition = string(sound_info_in(:,5));
 reg_tbl.exp_i = [1:size(sound_info_in_sdf,1)]';
+
+
 
 
 
