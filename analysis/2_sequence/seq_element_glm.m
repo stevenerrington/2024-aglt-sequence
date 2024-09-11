@@ -1,8 +1,4 @@
-clear glm_seq* encoding_seq_*
-
-% WE DONT NEED A MOVING WINDOW - JUST DO A FIXED WINDOW AND CALL IT A DAY
-neuron_i = 1498;
-sound_info_in = sdf_soundAlign_data{neuron_i};
+function [glm_sequence_out, anova_sequence_out] = seq_element_glm(sound_info_in, transitional_probability)
 
 %% Extract: get relevant data for GLM table
 reg_tbl = table;
@@ -25,17 +21,16 @@ for trial_i = 1:size(reg_tbl)
         prev_trial_ele = find(strcmp(transitional_probability.elements, reg_tbl.sound(trial_i-1)));
 
         try
-        reg_tbl.backward_prob(trial_i) = transitional_probability.backward_prob(prev_trial_ele,curr_trial_ele);
-        reg_tbl.forward_prob(trial_i) = transitional_probability.forward_prob(curr_trial_ele,prev_trial_ele);
+            reg_tbl.backward_prob(trial_i) = transitional_probability.backward_prob(prev_trial_ele,curr_trial_ele);
+            reg_tbl.forward_prob(trial_i) = transitional_probability.forward_prob(prev_trial_ele,curr_trial_ele);
         catch
-        reg_tbl.backward_prob(trial_i) = NaN;
-        reg_tbl.forward_prob(trial_i) = NaN;
+            reg_tbl.backward_prob(trial_i) = NaN;
+            reg_tbl.forward_prob(trial_i) = NaN;
         end
 
     end
 
 end
-
 
 %% Setup spike data into GLM
 mean_fr = nanmean(sound_info_in_sdf(:));
@@ -57,40 +52,45 @@ win_fr = nanmean(window_sdf(:,analysis_win_idx),2);
 
 reg_tbl.firing_rate = win_fr; % Add the firing rate over this whole window to the GLM table
 
-%% Run GLM: trial type
-clear glm_output
+%% Curate tables for specific trials and conditions
 
 % Initialise different model tables/data
 reg_tbl_all = reg_tbl(strcmp(reg_tbl.condition,'nonviol') ,:);
 reg_tbl_order = reg_tbl(strcmp(reg_tbl.condition,'nonviol') & strcmp(reg_tbl.sound,'C') ,:);
 
+%% Run GLM: trial type
+clear glm_output
+
+
 % Identity model
-u_t_mdl_identity = [];
+u_t_mdl_identity = []; anova_identity = [];
 reg_tbl_all.sound = categorical(reg_tbl_all.sound);
 reg_tbl_all.sound = reordercats(reg_tbl_all.sound, {'G', 'D', 'F', 'C','A'});
-u_t_mdl_identity = fitlm(reg_tbl_all, 'firing_rate ~ exp_i + sound');
+u_t_mdl_identity = fitlm(reg_tbl_all, 'firing_rate ~ sound');
+anova_identity = anova(u_t_mdl_identity);
 
 % Positional model
-u_t_mdl_position = [];
+u_t_mdl_position = []; anova_position = [];
 reg_tbl_order.order_pos = categorical(reg_tbl_order.order_pos);
 reg_tbl_order.order_pos = reordercats(reg_tbl_order.order_pos, {'position_2','position_3','position_4','position_5'});
-u_t_mdl_position = fitlm(reg_tbl_order, 'firing_rate ~ exp_i + order_pos');
+u_t_mdl_position = fitlm(reg_tbl_order, 'firing_rate ~ order_pos');
+anova_position = anova(u_t_mdl_position);
 
 % Backward transition model
-u_t_mdl_backward = [];
-%! u_t_mdl_backward = fitlm(reg_tbl_order, 'firing_rate ~ exp_i + backward_prob');
+u_t_mdl_backward = []; anova_backward = [];
+u_t_mdl_backward = fitlm(reg_tbl_order, 'firing_rate ~ backward_prob');
+anova_backward = anova(u_t_mdl_backward);
 
 % Forward transition model
-u_t_mdl_forward = [];
-%! u_t_mdl_forward = fitlm(reg_tbl_order, 'firing_rate ~ exp_i + forward_prob');
+u_t_mdl_forward = []; anova_forward = [];
+u_t_mdl_forward = fitlm(reg_tbl_order, 'firing_rate ~ forward_prob');
+anova_forward = anova(u_t_mdl_forward);
 
 
+%% Output GLM
 
+glm_sequence_out = table({u_t_mdl_identity}, {u_t_mdl_position}, {u_t_mdl_backward}, {u_t_mdl_forward},...
+    'VariableNames',{'identity_mdl','position_mdl','backward_mdl','forward_mdl'});
 
-% GLM output -------------------------------
-% - Ordinal Position
-glm_output.ordinal.sig_times(1,timepoint_i) = u_t_mdl_position.Coefficients.pValue(2) < .01; % Pos 3
-glm_output.ordinal.beta_weights(1,timepoint_i) = u_t_mdl_position.Coefficients.tStat(2); % Pos 3
-glm_output.relative.var_exp(1,timepoint_i) = u_t_mdl_relative.Rsquared.Ordinary;
-glm_output.relative.LogLikelihood(1,timepoint_i) = u_t_mdl_relative.LogLikelihood;
-
+anova_sequence_out = table({anova_identity}, {anova_position}, {anova_backward}, {anova_forward},...
+    'VariableNames',{'anova_identity','anova_position','anova_backward','anova_forward'});

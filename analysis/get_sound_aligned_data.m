@@ -52,7 +52,7 @@ for session_i = 1:size(ephysLog,1)
                                 if sound_i == stimulusLog.violation_pos(event_table.cond_value(trial_i))
                                     sound_sdf{count,5} = 'viol';
                                 else
-                                    sound_sdf{count,5} = 'nonviol';
+                                    sound_sdf{count,5} = 'viol';
                                 end
                         end
 
