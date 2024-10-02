@@ -128,8 +128,8 @@ position_data.position = reordercats(position_data.position, {'pos_2','pos_3','p
 lme_positional = fitlme(position_data, 'firing_rate ~ position + (1|neuron_i)');
 
 % Backward transition model
-lme_backward = []; 
-lme_backward = fitlme(bp_data, 'firing_rate ~ backwards + (1|neuron_i)');
+lme_back = []; 
+lme_back = fitlme(bp_data, 'firing_rate ~ backwards + (1|neuron_i)');
 
 % Forward transition model
 lme_forward = [];
@@ -137,6 +137,6 @@ lme_forward = fitlme(fp_data, 'firing_rate ~ forwards + (1|neuron_i)');
 
 
 %% Output GLM
-glm_sequence_out = table({lme_identity}, {lme_positional}, {lme_backward}, {lme_forward},...
+glm_sequence_out = table({lme_identity}, {lme_positional}, {lme_back}, {lme_back},...
     'VariableNames',{'identity_mdl','position_mdl','backward_mdl','forward_mdl'});
 
