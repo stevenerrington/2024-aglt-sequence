@@ -15,7 +15,7 @@ for neuron_i = 1:size(spike_log,1)
     if count > 25
         count = 1;
         page_count = page_count + 1;
-        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\sound_summary', ['sound_summary_pg' int2str(page_count) '.png']),'-dpng','-r1000');
+        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data-extraction\doc\sound_summary', ['sound_summary_pg' int2str(page_count) '.png']),'-dpng','-r1000');
 
         close all
         f = figuren('Renderer', 'painters', 'Position', [100 100 1800 1000]);

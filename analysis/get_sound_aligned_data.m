@@ -19,7 +19,7 @@ for session_i = 1:size(ephysLog,1)
         sound_sdf = {}; % Initialize sound SDF cell array
         count = 0; % Initialize counter for sound SDF
 
-        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\spike',[datafile '_' neuron_label]))
+        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\spike',[datafile '_' neuron_label]))
 
         % Process each trial for the current neuron
         for trial_i = 1:size(event_table,1)
@@ -77,4 +77,4 @@ for session_i = 1:size(ephysLog,1)
 end
 
 sdf_soundAlign_data = neuron_sdfsound_out;
-save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\sound_align','sdf_soundAlign_data'),'sdf_soundAlign_data','-v7.3')
+save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\sound_align','sdf_soundAlign_data'),'sdf_soundAlign_data','-v7.3')

@@ -19,7 +19,7 @@ for session_i = 1:size(ephysLog,1)
         sound_sdf = {}; % Initialize sound SDF cell array
         count = 0; % Initialize counter for sound SDF
 
-        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\spike',[datafile '_' neuron_label]))
+        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\spike',[datafile '_' neuron_label]))
 
 
         baseline_fr_mu_trialStart = nanmean(nanmean(sdf.trialStart(:,1000+[-200:0])));

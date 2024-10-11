@@ -15,7 +15,7 @@ def set_directories():
             "bin_data": r"C:\KIKUCHI-LOCAL\data\ephys\bin",
             "kilosort": r"C:\KIKUCHI-LOCAL\data\ephys\ks",
             "mat_data": r"C:\KIKUCHI-LOCAL\data\ephys\mat",
-            "doc_data": r"C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc",
+            "doc_data": r"C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data-extraction\doc",
             "py_data": r"C:\KIKUCHI-LOCAL\data\ephys\py_conv",
         }
     elif sys.platform == "darwin":
@@ -24,7 +24,7 @@ def set_directories():
             "bin_data": r"",  # Analysis not valid on mac
             "kilosort": r"",  # Analysis not valid on mac
             "mat_data": r"/Users/stevenerrington/Library/CloudStorage/OneDrive-NewcastleUniversity/Research/agl_t/mat",
-            "doc_data": r"/Users/stevenerrington/Desktop/Projects/2024-aglt-laminar/data-extraction/doc",
+            "doc_data": r"/Users/stevenerrington/Desktop/Projects/2024-aglt-sequence/data-extraction/doc",
             "py_data": r"/Users/stevenerrington/Library/CloudStorage/OneDrive-NewcastleUniversity/Research/agl_t/py",
         }
 

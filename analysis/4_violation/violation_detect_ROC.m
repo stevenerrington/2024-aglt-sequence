@@ -2,7 +2,7 @@ function [roc_neuron_out_ROC, roc_neuron_out_p, sdf_viol_out, sdf_nonviol_out] =
  
 parfor neuron_i = 1:size(spike_log,1)
     fprintf('Neuron %i of %i \n', neuron_i, size(spike_log,1)); % Display progress for current neuron
-    sdf_in = load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\spike', [spike_log.session{neuron_i} '_' spike_log.unitDSP{neuron_i} '.mat']));
+    sdf_in = load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\spike', [spike_log.session{neuron_i} '_' spike_log.unitDSP{neuron_i} '.mat']));
     event_table_in = load(fullfile(dirs.mat_data,[spike_log.session{neuron_i} '.mat']),'event_table');
 
     viol_sdf = []; nonviol_sdf = [];

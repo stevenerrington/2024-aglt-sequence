@@ -49,6 +49,6 @@ for session_i = 1:size(ephysLog,1)
     set(fig,'renderer','painters','Units','Inches');
     pos = get(fig,'Position');
     set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-    print(fig,['C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\laminar_summary\' datafile '-laminar.pdf'],'-r400','-bestfit','-dpdf')
+    print(fig,['C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data-extraction\doc\laminar_summary\' datafile '-laminar.pdf'],'-r400','-bestfit','-dpdf')
     close all
 end

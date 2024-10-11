@@ -12,7 +12,7 @@ for session_i = 1:size(ephysLog,1)
     % Process each neuron in the session
     for neuron_i = 1:length(neuron_list)
         neuron_label = neuron_list{neuron_i}; % Get the neuron label
-        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\spike',[datafile '_' neuron_label]))
+        load(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\spike',[datafile '_' neuron_label]))
         sound_align_table = table();
 
         % Process each trial for the current neuron
@@ -80,7 +80,7 @@ for session_i = 1:size(ephysLog,1)
             sound_align_table = [sound_align_table;trial_table];
         end
 
-        save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\sound_align', ['sound_align_table_' datafile '_' neuron_label]),'sound_align_table','-v7.3')
+        save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\sound_align', ['sound_align_table_' datafile '_' neuron_label]),'sound_align_table','-v7.3')
     end
 end
 

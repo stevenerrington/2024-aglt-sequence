@@ -13,7 +13,7 @@ for file_i = 1:n_stimuli
     audio_file = stimuli_table.filename{file_i};
 
     [sounddata,fs_check] = audioread...
-        (['C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\stimuli\' audio_file]);
+        (['C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\stimuli\' audio_file]);
 
     sounddata = sounddata(:,1);
 
@@ -54,7 +54,7 @@ sound_i = 14;
 audio_file = stimuli_table.filename{file_i};
 
 [sounddata,fs_check] = audioread...
-    (['C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\stimuli\' audio_file]);
+    (['C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\stimuli\' audio_file]);
 
 sounddata = sounddata(:,1);
 

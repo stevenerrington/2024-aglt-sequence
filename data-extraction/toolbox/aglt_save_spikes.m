@@ -66,7 +66,7 @@ for session_i = 1:size(ephysLog,1)
         raster.violation = raster_viol.(neuron_label);
         raster.reward = raster_rwd.(neuron_label);
 
-        save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data\spike',[datafile '_' neuron_label]),'sdf','raster','-v7.3')
+        save(fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data\spike',[datafile '_' neuron_label]),'sdf','raster','-v7.3')
 
     end
 end

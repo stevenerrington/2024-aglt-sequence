@@ -137,7 +137,7 @@ for session_i = 1 :size(ephysLog,1)
 
 
         figure_name = [outfile_name '_' data_in.spk_info.unitDSP{spike_i}];
-        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\spk_summary_adjust', [figure_name '.png']),'-dpng','-r1000');
+        print(f,fullfile('C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data-extraction\doc\spk_summary_adjust', [figure_name '.png']),'-dpng','-r1000');
         close all
     end
 end

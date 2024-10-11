@@ -86,6 +86,6 @@ for session_i = 1:size(optoLog,1)
     set(fig,'renderer','painters','Units','Inches');
     pos = get(fig,'Position');
     set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-    print(fig,['C:\KIKUCHI-LOCAL\script\2024-aglt-laminar\data-extraction\doc\opto_lfp_summary\' outfile_name '-' optoLog.laser_color{session_i} '-'  optoLog.laser_freq{session_i} '-' optoLog.laser_depth{session_i} '-' optoLog.laser_area{session_i} '.pdf'],'-r400','-bestfit','-dpdf')
+    print(fig,['C:\KIKUCHI-LOCAL\script\2024-aglt-sequence\data-extraction\doc\opto_lfp_summary\' outfile_name '-' optoLog.laser_color{session_i} '-'  optoLog.laser_freq{session_i} '-' optoLog.laser_depth{session_i} '-' optoLog.laser_area{session_i} '.pdf'],'-r400','-bestfit','-dpdf')
     close all
 end
