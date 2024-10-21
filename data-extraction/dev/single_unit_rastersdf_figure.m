@@ -7,7 +7,7 @@ ops.sdf_filter = 'Gauss';
 
 [sdf, raster] = get_spikes_aligned(spikes,aligntime,ops);
 
-names = ops.plot_ch;
+names = fieldnames(spikes.time);
 
 xlim_vals = [-200 1200];
 ylim_vals = [0 20];

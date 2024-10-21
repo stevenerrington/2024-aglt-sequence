@@ -23,7 +23,7 @@ optoLog = webread(sprintf('https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx
 
 session_list = [316, 318, 319, 320];
 neuron_frontal_label_list = {'DSP26b','DSP26b','DSP26b','DSP26b'};
-neuron_auditory_label_list = {'DSP15c','DSP15b','DSP15b','DSP15b'};
+neuron_auditory_label_list = {'DSP15b','DSP15b','DSP15b','DSP15b'};
 
 for session_list_i = 1:length(session_list)
 
@@ -74,7 +74,7 @@ for session_list_i = 1:length(session_list)
     ops.fs = 32000;
 
     [spikes] = phy2mat(ops);
-    [spk_info] = phyinfo2mat(ops);
+    %[spk_info] = phyinfo2mat(ops);
 
     ops.aligntime = aligntime;
     ops.timewin = -1000:5000;
@@ -96,7 +96,7 @@ frontal_sdf_plotdata = []; auditory_sdf_plotdata = [];
 frontal_raster_plotdata = []; auditory_raster_plotdata = [];
 cond_label = [];
 
-for cond_i = 1:4
+for cond_i = 1
     frontal_sdf_plotdata = [ frontal_sdf_plotdata ; frontal_sdf{cond_i,1} ];
     auditory_sdf_plotdata = [ auditory_sdf_plotdata ; auditory_sdf{cond_i,1} ];
 

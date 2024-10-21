@@ -3,7 +3,7 @@
 
 
 
-for ch_i = 8
+for ch_i = 10
     clear test
 
 
