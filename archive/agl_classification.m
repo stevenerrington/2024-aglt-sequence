@@ -27,11 +27,13 @@ end
 
 %%
 
-a_class_data = a_sdf(neuron_class.auditory.glm_pos,:);
-c_class_data = c_sdf(neuron_class.auditory.glm_pos,:);
-d_class_data = d_sdf(neuron_class.auditory.glm_pos,:);
-f_class_data = f_sdf(neuron_class.auditory.glm_pos,:);
-g_class_data = g_sdf(neuron_class.auditory.glm_pos,:);
+area = 'frontal';
+
+a_class_data = a_sdf(neuron_class.(area).glm_pos,:);
+c_class_data = c_sdf(neuron_class.(area).glm_pos,:);
+d_class_data = d_sdf(neuron_class.(area).glm_pos,:);
+f_class_data = f_sdf(neuron_class.(area).glm_pos,:);
+g_class_data = g_sdf(neuron_class.(area).glm_pos,:);
 
 figuren;
 plot(ops.sound_sdf_window, nanmean(a_class_data))
@@ -46,7 +48,7 @@ plot(ops.sound_sdf_window, nanmean(g_class_data))
 
 
 
-%%
+%% Accuracy x time
 
 obs_data = {a_class_data, c_class_data, d_class_data, f_class_data, g_class_data};
 obs_labels = {'A', 'C', 'D', 'F', 'G'};
@@ -76,6 +78,8 @@ box off
 
 
 %% Machine learning core
+
+
 % Split data into training and testing sets (e.g., 70% training, 30% testing)
 cv = cvpartition(data_table.data_labels, 'HoldOut', 0.3);  % 30% test, 70% train
 XTrain = data_table.mean_fr(training(cv), :);
