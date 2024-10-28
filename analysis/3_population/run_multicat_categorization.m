@@ -20,7 +20,7 @@ window_shift = 10;
 data_table = table(window_sdf, labels_in);
 
 %% Setup cross-validation parameters
-cv = cvpartition(data_table.labels_in, 'HoldOut', 0.3);  % 30% test, 70% train
+cv = cvpartition(data_table.labels_in, 'HoldOut', 0.2);  % 20% test, 80% train
 training_idx = training(cv);
 test_idx = test(cv);
 
