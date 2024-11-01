@@ -2,8 +2,6 @@
 %%
 sound_times = [0, 563, 1126, 1689, 2252];
 
-trials_in = find(strcmp(event_table_in.event_table.cond_label,'nonviol'));
-
 % Loop through each neuron
 parfor neuron_i = 1:size(spike_log,1)
     % Display progress for the current neuron
@@ -41,11 +39,7 @@ acorr_time = 1000+[0:2665];
 [acorr_frontal_nonmod, lags] = xcorr(nanmean(seq_sdf_out(neuron_class.frontal.nonmodulated,acorr_time)), 'coeff');
 [acorr_auditory_nonmod, lags] = xcorr(nanmean(seq_sdf_out(neuron_class.auditory.nonmodulated,acorr_time)), 'coeff');
 
-figuren;
-plot(lags,acorr_frontal_nonmod)
-plot(lags,acorr_auditory_nonmod)
-
-figuren('Renderer', 'painters', 'Position', [100 100 650 700]); hold on
+figuren('Renderer', 'painters', 'Position', [100 100 500 700]); hold on
 subplot(2,1,1); hold on; box off
 plot(ops.timewin,nanmean(seq_sdf_out(neuron_class.auditory.glm_pos,:)))
 plot(ops.timewin,nanmean(seq_sdf_out(neuron_class.auditory.glm_neg,:)))
@@ -100,40 +94,35 @@ end
 
 figuren; 
 subplot(2,1,1); hold on
-histogram(acorr_r{1},0:0.01:1)
-histogram(acorr_r{2},0:0.01:1)
-histogram(acorr_r{3},0:0.01:1)
-histogram(acorr_r{4},0:0.01:1)
+histogram(acorr_r{1},-1:0.01:1,'LineStyle','none')
+histogram(acorr_r{2},-1:0.01:1,'LineStyle','none')
+histogram(acorr_r{3},-1:0.01:1,'LineStyle','none')
+histogram(acorr_r{4},-1:0.01:1,'LineStyle','none')
 legend(label, 'Interpreter', 'none')
 
 subplot(2,1,2); hold on
-histogram(acorr_peaks{1},0:10:1000)
-histogram(acorr_peaks{2},0:10:1000)
-histogram(acorr_peaks{3},0:10:1000)
-histogram(acorr_peaks{4},0:10:1000)
+histogram(acorr_peaks{1},0:10:800,'LineStyle','none')
+histogram(acorr_peaks{2},0:10:800,'LineStyle','none')
+histogram(acorr_peaks{3},0:10:800,'LineStyle','none')
+histogram(acorr_peaks{4},0:10:800,'LineStyle','none')
 
 
 
-bootstrap_lags = [];
 
-for bootstrap_i = 1:1000
-    % is it legal to resample from the same pool, or is it double dipping?
+mode(acorr_r{1}(~isnan(acorr_r{1})))
+mode(acorr_r{2}(~isnan(acorr_r{2})))
+mode(acorr_r{3}(~isnan(acorr_r{3})))
+mode(acorr_r{4}(~isnan(acorr_r{4})))
 
-    clear acorr_aud_pos lags Xpk peak_lags
-    [acorr_aud_pos, lags] = xcorr(nanmean(seq_sdf_out(randsample(neuron_class.frontal.glm_pos, 25, false),acorr_time)), 'coeff');
 
-    [~,Xpk,~,~] = findpeaks(acorr_aud_pos,'MinPeakProminence',0.05);
-    peak_lags = lags(Xpk);
+mean(~isnan(acorr_peaks{1}))*100
+mean(~isnan(acorr_peaks{2}))*100
+mean(~isnan(acorr_peaks{3}))*100
+mean(~isnan(acorr_peaks{4}))*100
 
-    try
-        bootstrap_lags(bootstrap_i,1) = peak_lags(find(peak_lags > 0 , 1, 'first'));
-    catch
-        bootstrap_lags(bootstrap_i,1) = NaN;
-    end
-end
 
-histogram(bootstrap_lags,100 )
-nanmean(isnan(bootstrap_lags))
+
+
 
 %%
 neuron_i = 1498;
