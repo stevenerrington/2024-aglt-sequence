@@ -33,8 +33,6 @@ parfor neuron_i = 1:size(spike_log,1)
     [power_bl(:,neuron_i), ~] = pwelch(neuron_bl_concat, window, noverlap, nfft, 1000, 'psd');
 end
 
-power_sequence = power_sequence';
-power_bl = power_bl';
 
 cell_class = 'modulated';
 power_idx = find(f(:,1) > 1.5 & f(:,1) < 2);

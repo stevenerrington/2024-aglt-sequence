@@ -28,7 +28,7 @@ for session_i = 1:size(ephysLog,1)
                     count = count + 1;
 
                     if sound_i == 0
-                        temp = []; temp = repmat(sdf.trialStart(trial_i,zero_offset+[-200:0]),1,5);
+                        temp = []; temp = repmat(sdf.trialStart(trial_i,zero_offset+[-250:-50]),5,1);
                         sound_sdf{count,1} = temp(1:1001);
                         sound_sdf{count,2} = raster.sequenceOnset{trial_i};
                         sound_sdf{count,3} = 'Baseline';
@@ -37,10 +37,20 @@ for session_i = 1:size(ephysLog,1)
                         sound_sdf{count,6} = 'NA';
                         sound_sdf{count,7} = neuron_i;
                         sound_sdf{count,8} = trial_i;
+                        sound_sdf{count,9} = ~isnan(event_table.rewardOnset_ms(trial_i));
 
                     else
                         % Extract and store relevant SDF information for each sound
-                        sound_sdf{count,1} = sdf.sequenceOnset(trial_i,zero_offset+ops.sound_sdf_window+sound_onset_ms(sound_i));
+
+                        clear sdf_trial
+                        % Linear regression to detrend
+                        sdf_trial = sdf.sequenceOnset(trial_i,zero_offset+ops.sound_sdf_window+sound_onset_ms(sound_i));
+                        % p = polyfit(1:length(ops.sound_sdf_window), sdf.sequenceOnset(trial_i,zero_offset+ops.sound_sdf_window+sound_onset_ms(sound_i)), 1);
+                        % trend = polyval(p, 1:length(ops.sound_sdf_window));
+                        % sdf_detrended = sdf_trial - trend;
+
+
+                        sound_sdf{count,1} = sdf_trial;
                         sound_sdf{count,2} = raster.sequenceOnset{trial_i}-sound_onset_ms(sound_i);
                         sound_sdf{count,3} = stimulusLog.(['sound_' int2str(sound_i) '_code']){event_table.cond_value(trial_i)};
                         sound_sdf{count,4} = ['position_' int2str(sound_i)];
@@ -63,6 +73,7 @@ for session_i = 1:size(ephysLog,1)
                         end
                         sound_sdf{count,7} = neuron_i;
                         sound_sdf{count,8} = trial_i;
+                        sound_sdf{count,9} = ~isnan(event_table.rewardOnset_ms(trial_i));
 
                     end
                 end

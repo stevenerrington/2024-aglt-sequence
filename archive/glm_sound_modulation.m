@@ -9,6 +9,7 @@ reg_tbl.sound = string(sound_info_in(:,3));
 reg_tbl.order_pos = string(sound_info_in(:,4));
 reg_tbl.condition = string(sound_info_in(:,5));
 reg_tbl.exp_i = [1:size(sound_info_in_sdf,1)]';
+reg_tbl.valid = cell2mat(sound_info_in(:,9));
 
 
 %% Setup spike data into GLM
@@ -39,13 +40,13 @@ glm_output.trial_type.sig_times = [];
 glm_output.trial_type.beta_weights = [];
 u_t_mdl = [];
 
-reg_tbl_trialtype = reg_tbl(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') ,:);
+reg_tbl_trialtype = reg_tbl(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') | reg_tbl.valid == 1 ,:);
 
 % For each averaged time point
 for timepoint_i = 1:n_times
 
     % Input the timepoint specific firing times
-    reg_tbl_trialtype.firing_rate = window_sdf(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline'),timepoint_i);
+    reg_tbl_trialtype.firing_rate = window_sdf(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') | reg_tbl.valid == 1,timepoint_i);
     % Convert 'sound' to a categorical variable if it's not already
     reg_tbl_trialtype.sound = categorical(reg_tbl_trialtype.sound);
 

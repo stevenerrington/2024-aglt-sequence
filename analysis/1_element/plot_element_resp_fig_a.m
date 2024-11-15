@@ -9,7 +9,7 @@ function plot_element_resp_fig_a(neuron_example, sdf_soundAlign_data, ops, pop_n
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Filter example neuron data for non-baseline and non-viol data points
-    example_valid_idx = strcmp(string(sdf_soundAlign_data{neuron_example}(:,5)) ,'nonviol') & ~strcmp(string(sdf_soundAlign_data{neuron_example}(:,3)) ,'Baseline');
+    example_valid_idx = strcmp(string(sdf_soundAlign_data{neuron_example}(:,5)) ,'nonviol') & ~strcmp(string(sdf_soundAlign_data{neuron_example}(:,3)) ,'Baseline') & cell2mat(sdf_soundAlign_data{neuron_example}(:,9)) == 1;
     example_sdf_in = cell2mat(sdf_soundAlign_data{neuron_example}(example_valid_idx, 1));  % Extract SDFs for valid trials
 
     % Smooth each row (trial) of SDF data with a smoothing window of 50
