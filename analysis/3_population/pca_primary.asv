@@ -129,28 +129,27 @@ end
 
 
 % Create a figure for visualization of the PCA distance results
-figuren('Renderer', 'painters', 'Position', [100 100 900 350]);
+figure('Renderer', 'painters', 'Position', [100 100 900 350]);
 
 % Plot the heatmap for the auditory area (mean over the third dimension of distances)
 subplot(1,2,1)
-h = imagesc(tril(nanmean(pca_dist.auditory, 3)));  % Mean across the third dimension (e.g., over multiple repetitions)
+imagesc(tril(nanmean(pca_dist.auditory, 3)))  % Mean across the third dimension (e.g., over multiple repetitions)
 clim([0 1]); title('Auditory')  % Set color limits for the heatmap
-colormap(parula); box off
-
-% Plot the heatmap for the frontal area (mean over the third dimension of distances)
-subplot(1,2,2)
-g = imagesc(tril(nanmean(pca_dist.frontal, 3)))  % Mean across the third dimension (e.g., over multiple repetitions)
-clim([0 1]); title('Frontal')  % Set color limits for the heatmap
-colormap(parula); box off
+colormap(parula)
 
 
 % Set transparency for zeros
-alpha = ones(size(tril(nanmean(pca_dist.auditory, 3))));      % Initialize alpha (fully opaque)
-alpha(tril(nanmean(pca_dist.auditory, 3)) == 0) = 0.0;        % Set transparency for zeros
+alpha = ones(size(data));      % Initialize alpha (fully opaque)
+alpha(data == 0) = 0.2;        % Set transparency for zeros
 
 % Apply the alpha data
-set(h, 'AlphaData', alpha);
-set(g, 'AlphaData', alpha);
+set(gca, 'AlphaData', alpha);
+
+% Plot the heatmap for the frontal area (mean over the third dimension of distances)
+subplot(1,2,2)
+imagesc(tril(nanmean(pca_dist.frontal, 3)))  % Mean across the third dimension (e.g., over multiple repetitions)
+clim([0 1]); title('Frontal')  % Set color limits for the heatmap
+colormap(parula)
 
 
 %%

@@ -58,23 +58,23 @@ for timepoint_i = 1:n_times
 
     % GLM output -------------------------------
     % - Sound A
-    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < .01; % trial type
+    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < (.01/5); % trial type
     glm_output.trial_type.beta_weights(1,timepoint_i) = u_t_mdl.Coefficients.tStat(2); % trial type
     
     % - Sound C
-    glm_output.trial_type.sig_times(2,timepoint_i) = u_t_mdl.Coefficients.pValue(3) < .01; % trial type
+    glm_output.trial_type.sig_times(2,timepoint_i) = u_t_mdl.Coefficients.pValue(3) < (.01/5); % trial type
     glm_output.trial_type.beta_weights(2,timepoint_i) = u_t_mdl.Coefficients.tStat(3); % trial type
     
     % - Sound D
-    glm_output.trial_type.sig_times(3,timepoint_i) = u_t_mdl.Coefficients.pValue(4) < .01; % trial type
+    glm_output.trial_type.sig_times(3,timepoint_i) = u_t_mdl.Coefficients.pValue(4) < (.01/5); % trial type
     glm_output.trial_type.beta_weights(3,timepoint_i) = u_t_mdl.Coefficients.tStat(4); % trial type
     
     % - Sound F
-    glm_output.trial_type.sig_times(4,timepoint_i) = u_t_mdl.Coefficients.pValue(5) < .01; % trial type
+    glm_output.trial_type.sig_times(4,timepoint_i) = u_t_mdl.Coefficients.pValue(5) < (.01/5); % trial type
     glm_output.trial_type.beta_weights(4,timepoint_i) = u_t_mdl.Coefficients.tStat(5); % trial type
 
     % - Sound G
-    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(6) < .01; % trial type
+    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(6) < (.01/5); % trial type
     glm_output.trial_type.beta_weights(5,timepoint_i) = u_t_mdl.Coefficients.tStat(6); % trial type
 end
 

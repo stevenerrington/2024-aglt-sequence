@@ -9,64 +9,6 @@ dirs = set_directories();
 ephysLog = clean_exp_map(ephysLog);
 spike_log = clean_spike_map(spike_log);
 
-%% Get prior probabilities from AGL exposure task
-
-% Define a list of predefined sequences
-seq_list{1} = {'Start','A', 'C', 'F', 'C','X'};
-seq_list{2} = {'Start','A', 'C', 'F', 'C','G','X'};
-seq_list{3} = {'Start','A', 'C', 'G', 'F'};
-seq_list{4} = {'Start','A', 'C', 'G', 'F','C','G','X'};
-seq_list{5} = {'Start','A', 'D', 'C', 'F','X'};
-seq_list{6} = {'Start','A', 'D', 'C', 'F','C','X'};
-seq_list{7} = {'Start','A', 'D', 'C', 'F','C','G','X'};
-seq_list{8} = {'Start','A', 'D', 'C', 'G','F','C','X'};
-
-% Set the random seed for reproducibility of the randomization
-rng(1, 'twister')
-
-% Define the total number of repetitions needed
-reps = 160;
-
-% Create an index list for the 8 sequences
-seq_indx = 1:8;
-
-% Initialize an empty array to store the randomized sequence indices
-trial_order = [];
-
-% Loop until 160 elements (trials) are collected in 'trial_order'
-while length(trial_order) < reps
-    % Randomly shuffle the sequence indices and append to 'trial_order'
-    trial_order = [trial_order, seq_indx(randperm(length(seq_indx)))];
-end
-
-% Define the elements used in sequences
-elements = {'Start','A','C','D','F','G','X'};
-
-% Initialize a transitional probability matrix (7x7 for 7 elements)
-transitional_prob_array = zeros(7,7);
-
-% Initialize a positional probability matrix (7x7 for 7 elements)
-positional_prob_array = zeros(7,8);
-
-% Loop over all trials to count transitions between elements
-for trial_i = 1:reps
-    % Get the sequence corresponding to the current trial
-    seq_in = seq_list{trial_order(trial_i)};
-    
-    % Loop through elements in the sequence and track transitions
-    for ele_i = 2:length(seq_in)
-        % Find the index of the previous element in 'elements'
-        last_ele_index = find(strcmp(elements, seq_in{ele_i-1}));
-        
-        % Find the index of the current element in 'elements'
-        next_ele_index = find(strcmp(elements, seq_in{ele_i}));
-        
-        % Increment the transition count between the previous and current element
-        transitional_prob_array(last_ele_index, next_ele_index) = ...
-            transitional_prob_array(last_ele_index, next_ele_index) + 1;
-
-    end
-end
 
 % Load session data
 session_i = 1;

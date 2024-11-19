@@ -100,3 +100,68 @@ end
 view(34.2409,7.6800)
 xlabel('PC1'); ylabel('PC2'); zlabel('PC3');
 grid on
+
+
+%% 
+
+
+
+
+
+
+%% Generate subsamples from the population
+n_obs_psuedopop = 1000;  % Number of observations in the pseudopopulation
+subsamples = gen_psudeo_population(neuron_class.auditory.all, n_obs_psuedopop);  % Generate pseudopopulation subsamples
+
+% Define time window for analysis (-200 ms to 3000 ms)
+timewin = [-100:1:2750];
+timewin_idx = find(ismember(ops.timewin, timewin));  % Get the index of the time window
+
+% Initialize the first subsample
+subsample_i = 1;
+
+% Store SDF signals for each sequence in the specified time window
+signal_in = {};
+signal_in = {pca_sdf_out_seq1(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq2(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq3(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq4(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq5(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq6(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq7(subsamples{subsample_i}, timewin_idx), 
+             pca_sdf_out_seq8(subsamples{subsample_i}, timewin_idx)};
+
+
+% Perform cross-condition PCA analysis
+[pc_out, pc_shuf_out] = get_xcond_pca(signal_in);
+
+
+n_ele = 5;
+seq_i = 1;
+
+for seq_i = 1:4
+    pca_co_seq{seq_i}(1,:) = [nanmean(pc_out{seq_i}(1,100+0+peri_element_timewin)), nanmean(pc_out{seq_i}(2,100+0+peri_element_timewin)), nanmean(pc_out{seq_i}(3,100+0+peri_element_timewin))];
+    pca_co_seq{seq_i}(2,:) = [nanmean(pc_out{seq_i}(1,100+563+peri_element_timewin)), nanmean(pc_out{seq_i}(2,100+563+peri_element_timewin)), nanmean(pc_out{seq_i}(3,100+563+peri_element_timewin))];
+    pca_co_seq{seq_i}(3,:) = [nanmean(pc_out{seq_i}(1,100+1126+peri_element_timewin)), nanmean(pc_out{seq_i}(2,100+1126+peri_element_timewin)), nanmean(pc_out{seq_i}(3,100+1126+peri_element_timewin))];
+    pca_co_seq{seq_i}(4,:) = [nanmean(pc_out{seq_i}(1,100+1689+peri_element_timewin)), nanmean(pc_out{seq_i}(2,100+1689+peri_element_timewin)), nanmean(pc_out{seq_i}(3,100+1689+peri_element_timewin))];
+    pca_co_seq{seq_i}(5,:) = [nanmean(pc_out{seq_i}(1,100+2252+peri_element_timewin)), nanmean(pc_out{seq_i}(2,100+2252+peri_element_timewin)), nanmean(pc_out{seq_i}(3,100+2252+peri_element_timewin))];
+end
+
+colormap_in = parula(5);
+
+figuren; hold on
+
+sound_labels = {'A','C','D','F','G'};
+
+for seq_i = 1:4
+    scatter3(pca_co_seq{seq_i}(1,1),pca_co_seq{seq_i}(1,2),pca_co_seq{seq_i}(1,3),100,'filled','MarkerFaceColor', colormap_in(find(strcmp(stimulusLog.sound_1_code{seq_i},sound_labels)),:))
+    scatter3(pca_co_seq{seq_i}(2,1),pca_co_seq{seq_i}(2,2),pca_co_seq{seq_i}(2,3),100,'filled','MarkerFaceColor', colormap_in(find(strcmp(stimulusLog.sound_2_code{seq_i},sound_labels)),:))
+    scatter3(pca_co_seq{seq_i}(3,1),pca_co_seq{seq_i}(3,2),pca_co_seq{seq_i}(3,3),100,'filled','MarkerFaceColor', colormap_in(find(strcmp(stimulusLog.sound_3_code{seq_i},sound_labels)),:))
+    scatter3(pca_co_seq{seq_i}(4,1),pca_co_seq{seq_i}(4,2),pca_co_seq{seq_i}(4,3),100,'filled','MarkerFaceColor', colormap_in(find(strcmp(stimulusLog.sound_4_code{seq_i},sound_labels)),:))
+    scatter3(pca_co_seq{seq_i}(5,1),pca_co_seq{seq_i}(5,2),pca_co_seq{seq_i}(5,3),100,'filled','MarkerFaceColor', colormap_in(find(strcmp(stimulusLog.sound_5_code{seq_i},sound_labels)),:))
+
+end
+
+xlabel('PC1'); xlim([-50 50])
+ylabel('PC2'); ylim([-50 50])
+zlabel('PC3'); zlim([-50 50])
