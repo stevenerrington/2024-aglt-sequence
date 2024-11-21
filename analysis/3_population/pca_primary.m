@@ -11,13 +11,16 @@ parfor neuron_i = 1:size(spike_log,1)
 
     % Extract spike density function (SDF) for 'nonviolent' condition
     nonviol_sdf = []; 
-    nonviol_sdf = sdf_in.sdf.sequenceOnset(strcmp(event_table_in.event_table.cond_label, 'nonviol'), :);
+    nonviol_sdf = sdf_in.sdf.sequenceOnset(strcmp(event_table_in.event_table.cond_label, 'nonviol') & ~isnan(event_table_in.event_table.rewardOnset_ms), :);
     
     % Calculate baseline firing rate mean and standard deviation over a pre-stimulus period (-200 ms to 0 ms)
     baseline_fr_mean = nanmean(nanmean(nonviol_sdf(:, [1000+[-200:0]])));
     baseline_fr_std = nanstd(nanmean(nonviol_sdf(:, [1000+[-200:0]])));
 
     % Compute and smooth normalized SDF for the current neuron across time points
+    pca_sdf_out(neuron_i,:) = smooth((nanmean(nonviol_sdf) - baseline_fr_mean) ./ baseline_fr_std, 50);
+    pca_sdf_out_shuffled(neuron_i,:) = smooth((nanmean(nonviol_sdf(:,randperm(size(nonviol_sdf, 2)))) - baseline_fr_mean) ./ baseline_fr_std, 50);
+
     pca_sdf_out(neuron_i,:) = smooth((nanmean(nonviol_sdf) - baseline_fr_mean) ./ baseline_fr_std, 50);
 
     % Calculate and smooth the SDF for each sequence condition, normalized by baseline firing rate
@@ -129,16 +132,16 @@ end
 
 
 % Create a figure for visualization of the PCA distance results
-figuren('Renderer', 'painters', 'Position', [100 100 900 350]);
+figuren('Renderer', 'painters', 'Position', [100 100 250 500]);
 
 % Plot the heatmap for the auditory area (mean over the third dimension of distances)
-subplot(1,2,1)
+subplot(2,1,1)
 h = imagesc(tril(nanmean(pca_dist.auditory, 3)));  % Mean across the third dimension (e.g., over multiple repetitions)
 clim([0 1]); title('Auditory')  % Set color limits for the heatmap
 colormap(parula); box off
 
 % Plot the heatmap for the frontal area (mean over the third dimension of distances)
-subplot(1,2,2)
+subplot(2,1,2)
 g = imagesc(tril(nanmean(pca_dist.frontal, 3)))  % Mean across the third dimension (e.g., over multiple repetitions)
 clim([0 1]); title('Frontal')  % Set color limits for the heatmap
 colormap(parula); box off
@@ -160,10 +163,10 @@ aud_d_diag = []; frontal_d_diag = [];
 
 
 for seq_comb_i = [2,3,4,7,8,12]
-    m  = tril(true(size(temp_aud)),-1);
 
     temp_aud = []; temp_aud = pca_dist.auditory(:,:,seq_comb_i);
     temp_frontal = []; temp_frontal = pca_dist.frontal(:,:,seq_comb_i);
+    m  = tril(true(size(temp_aud)),-1);
 
     aud_d_tril = [aud_d_tril; temp_aud(m)];
     frontal_d_tril = [frontal_d_tril; temp_frontal(m)];
@@ -181,7 +184,7 @@ clear pca_similarity
 pca_similarity(1,1)=gramm('x',pca_similarity_label,'y',pca_similiarity_data,'color',pca_similarity_label);
 pca_similarity(1,1).stat_summary('geom',{'bar','black_errorbar'},'width',3);
 pca_similarity(1,1).geom_jitter();
-fig = figure('Renderer', 'painters', 'Position', [100 100 700 400]);
+fig = figure('Renderer', 'painters', 'Position', [100 100 500 400]);
 pca_similarity.draw();
 
 %%
@@ -219,7 +222,8 @@ plot(pc_out_auditory{1}(2,element_1_idx), pc_out_auditory{1}(3,element_1_idx),'l
 plot(pc_out_auditory{2}(2,element_1_idx), pc_out_auditory{2}(3,element_1_idx),'linewidth',1.5,'color',[22 128 57]./255)
 plot(pc_out_auditory{3}(2,element_1_idx), pc_out_auditory{3}(3,element_1_idx),'linewidth',1.5,'color',[4 77 41]./255)
 plot(pc_out_auditory{4}(2,element_1_idx), pc_out_auditory{4}(3,element_1_idx),'linewidth',1.5,'color',[0 38 28]./255)
-xlim([-40 40]);
+xlim([-40 40]); ylim([-40 40]);
+
 title('Auditory | between seq', 'FontSize', 10);
 
 b = subplot(2,2,2); hold on
@@ -228,7 +232,7 @@ plot(pc_out_auditory{1}(2,element_2_idx), pc_out_auditory{1}(3,element_2_idx),'l
 plot(pc_out_auditory{1}(2,element_3_idx), pc_out_auditory{1}(3,element_3_idx),'linewidth',1.5,'color',[185 63 56]./255)
 plot(pc_out_auditory{1}(2,element_4_idx), pc_out_auditory{1}(3,element_4_idx),'linewidth',1.5,'color',[207 101 38]./255)
 plot(pc_out_auditory{1}(2,element_5_idx), pc_out_auditory{1}(3,element_5_idx),'linewidth',1.5,'color',[215 144 0]./255)
-xlim([-40 40])
+xlim([-40 40]); ylim([-40 40]); 
 title('Auditory | between element', 'FontSize', 10);
 
 
@@ -237,7 +241,7 @@ plot(pc_out_frontal{1}(2,element_1_idx), pc_out_frontal{1}(3,element_1_idx),'lin
 plot(pc_out_frontal{2}(2,element_1_idx), pc_out_frontal{2}(3,element_1_idx),'linewidth',1.5,'color',[22 128 57]./255)
 plot(pc_out_frontal{3}(2,element_1_idx), pc_out_frontal{3}(3,element_1_idx),'linewidth',1.5,'color',[4 77 41]./255)
 plot(pc_out_frontal{4}(2,element_1_idx), pc_out_frontal{4}(3,element_1_idx),'linewidth',1.5,'color',[0 38 28]./255)
-xlim([-20 20])
+xlim([-20 20]); ylim([-20 20])
 title('Frontal | between seq', 'FontSize', 10);
 
 d = subplot(2,2,4); hold on
@@ -246,10 +250,11 @@ plot(pc_out_frontal{1}(2,element_2_idx), pc_out_frontal{1}(3,element_2_idx),'lin
 plot(pc_out_frontal{1}(2,element_3_idx), pc_out_frontal{1}(3,element_3_idx),'linewidth',1.5,'color',[185 63 56]./255)
 plot(pc_out_frontal{1}(2,element_4_idx), pc_out_frontal{1}(3,element_4_idx),'linewidth',1.5,'color',[207 101 38]./255)
 plot(pc_out_frontal{1}(2,element_5_idx), pc_out_frontal{1}(3,element_5_idx),'linewidth',1.5,'color',[215 144 0]./255)
-xlim([-20 20])
+xlim([-20 20]); ylim([-20 20])
 title('Frontal | between element', 'FontSize', 10);
 
 
+%% 
 figuren('Renderer', 'painters', 'Position', [100 207 634 593]);
 plot(timewin, pc_out_frontal{1}(1,:),'linewidth',1.5,'color',[69 191 85]./255)
 plot(timewin, pc_out_frontal{2}(1,:),'linewidth',1.5,'color',[22 128 57]./255)

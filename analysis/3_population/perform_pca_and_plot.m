@@ -13,8 +13,6 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
         sdf_in_shuffled(neuron_i, :) = sdf_in_regular(neuron_i, randperm(size(sdf_in_regular, 2)));
     end
 
-
-            
     % Clear previous PCA variables
     clear pcs* var*
 
@@ -48,12 +46,12 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     onset_time_idx = 1000;
 
     % Create figure for plotting
-    figuren('Renderer', 'painters', 'Position', [100 100 1300 400]); hold on;
+    figuren('Renderer', 'painters', 'Position', [100 100 1000 250]); hold on;
 
     % Variance explained plot
-    n_vars = 8;
-    colorscale = flipud(cbrewer('seq', 'PuRd', n_vars));
-    colorscale_shuf = flipud(cbrewer('seq', 'Greys', n_vars));
+    n_vars = 6;
+    colorscale = abs(flipud(cbrewer('seq', 'PuRd', n_vars)));
+    colorscale_shuf = abs(flipud(cbrewer('seq', 'Greys', n_vars)));
 
     nsubplot(3, 10, [1 2 3], [1 2]); hold on
     b_obs = bar([1:n_vars], var_exp([1:n_vars]), 'LineStyle', 'None', 'FaceAlpha', 0.5);

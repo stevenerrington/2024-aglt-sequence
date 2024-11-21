@@ -58,3 +58,66 @@ obs_labels = {'viol','nonviol'};
 
 accuracy = run_multicat_categorization(obs_data, obs_labels);
 
+%%
+%% Distance/similarity analysis
+% Define the time window and extract indices for the time window from 'ops'
+timewin = [-50:1:500];  % Set the time window from -100 ms to 2750 ms
+timewin_idx = find(ismember([-200:800], timewin));  % Get the indices of this time window from the 'ops' structure
+
+% Store the spike density function (SDF) signals for each sequence in the specified time window
+signal_in_frontal = {};  % Initialize a cell array to store the signal data
+signal_in_frontal = {viol_sdf(neuron_class.frontal.all, timewin_idx),  % SDF for sequence 1 in the current area
+    nonviol_sdf(neuron_class.frontal.all, timewin_idx)}; % SDF for sequence 4
+
+% Store the spike density function (SDF) signals for each sequence in the specified time window
+signal_in_auditory = {};  % Initialize a cell array to store the signal data
+signal_in_auditory = {viol_sdf(neuron_class.auditory.all, timewin_idx),  % SDF for sequence 1 in the current area
+    nonviol_sdf(neuron_class.auditory.all, timewin_idx)}; % SDF for sequence 4
+
+
+% Perform cross-condition PCA analysis to extract principal components
+[pc_out_frontal, pc_shuf_out_frontal] = get_xcond_pca(signal_in_frontal);  % Perform PCA on the input signals
+[pc_out_auditory, pc_shuf_out_auditory] = get_xcond_pca(signal_in_auditory);  % Perform PCA on the input signals
+
+
+pc1a = pc_out_auditory{1}(1,:);
+pc2a = pc_out_auditory{1}(2,:);
+pc3a = pc_out_auditory{1}(3,:);
+
+pc1b = pc_out_auditory{2}(1,:);
+pc2b = pc_out_auditory{2}(2,:);
+pc3b = pc_out_auditory{2}(3,:);
+
+
+figuren('Renderer', 'painters', 'Position', [100 207 634 593]);
+subplot(3,1,1); hold on; box off
+plot(timewin, pc1a);plot(timewin, pc1b)
+
+subplot(3,1,2); hold on; box off
+plot(timewin, pc2a);plot(timewin, pc2b)
+
+subplot(3,1,3); hold on; box off
+plot(timewin, pc3a);plot(timewin, pc3b)
+
+legend({'Violation','Nonviolation'})
+
+pc1a = pc_out_frontal{1}(1,:);
+pc2a = pc_out_frontal{1}(2,:);
+pc3a = pc_out_frontal{1}(3,:);
+
+pc1b = pc_out_frontal{2}(1,:);
+pc2b = pc_out_frontal{2}(2,:);
+pc3b = pc_out_frontal{2}(3,:);
+
+
+figuren('Renderer', 'painters', 'Position', [100 207 634 593]);
+subplot(3,1,1); hold on; box off
+plot(timewin, pc1a);plot(timewin, pc1b)
+
+subplot(3,1,2); hold on; box off
+plot(timewin, pc2a);plot(timewin, pc2b)
+
+subplot(3,1,3); hold on; box off
+plot(timewin, pc3a);plot(timewin, pc3b)
+
+legend({'Violation','Nonviolation'})

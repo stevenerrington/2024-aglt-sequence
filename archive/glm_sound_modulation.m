@@ -30,7 +30,7 @@ window_shift = 10;
 [n_trials, n_times] = size(window_sdf); % Get the number of windows in the time averaged data
 
 baseline_win_idx = find(window_time >= -200 & window_time <= 0); % Find the relevant indicies for the timepoints of interest
-analysis_win_idx = find(window_time >= 0 & window_time <= 600); % Find the relevant indicies for the timepoints of interest
+analysis_win_idx = find(window_time >= 0 & window_time <= 413); % Find the relevant indicies for the timepoints of interest
 win_fr = nanmean(window_sdf(:,analysis_win_idx),2);
 
 reg_tbl.win_fr = win_fr; % Add the firing rate over this whole window to the GLM table
@@ -40,13 +40,17 @@ glm_output.trial_type.sig_times = [];
 glm_output.trial_type.beta_weights = [];
 u_t_mdl = [];
 
-reg_tbl_trialtype = reg_tbl(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') | reg_tbl.valid == 1 ,:);
+valid_trial_idx = [];
+valid_trial_idx = find(reg_tbl.valid == 1 );
+
+reg_tbl_trialtype = [];
+reg_tbl_trialtype = reg_tbl(valid_trial_idx ,:);
 
 % For each averaged time point
 for timepoint_i = 1:n_times
 
     % Input the timepoint specific firing times
-    reg_tbl_trialtype.firing_rate = window_sdf(strcmp(reg_tbl.condition,'nonviol') | strcmp(reg_tbl.condition,'Baseline') | reg_tbl.valid == 1,timepoint_i);
+    reg_tbl_trialtype.firing_rate = window_sdf(valid_trial_idx,timepoint_i);
     % Convert 'sound' to a categorical variable if it's not already
     reg_tbl_trialtype.sound = categorical(reg_tbl_trialtype.sound);
 
@@ -54,27 +58,27 @@ for timepoint_i = 1:n_times
     reg_tbl_trialtype.sound = reordercats(reg_tbl_trialtype.sound, {'Baseline', 'A', 'C', 'D', 'F','G'});
 
     % Then include all these in your model
-    u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ exp_i + sound');
+    u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ sound');
 
     % GLM output -------------------------------
     % - Sound A
-    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < (.01/5); % trial type
+    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < (.0001/5); % trial type
     glm_output.trial_type.beta_weights(1,timepoint_i) = u_t_mdl.Coefficients.tStat(2); % trial type
     
     % - Sound C
-    glm_output.trial_type.sig_times(2,timepoint_i) = u_t_mdl.Coefficients.pValue(3) < (.01/5); % trial type
+    glm_output.trial_type.sig_times(2,timepoint_i) = u_t_mdl.Coefficients.pValue(3) < (.0001/5); % trial type
     glm_output.trial_type.beta_weights(2,timepoint_i) = u_t_mdl.Coefficients.tStat(3); % trial type
     
     % - Sound D
-    glm_output.trial_type.sig_times(3,timepoint_i) = u_t_mdl.Coefficients.pValue(4) < (.01/5); % trial type
+    glm_output.trial_type.sig_times(3,timepoint_i) = u_t_mdl.Coefficients.pValue(4) < (.0001/5); % trial type
     glm_output.trial_type.beta_weights(3,timepoint_i) = u_t_mdl.Coefficients.tStat(4); % trial type
     
     % - Sound F
-    glm_output.trial_type.sig_times(4,timepoint_i) = u_t_mdl.Coefficients.pValue(5) < (.01/5); % trial type
+    glm_output.trial_type.sig_times(4,timepoint_i) = u_t_mdl.Coefficients.pValue(5) < (.0001/5); % trial type
     glm_output.trial_type.beta_weights(4,timepoint_i) = u_t_mdl.Coefficients.tStat(5); % trial type
 
     % - Sound G
-    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(6) < (.01/5); % trial type
+    glm_output.trial_type.sig_times(5,timepoint_i) = u_t_mdl.Coefficients.pValue(6) < (.0001/5); % trial type
     glm_output.trial_type.beta_weights(5,timepoint_i) = u_t_mdl.Coefficients.tStat(6); % trial type
 end
 

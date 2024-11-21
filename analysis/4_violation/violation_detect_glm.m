@@ -36,7 +36,7 @@ cond_inc = [];
 cond_inc = [1 5 14 2 6 15 3 7 13 4 8 16];
 
 single_viol_trials = [];
-single_viol_trials = find(ismember(event_table_in.event_table.cond_value,cond_inc ));
+single_viol_trials = find(ismember(event_table_in.event_table.cond_value,cond_inc) & ~isnan(event_table_in.event_table.rewardOnset_ms));
 
 reg_tbl = reg_tbl(single_viol_trials,:);
 
@@ -59,7 +59,7 @@ for timepoint_i = 1:n_times
 
     % GLM output -------------------------------
     % - Violation
-    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < .01; % trial type
+    glm_output.trial_type.sig_times(1,timepoint_i) = u_t_mdl.Coefficients.pValue(2) < .001; % trial type
     glm_output.trial_type.beta_weights(1,timepoint_i) = u_t_mdl.Coefficients.tStat(2); % trial type
 
 end
