@@ -28,8 +28,9 @@ for session_i = 1:size(ephysLog,1)
                     count = count + 1;
 
                     if sound_i == 0
-                        temp = []; temp = repmat(sdf.trialStart(trial_i,zero_offset+[-250:-50]),5,1);
+                        temp = []; temp = repmat(sdf.trialStart(trial_i,zero_offset+[-550:-50]),2,1);
                         sound_sdf{count,1} = temp(1:1001);
+                        sound_sdf{count,1} = smooth(pseudo_data,100);
                         sound_sdf{count,2} = raster.sequenceOnset{trial_i};
                         sound_sdf{count,3} = 'Baseline';
                         sound_sdf{count,4} = ['position_' int2str(sound_i)];
@@ -62,7 +63,7 @@ for session_i = 1:size(ephysLog,1)
                                 if sound_i == stimulusLog.violation_pos(event_table.cond_value(trial_i))
                                     sound_sdf{count,5} = 'viol';
                                 else
-                                    sound_sdf{count,5} = 'viol';
+                                    sound_sdf{count,5} = 'nonviol';
                                 end
                         end
 

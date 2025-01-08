@@ -9,7 +9,7 @@ norm_fr_soundG = normFR_in.norm_fr_soundG;
 
 %% Analysis: determine significant modulation
 % Define significance threshold and minimum significant time duration
-sig_threshold = 5;
+sig_threshold = 2;
 ops.min_sig_time = 50;
 
 % Clear any previous significance and direction flags

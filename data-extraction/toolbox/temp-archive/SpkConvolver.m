@@ -3,7 +3,7 @@ function SessionSDF = SpkConvolver (SpkData, SessionEndTime, ConvType)
 if strcmp(ConvType, 'PSP') == 1
     
     xrange = 0:20;
-    R_nonNormalized = ([1 - exp(-xrange./1)] .* exp (-xrange./20) );   % defining R, which is the Rate function. This will be convolved with Raster data (see below)
+    R_nonNormalized = ([1 - exp(-xrange./1)] .* exp (-xrange./1) );   % defining R, which is the Rate function. This will be convolved with Raster data (see below)
     R = R_nonNormalized/sum(R_nonNormalized);
     R2use = [zeros(1,length(xrange))  R];
 

@@ -67,10 +67,10 @@ for area = {'frontal','auditory'}
             % is it legal to resample from the same pool, or is it double dipping?
 
             clear acorr lags Xpk peak_lags
-            [acorr, lags] = xcorr(nanmean(seq_sdf_out(randsample(neuron_class.(area{1}).(type{1}), 50, false),acorr_time)), 'coeff');
+            [acorr, lags] = xcorr(nanmean(seq_sdf_out(randsample(neuron_class.(area{1}).(type{1}), 10, false),acorr_time)), 'coeff');
             lag_idx = find(lags > 500 & lags < 650);
 
-            [~,Xpk,~,~] = findpeaks(acorr,'MinPeakProminence',0.03);
+            [~,Xpk,~,~] = findpeaks(acorr,'MinPeakProminence',0.2);
             peak_lags = lags(Xpk);
 
             try
@@ -94,10 +94,10 @@ end
 
 figuren; 
 subplot(2,1,1); hold on
-histogram(acorr_r{1},-1:0.01:1,'LineStyle','none')
-histogram(acorr_r{2},-1:0.01:1,'LineStyle','none')
-histogram(acorr_r{3},-1:0.01:1,'LineStyle','none')
-histogram(acorr_r{4},-1:0.01:1,'LineStyle','none')
+histogram(acorr_r{1},-1:0.02:1,'LineStyle','none')
+histogram(acorr_r{2},-1:0.02:1,'LineStyle','none')
+histogram(acorr_r{3},-1:0.02:1,'LineStyle','none')
+histogram(acorr_r{4},-1:0.02:1,'LineStyle','none')
 legend(label, 'Interpreter', 'none')
 
 subplot(2,1,2); hold on
@@ -105,9 +105,6 @@ histogram(acorr_peaks{1},0:10:800,'LineStyle','none')
 histogram(acorr_peaks{2},0:10:800,'LineStyle','none')
 histogram(acorr_peaks{3},0:10:800,'LineStyle','none')
 histogram(acorr_peaks{4},0:10:800,'LineStyle','none')
-
-
-
 
 mode(acorr_r{1}(~isnan(acorr_r{1})))
 mode(acorr_r{2}(~isnan(acorr_r{2})))

@@ -1,5 +1,5 @@
 % Loop through each neuron
-parfor neuron_i = 1:size(spike_log,1)
+for neuron_i = 1:size(spike_log,1)
     % Display progress for the current neuron
     fprintf('Neuron %i of %i \n', neuron_i, size(spike_log,1)); 
     

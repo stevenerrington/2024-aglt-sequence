@@ -21,18 +21,18 @@ function neuron_class = classify_neurons(spike_log, element_neuron_table)
     frontal_nonmod_neurons = intersect(nonmodulated_neurons, frontal_neuron_idx);
 
     % Identify auditory neurons that are positively modulated
-    aud_mod_neurons_pos = aud_mod_neurons(strcmp(element_neuron_table.dir_label(aud_mod_neurons), 'pos'));
+    aud_mod_neurons_pos = aud_mod_neurons(strcmp(element_neuron_table.glm_dir_label(aud_mod_neurons), 'pos'));
     % Identify auditory neurons that are negatively modulated
-    aud_mod_neurons_neg = aud_mod_neurons(strcmp(element_neuron_table.dir_label(aud_mod_neurons), 'neg'));
+    aud_mod_neurons_neg = aud_mod_neurons(strcmp(element_neuron_table.glm_dir_label(aud_mod_neurons), 'neg'));
     % Identify auditory neurons that are mixed modulated
-    aud_mod_neurons_mixed = aud_mod_neurons(strcmp(element_neuron_table.dir_label(aud_mod_neurons), 'mixed'));
+    aud_mod_neurons_mixed = aud_mod_neurons(strcmp(element_neuron_table.glm_dir_label(aud_mod_neurons), 'mixed'));
 
     % Identify frontal neurons that are positively modulated
-    frontal_mod_neurons_pos = frontal_mod_neurons(strcmp(element_neuron_table.dir_label(frontal_mod_neurons), 'pos'));
+    frontal_mod_neurons_pos = frontal_mod_neurons(strcmp(element_neuron_table.glm_dir_label(frontal_mod_neurons), 'pos'));
     % Identify frontal neurons that are negatively modulated
-    frontal_mod_neurons_neg = frontal_mod_neurons(strcmp(element_neuron_table.dir_label(frontal_mod_neurons), 'neg'));
+    frontal_mod_neurons_neg = frontal_mod_neurons(strcmp(element_neuron_table.glm_dir_label(frontal_mod_neurons), 'neg'));
     % Identify frontal neurons that are mixed modulated
-    frontal_mod_neurons_mixed = frontal_mod_neurons(strcmp(element_neuron_table.dir_label(frontal_mod_neurons), 'mixed'));
+    frontal_mod_neurons_mixed = frontal_mod_neurons(strcmp(element_neuron_table.glm_dir_label(frontal_mod_neurons), 'mixed'));
 
     % Assign results to the output struct
     neuron_class.auditory.all = auditory_neuron_idx;

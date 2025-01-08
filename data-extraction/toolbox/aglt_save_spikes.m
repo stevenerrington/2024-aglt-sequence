@@ -1,6 +1,8 @@
 %% Extract sound aligned Spike Density Function (SDF)
 % Load data
 neuron_count = 0; lfp_count = 0; % Initialize counters for neurons and LFPs
+ops.timewin = [-1000:5000];
+ops.sdf_filter = 'PSP';
 
 % Loop through each session in the ephysLog
 for session_i = 1:size(ephysLog,1)
