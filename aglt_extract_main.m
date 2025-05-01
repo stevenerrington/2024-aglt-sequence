@@ -29,7 +29,7 @@ load('session_audio_latency.mat')
 % trials. They will then be saved to the matlab directory defined in
 % set_directories().
 
-% [! main extraction] aglt_multisession_loop
+% [! main extraction] aglt_multisessin_loop
 
 %% Analysis
 agl_t_analysis_spkModulation

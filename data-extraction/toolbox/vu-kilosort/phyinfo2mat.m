@@ -44,7 +44,7 @@ for unitIdx = 1:nUnits
     contamPct(unitIdx,1) = ks_contamPct.ContamPct(ks_contamPct.cluster_id ==  ks_cluster(unitIdx,1),:);
     amplitude(unitIdx,1) = ks_clusterAmp.Amplitude(ks_clusterAmp.cluster_id ==  ks_cluster(unitIdx,1),:);
     ksClass{unitIdx,1} = ks_classification.KSLabel(ks_classification.cluster_id ==  ks_cluster(unitIdx,1),:);
-    phyClass{unitIdx,1} = phy_classification.group(phy_classification.cluster_id ==  ks_cluster(unitIdx,1),:);
+    % phyClass{unitIdx,1} = phy_classification.group(phy_classification.cluster_id ==  ks_cluster(unitIdx,1),:);
    
     
 %     
@@ -53,6 +53,6 @@ for unitIdx = 1:nUnits
 %     ksClass{unitIdx,1} = {clusterInfo_phy.KSLabel(clusterInfo_phy.cluster_id ==  cluster(unitIdx,1),:)};
 end
 
-spkTable = table(ks_cluster,site,unitDSP,unitWAV,contamPct,amplitude,ksClass,phyClass,nSpikes,ISI_2ms,ISI_2_4_ratio);
+spkTable = table(ks_cluster,site,unitDSP,unitWAV,contamPct,amplitude,ksClass,nSpikes,ISI_2ms,ISI_2_4_ratio);
 spkTable = sortrows(spkTable,'site');
 

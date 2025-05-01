@@ -8,6 +8,9 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     pca_window = -100:2750;  % Can be overridden by input if needed
     sdf_in_regular = pca_sdf_out(neurons_in, 1000 + pca_window);
 
+    sdf_in_regular = rmmissing(sdf_in_regular, 1);
+
+
     % Shuffle data for comparison
     for neuron_i = 1:size(sdf_in_regular, 1)
         sdf_in_shuffled(neuron_i, :) = sdf_in_regular(neuron_i, randperm(size(sdf_in_regular, 2)));

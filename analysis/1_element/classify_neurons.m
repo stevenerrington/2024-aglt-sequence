@@ -8,7 +8,7 @@ function neuron_class = classify_neurons(spike_log, element_neuron_table)
     frontal_neuron_idx = find(ismember(spike_log.area, brain_areas.frontal));
 
     % Identify neurons modulated by ROC analysis
-    modulated_neurons = find(element_neuron_table.sig_glm == 1);
+    modulated_neurons = glm_sig_units;
 
     % Identify non-modulated neurons
     nonmodulated_neurons = setdiff(1:size(spike_log, 1), modulated_neurons);

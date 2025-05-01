@@ -1,4 +1,4 @@
-function [encoding_flag, glm_beta, glm_sig] = glm_sound_modulation(sound_info_in)
+function [encoding_flag] = ttest_sound_modulation(sound_info_in)
 
 %% Extract: get relevant data for GLM table
 reg_tbl = table;
@@ -46,29 +46,27 @@ valid_trial_idx = find(reg_tbl.valid == 1 );
 reg_tbl_trialtype = [];
 reg_tbl_trialtype = reg_tbl(valid_trial_idx ,:);
 
+sig_flag = []; p_value = [];
+
 % For each averaged time point
 for timepoint_i = 1:n_times
 
     % Input the timepoint specific firing times
     reg_tbl_trialtype.firing_rate = window_sdf(valid_trial_idx,timepoint_i);
-    % Convert 'sound' to a categorical variable if it's not already
-    reg_tbl_trialtype.sound = categorical(reg_tbl_trialtype.sound);
-    reg_tbl_trialtype.order_pos = categorical(reg_tbl_trialtype.order_pos);
+ 
 
-    % Reorder categories to make "G" the reference
-    reg_tbl_trialtype.sound = reordercats(reg_tbl_trialtype.sound, {'Baseline', 'A', 'C', 'D', 'F','G'});
+    alpha_level = 0.0001;
 
-    % Then include all these in your model
-    u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ sound + order_pos + sound*order_pos');
-    anova_out = []; anova_out = anova(u_t_mdl);
-
-    anova_pvalue(1, timepoint_i) = anova_out.pValue(1) < 0.001;
-    anova_pvalue(2, timepoint_i) = anova_out.pValue(2) < 0.001;
-
-    for i = 1:10
-        glm_beta(i, timepoint_i) = u_t_mdl.Coefficients.Estimate(i+1);
-        glm_sig(i, timepoint_i) = u_t_mdl.Coefficients.pValue(i+1) < 0.001;
-    end
+    [sig_flag(1,timepoint_i), p_value(1,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.sound,'A'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(2,timepoint_i), p_value(2,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.sound,'C'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(3,timepoint_i), p_value(3,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.sound,'D'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(4,timepoint_i), p_value(4,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.sound,'F'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(5,timepoint_i), p_value(5,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.sound,'G'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(6,timepoint_i), p_value(6,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.order_pos,'position_1'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(7,timepoint_i), p_value(7,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.order_pos,'position_2'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(8,timepoint_i), p_value(8,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.order_pos,'position_3'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(9,timepoint_i), p_value(9,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.order_pos,'position_4'),:),0,'Alpha',alpha_level,'Tail','both');
+    [sig_flag(10,timepoint_i), p_value(10,timepoint_i)] = ttest(reg_tbl_trialtype.firing_rate(strcmp(reg_tbl_trialtype.order_pos,'position_5'),:),0,'Alpha',alpha_level,'Tail','both');
 
 end
 
@@ -83,13 +81,13 @@ signal_detect_wins = signal_detect_length/window_shift;
 
 % Trial-type
 clear start sig_len
-for cond_i = 1:2
-    [start{cond_i}, sig_len{cond_i}, ~] = ZeroOnesCount(anova_pvalue(cond_i,analysis_win_idx));
+for cond_i = 1:10
+    [start{cond_i}, sig_len{cond_i}, ~] = ZeroOnesCount(sig_flag(cond_i,analysis_win_idx));
 end
 
-encoding_flag = []; encoding_beta = [];
+encoding_flag = []; 
 
-for cond_i = 1:2
+for cond_i = 1:10
     encoding_flag(1,cond_i) = any(sig_len{cond_i} >= signal_detect_wins);
 end
 

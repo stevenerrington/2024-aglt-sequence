@@ -34,7 +34,7 @@ parfor neuron_i = 1:size(spike_log,1)
 end
 
 
-cell_class = 'modulated';
+cell_class = 'all';
 power_idx = find(f(:,1) > 1.5 & f(:,1) < 2);
 
 power_ratio_aud = [];

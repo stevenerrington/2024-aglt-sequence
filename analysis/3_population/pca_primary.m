@@ -1,5 +1,7 @@
+clear pca_* nonviol_sdf
+
 % Loop through each neuron
-for neuron_i = 1:size(spike_log,1)
+parfor neuron_i = 1:size(spike_log,1)
     % Display progress for the current neuron
     fprintf('Neuron %i of %i \n', neuron_i, size(spike_log,1)); 
     
@@ -10,18 +12,18 @@ for neuron_i = 1:size(spike_log,1)
     event_table_in = load(fullfile(dirs.mat_data, [spike_log.session{neuron_i} '.mat']), 'event_table');
 
     % Extract spike density function (SDF) for 'nonviolent' condition
-    nonviol_sdf = []; 
+    nonviol_sdf = [];
     nonviol_sdf = sdf_in.sdf.sequenceOnset(strcmp(event_table_in.event_table.cond_label, 'nonviol') & ~isnan(event_table_in.event_table.rewardOnset_ms), :);
-    
+
     % Calculate baseline firing rate mean and standard deviation over a pre-stimulus period (-200 ms to 0 ms)
     baseline_fr_mean = nanmean(nanmean(nonviol_sdf(:, [1000+[-200:0]])));
     baseline_fr_std = nanstd(nanmean(nonviol_sdf(:, [1000+[-200:0]])));
 
     % Compute and smooth normalized SDF for the current neuron across time points
-    pca_sdf_out(neuron_i,:) = smooth((nanmean(nonviol_sdf) - baseline_fr_mean) ./ baseline_fr_std, 50);
-    pca_sdf_out_shuffled(neuron_i,:) = smooth((nanmean(nonviol_sdf(:,randperm(size(nonviol_sdf, 2)))) - baseline_fr_mean) ./ baseline_fr_std, 50);
+    pca_sdf_out(neuron_i,:) = smooth((nanmean(nonviol_sdf) - baseline_fr_mean) ./ baseline_fr_std, 100);
 
-    pca_sdf_out(neuron_i,:) = smooth((nanmean(nonviol_sdf) - baseline_fr_mean) ./ baseline_fr_std, 50);
+    % Compute and smooth normalized SDF for the current neuron across time points
+    pca_sdf_out_shuffled(neuron_i,:) = smooth((nanmean(nonviol_sdf(:,randperm(size(nonviol_sdf, 2)))) - baseline_fr_mean) ./ baseline_fr_std, 50);
 
     % Calculate and smooth the SDF for each sequence condition, normalized by baseline firing rate
     pca_sdf_out_seq1(neuron_i,:) = smooth((nanmean(sdf_in.sdf.sequenceOnset((event_table_in.event_table.cond_value == 1 | event_table_in.event_table.cond_value == 5) & ~isnan(event_table_in.event_table.rewardOnset_ms) == 1, :)) - baseline_fr_mean) ./ baseline_fr_std, 50);
@@ -30,11 +32,45 @@ for neuron_i = 1:size(spike_log,1)
     pca_sdf_out_seq4(neuron_i,:) = smooth((nanmean(sdf_in.sdf.sequenceOnset((event_table_in.event_table.cond_value == 4 | event_table_in.event_table.cond_value == 8) & ~isnan(event_table_in.event_table.rewardOnset_ms) == 1, :)) - baseline_fr_mean) ./ baseline_fr_std, 50);
 end
 
+pca_sdf_out(find(pca_sdf_out(:,4250) == max(pca_sdf_out(:,4250)),1),:) = nan(1,6001);
+pca_sdf_out_seq1(find(pca_sdf_out_seq1(:,4250) == max(pca_sdf_out_seq1(:,4250)),1),:) = nan(1,6001);
+pca_sdf_out_seq2(find(pca_sdf_out_seq2(:,4250) == max(pca_sdf_out_seq2(:,4250)),1),:) = nan(1,6001);
+pca_sdf_out_seq3(find(pca_sdf_out_seq3(:,4250) == max(pca_sdf_out_seq3(:,4250)),1),:) = nan(1,6001);
+pca_sdf_out_seq4(find(pca_sdf_out_seq4(:,4250) == max(pca_sdf_out_seq4(:,4250)),1),:) = nan(1,6001);
 
 
-%% All sequences
-pc_out_auditory = perform_pca_and_plot(neuron_class.auditory.all, pca_sdf_out);
-pc_out_frontal = perform_pca_and_plot(neuron_class.frontal.all, pca_sdf_out);
+%%
+sound_times = [0, 563, 1126, 1689, 2252];
+sound_times_idx = sound_times + 100;
+
+figuren('Renderer', 'painters', 'Position', [200 200 1000 400]); hold on;
+% 3D PCA Plot
+subplot(1, 2, 1); hold on
+color_line3(pc_out_auditory.obs.pcs(:,1), pc_out_auditory.obs.pcs(:,2), pc_out_auditory.obs.pcs(:,3), -100:2750, 'LineWidth', 2);
+view(326.4106,22.1996);
+xlabel('PC1'); ylabel('PC2'); zlabel('PC3'); grid on
+scatter3(pc_out_auditory.obs.pcs(sound_times_idx,1), pc_out_auditory.obs.pcs(sound_times_idx,2), pc_out_auditory.obs.pcs(sound_times_idx,3), 100, [0 0 0], '^', 'filled');
+grid on;
+
+subplot(1, 2, 2); hold on
+color_line3(pc_out_frontal.obs.pcs(:,1), pc_out_frontal.obs.pcs(:,2), pc_out_frontal.obs.pcs(:,3), -100:2750, 'LineWidth', 2);
+view(326.4106,22.1996);
+xlabel('PC1'); ylabel('PC2'); zlabel('PC3'); grid on
+scatter3(pc_out_frontal.obs.pcs(sound_times_idx,1), pc_out_frontal.obs.pcs(sound_times_idx,2), pc_out_frontal.obs.pcs(sound_times_idx,3), 100, [0 0 0], '^', 'filled');
+grid on;
+
+%% Each Sequence Analysis
+pc_out_auditory = perform_pca_and_plot(auditory_neuron_idx, pca_sdf_out);
+pc_out_frontal = perform_pca_and_plot(frontal_neuron_idx, pca_sdf_out);
+
+figuren('Renderer', 'painters', 'Position', [200 200 400 400]); hold on
+plot(cumsum(pc_out_auditory.obs.var_exp),'Color', color_pal.auditory_clu(4,:),'LineWidth',1.5)
+plot(cumsum(pc_out_frontal.obs.var_exp),'Color', color_pal.frontal_clu(4,:),'LineWidth',1.5)
+xlim([0 50]); xlabel('Principal Component'); ylabel('')
+hline(80,'k')
+
+cumsum(pc_out_auditory.obs.var_exp(1:6))
+cumsum(pc_out_frontal.obs.var_exp(1:6))
 
 
 %% Distance/similarity analysis
@@ -62,12 +98,15 @@ for area = {'auditory', 'frontal'}
                  pca_sdf_out_seq3(neuron_class.(area{1}).all, timewin_idx),  % SDF for sequence 3
                  pca_sdf_out_seq4(neuron_class.(area{1}).all, timewin_idx)}; % SDF for sequence 4
 
+
+
+    
     % Perform cross-condition PCA analysis to extract principal components
     [pc_out, pc_shuf_out] = get_xcond_pca(signal_in);  % Perform PCA on the input signals
 
     % Initialize counters and storage variables for distance calculations
     count = 0;  % Initialize count for combinations of sequences
-    clear d pca_element_out_temp;  % Clear previous distance and temporary PCA storage
+    clear d pca_element_out_temp_a;  % Clear previous distance and temporary PCA storage
 
     % Loop through all pairs of sequence patterns
     for seq_i = 1:4  % Loop over first sequence (seq_i)
@@ -109,14 +148,14 @@ for area = {'auditory', 'frontal'}
                         [d(element_i,element_j,count), ~, ~] = procrustes(pca_a', pca_b');
 
                         % Store the PCA data for both elements in a temporary structure
-                        pca_element_out_temp{element_i,element_j,count} = pca_a;
-                        pca_element_out_temp{element_i,element_j,count} = pca_b;
+                        pca_element_out_temp_a{element_i,element_j,count} = pca_a;
+                        pca_element_out_temp_b{element_i,element_j,count} = pca_b;
 
                     else
                         % If conditions aren't met (missing elements or same sequences), set distance to NaN
                         d(element_i,element_j,count) = NaN;
-                        pca_element_out_temp{element_i,element_j,count} = NaN;  % Set output to NaN for missing or invalid elements
-                        pca_element_out_temp{element_i,element_j,count} = NaN;  % Ensure both entries are NaN
+                        pca_element_out_temp_a{element_i,element_j,count} = NaN;  % Set output to NaN for missing or invalid elements
+                        pca_element_out_temp_b{element_i,element_j,count} = NaN;  % Ensure both entries are NaN
                     end
 
                 end
@@ -126,7 +165,8 @@ for area = {'auditory', 'frontal'}
 
     % Store the results for each area (auditory or frontal) in the pca_dist structure
     pca_dist.(area{1}) = d;
-    pca_dist_pc.(area{1}) = pca_element_out_temp;
+    pca_dist_pc.(area{1}).a = pca_element_out_temp_a;
+    pca_dist_pc.(area{1}).b = pca_element_out_temp_b;
 
 end
 
@@ -183,7 +223,6 @@ pca_similarity_label = [repmat({'1_Aud_interelement_tril'},length(aud_d_tril),1)
 clear pca_similarity
 pca_similarity(1,1)=gramm('x',pca_similarity_label,'y',pca_similiarity_data,'color',pca_similarity_label);
 pca_similarity(1,1).stat_summary('geom',{'bar','black_errorbar'},'width',3);
-pca_similarity(1,1).geom_jitter();
 fig = figure('Renderer', 'painters', 'Position', [100 100 500 400]);
 pca_similarity.draw();
 
@@ -222,7 +261,7 @@ plot(pc_out_auditory{1}(2,element_1_idx), pc_out_auditory{1}(3,element_1_idx),'l
 plot(pc_out_auditory{2}(2,element_1_idx), pc_out_auditory{2}(3,element_1_idx),'linewidth',1.5,'color',[22 128 57]./255)
 plot(pc_out_auditory{3}(2,element_1_idx), pc_out_auditory{3}(3,element_1_idx),'linewidth',1.5,'color',[4 77 41]./255)
 plot(pc_out_auditory{4}(2,element_1_idx), pc_out_auditory{4}(3,element_1_idx),'linewidth',1.5,'color',[0 38 28]./255)
-xlim([-40 40]); ylim([-40 40]);
+xlim([-10 10]); ylim([-10 10]);
 
 title('Auditory | between seq', 'FontSize', 10);
 
@@ -232,7 +271,7 @@ plot(pc_out_auditory{1}(2,element_2_idx), pc_out_auditory{1}(3,element_2_idx),'l
 plot(pc_out_auditory{1}(2,element_3_idx), pc_out_auditory{1}(3,element_3_idx),'linewidth',1.5,'color',[185 63 56]./255)
 plot(pc_out_auditory{1}(2,element_4_idx), pc_out_auditory{1}(3,element_4_idx),'linewidth',1.5,'color',[207 101 38]./255)
 plot(pc_out_auditory{1}(2,element_5_idx), pc_out_auditory{1}(3,element_5_idx),'linewidth',1.5,'color',[215 144 0]./255)
-xlim([-40 40]); ylim([-40 40]); 
+xlim([-10 10]); ylim([-10 10]);
 title('Auditory | between element', 'FontSize', 10);
 
 
@@ -241,7 +280,7 @@ plot(pc_out_frontal{1}(2,element_1_idx), pc_out_frontal{1}(3,element_1_idx),'lin
 plot(pc_out_frontal{2}(2,element_1_idx), pc_out_frontal{2}(3,element_1_idx),'linewidth',1.5,'color',[22 128 57]./255)
 plot(pc_out_frontal{3}(2,element_1_idx), pc_out_frontal{3}(3,element_1_idx),'linewidth',1.5,'color',[4 77 41]./255)
 plot(pc_out_frontal{4}(2,element_1_idx), pc_out_frontal{4}(3,element_1_idx),'linewidth',1.5,'color',[0 38 28]./255)
-xlim([-20 20]); ylim([-20 20])
+xlim([-10 10]); ylim([-10 10]);
 title('Frontal | between seq', 'FontSize', 10);
 
 d = subplot(2,2,4); hold on
@@ -250,13 +289,6 @@ plot(pc_out_frontal{1}(2,element_2_idx), pc_out_frontal{1}(3,element_2_idx),'lin
 plot(pc_out_frontal{1}(2,element_3_idx), pc_out_frontal{1}(3,element_3_idx),'linewidth',1.5,'color',[185 63 56]./255)
 plot(pc_out_frontal{1}(2,element_4_idx), pc_out_frontal{1}(3,element_4_idx),'linewidth',1.5,'color',[207 101 38]./255)
 plot(pc_out_frontal{1}(2,element_5_idx), pc_out_frontal{1}(3,element_5_idx),'linewidth',1.5,'color',[215 144 0]./255)
-xlim([-20 20]); ylim([-20 20])
+xlim([-10 10]); ylim([-10 10]);
 title('Frontal | between element', 'FontSize', 10);
 
-
-%% 
-figuren('Renderer', 'painters', 'Position', [100 207 634 593]);
-plot(timewin, pc_out_frontal{1}(1,:),'linewidth',1.5,'color',[69 191 85]./255)
-plot(timewin, pc_out_frontal{2}(1,:),'linewidth',1.5,'color',[22 128 57]./255)
-plot(timewin, pc_out_frontal{3}(1,:),'linewidth',1.5,'color',[4 77 41]./255)
-plot(timewin, pc_out_frontal{4}(1,:),'linewidth',1.5,'color',[0 38 28]./255)

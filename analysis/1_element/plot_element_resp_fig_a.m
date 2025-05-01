@@ -3,7 +3,7 @@ function plot_element_resp_fig_a(neuron_example, sdf_soundAlign_data, ops, pop_n
     sound_list = {'A', 'C', 'D', 'F', 'G'};
 
     % Set axis limits for the plots
-    xlim_vals = [-100 500];
+    xlim_vals = [-100 600];
     ylim_vals = [0 60];
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,9 +23,10 @@ function plot_element_resp_fig_a(neuron_example, sdf_soundAlign_data, ops, pop_n
     example_order_cond = sdf_soundAlign_data{neuron_example}(example_valid_idx, 4);
 
     % Plot 2: Example neuron SDF plot
-    single_unit_fig(1, 1) = gramm('x', ops.sound_sdf_window, 'y', example_sdf_in, 'color', example_sound_cond);
+    single_unit_fig(1, 1) = gramm('x', ops.sound_sdf_window, 'y', example_sdf_in, 'color', example_order_cond);
     single_unit_fig(1, 1).stat_summary();
     single_unit_fig(1, 1).axe_property('XLim', xlim_vals, 'YLim', ops.plot.example_yaxis);
+    single_unit_fig(1, 1).geom_vline('xintercept',[0 413 563]);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -43,10 +44,12 @@ function plot_element_resp_fig_a(neuron_example, sdf_soundAlign_data, ops, pop_n
         repmat({'F'}, length(pop_neurons_in), 1);
         repmat({'G'}, length(pop_neurons_in), 1)];
 
+
     % Plot 3: Population SDF plot
     single_unit_fig(1, 2) = gramm('x', ops.sound_sdf_window, 'y', pop_sdf_in, 'color', pop_sound_cond);
     single_unit_fig(1, 2).stat_summary();
     single_unit_fig(1, 2).axe_property('XLim', xlim_vals, 'YLim',  ops.plot.pop_yaxis);
+    single_unit_fig(1, 2).geom_vline('xintercept',[0 413 563]);
 
     % Create the figure and draw the plots
     figure('Renderer', 'painters', 'Position', [100 100 900 300]);

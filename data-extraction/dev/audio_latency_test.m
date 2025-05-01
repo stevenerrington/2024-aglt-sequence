@@ -22,9 +22,8 @@ dirs.raw_data = 'T:\EPHYS\RAWDATA\NHP\TDT\WALT\ephys\Tank\';
 clear tdt_data 
 tdtFun = @TDTbin2mat;
 
-for session_i = 32:87
-    session_i
-    tdt_data = tdtFun(fullfile(dirs.raw_data,ephysLog.data_folder{session_i}),'STORE', {'Audo','St1_'});
+for session_i = 1:14
+    tdt_data = tdtFun(fullfile(dirs.raw_data,ephysLog_hpc.data_folder{session_i}),'STORE', {'Audo','St1_'});
 
     audio_data = tdt_data.streams.Audo.data;
     original_fs = tdt_data.streams.Audo.fs;
@@ -39,7 +38,7 @@ for session_i = 32:87
 
     % Behavioral data -------------------------------------------------------
     % Read in events
-    ops.dirs.raw_data = dirs.raw_data; ops.filename = ephysLog.data_folder{session_i};
+    ops.dirs.raw_data = dirs.raw_data; ops.filename = ephysLog_hpc.data_folder{session_i};
     event_table = get_agl_t_trials_tdt(tdt_data.epocs.St1_,ops);
 
     ops.timewin = [-1000:5000];
@@ -49,7 +48,6 @@ for session_i = 32:87
 
 
     for trial_i = 1:size(event_table,1)
-        plot(ops.timewin,audio_aligned.lfp_1(trial_i,:))
         try
             onset_latency(trial_i,1) = find(abs(audio_aligned.lfp_1(trial_i,:)) > 0.02,1,'first') - 1000;
         catch

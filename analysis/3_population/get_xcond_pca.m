@@ -7,7 +7,17 @@ rng(1,"twister");
 signal_in_conc = [];
 signal_in_shuffled_conc = [];
 
+valid_rows = []; valid_idx = [];
 for cond_i = 1:n_conditions
+    [valid_rows, ~] = find(~isnan(signal_in{cond_i}));
+    valid_idx{cond_i} = valid_rows;
+end
+
+valid_idx_pca = intersect(valid_idx{1}, valid_idx{2});
+
+for cond_i = 1:n_conditions
+    signal_in{cond_i} = signal_in{cond_i}(valid_idx_pca,:);
+
     signal_in_conc = [signal_in_conc, signal_in{cond_i}];
 
     shuffle_temp = [];
