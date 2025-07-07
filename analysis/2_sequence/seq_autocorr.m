@@ -47,6 +47,7 @@ acorr_time = 1000+[0:2665];
 
 %% Figures
 figure_xlim = [-250 2665];
+figure_linewidth = 1;
 figuren('Renderer', 'painters', 'Position', [100 100 700 400]); hold on
 
 plot_ylim_clu_i = {[-0.4 0.4], [-0.25 0.25];...

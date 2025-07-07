@@ -12,6 +12,15 @@ extracted for data recorded on both NeuraLynx and TDT.
 ///////////////////////////////////////////////////////////////////////////
 %} 
 
+% Clear environment
+clear all; clc; warning off
+
+% Setup data directories for use throughout scripts
+dirs = set_directories();
+
+% Import and curate experimental log
+ephysLog = import_exp_map();
+
 %% Run initial extraction
 % 
 

@@ -7,10 +7,10 @@ session_n = ops.session_n;
 
 % Import events from .nev file
 if strcmp(session_n,'')
-    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1.ncs'],16));
+    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1.ncs'],1));
     [event] = ft_read_event_BA(fullfile(dirs.raw_data,raw_filename,['Events.nev']));
 else
-    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1' session_n '.ncs'],16));
+    hdr = ft_read_header(get_ncs_filelabel(fullfile(dirs.raw_data,[raw_filename '\']), ['CSC1' session_n '.ncs'],1));
     [event] = ft_read_event_BA(fullfile(dirs.raw_data,raw_filename,['Events' session_n '.nev']));
 end
 

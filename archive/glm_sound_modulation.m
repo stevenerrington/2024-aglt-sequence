@@ -21,7 +21,7 @@ for trial_i = 1:size(sound_info_in_sdf,1)
 end
 
 window_size = 100;
-window_shift = 10;
+window_shift = 25;
 [window_sdf, window_time] = movaverage_sdf(z_sdf, window_size, window_shift);
 % 2023-08-26, 23h25: I tested this and it does the job correctly. The
 % z-scored profile looks exactly like the raw profile, and the movaverage
@@ -36,6 +36,9 @@ win_fr = nanmean(window_sdf(:,analysis_win_idx),2);
 reg_tbl.win_fr = win_fr; % Add the firing rate over this whole window to the GLM table
 
 %% Run GLM: trial type
+
+p_cutoff = 0.01;
+
 glm_output.trial_type.sig_times = [];
 glm_output.trial_type.beta_weights = [];
 u_t_mdl = [];
@@ -59,15 +62,15 @@ for timepoint_i = 1:n_times
     reg_tbl_trialtype.sound = reordercats(reg_tbl_trialtype.sound, {'Baseline', 'A', 'C', 'D', 'F','G'});
 
     % Then include all these in your model
-    u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ sound + order_pos + sound*order_pos');
+    u_t_mdl = fitlm(reg_tbl_trialtype, 'firing_rate ~ sound + order_pos + exp_i');
     anova_out = []; anova_out = anova(u_t_mdl);
 
-    anova_pvalue(1, timepoint_i) = anova_out.pValue(1) < 0.001;
-    anova_pvalue(2, timepoint_i) = anova_out.pValue(2) < 0.001;
+    anova_pvalue(1, timepoint_i) = anova_out.pValue(1) < p_cutoff;
+    anova_pvalue(2, timepoint_i) = anova_out.pValue(2) < p_cutoff;
 
     for i = 1:10
         glm_beta(i, timepoint_i) = u_t_mdl.Coefficients.Estimate(i+1);
-        glm_sig(i, timepoint_i) = u_t_mdl.Coefficients.pValue(i+1) < 0.001;
+        glm_sig(i, timepoint_i) = u_t_mdl.Coefficients.pValue(i+1) < p_cutoff;
     end
 
 end
@@ -75,7 +78,7 @@ end
 
 %% Determine periods of significance
 
-signal_detect_length = 50;
+signal_detect_length = 100;
 signal_detect_wins = signal_detect_length/window_shift;
 
 % now ask whether this unit was significant with significance defined as at least

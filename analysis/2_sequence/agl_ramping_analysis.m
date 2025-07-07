@@ -25,7 +25,7 @@ parfor neuron_i = 1:size(spike_log,1)
 end
 
 
-clusterid = 'clu4';
+clusterid = 'clu2';
 
 figuren('Renderer', 'painters', 'Position', [100 100 1800 300]); hold on;
 a1 = subplot(1,4,[1 2 3]); hold on

@@ -13,14 +13,14 @@ inputSDF_split = {normFR_in.norm_fr_soundA(sig_neurons,:),...
 
 % Define time windows for SDF analysis
 sdfTimes = {[-200:800], [-200:800], [-200:800], [-200:800], [-200:800]};
-sdfEpoch = {[0:450], [0:450], [0:450], [0:450], [0:450]};
+sdfEpoch = {[-50:563], [0:563], [0:563], [0:563], [0:563]};
 
 % Define color mapping for clustering
 colorMapping = [1, 1, 1, 1, 1];
 
 % Perform consensus clustering on input SDF data
 [sortIDs,idxDist, raw, respSumStruct, rawLink, myK] =...
-    consensusCluster(inputSDF,sdfTimes,'-e',sdfEpoch,'-ei',colorMapping,'-er',sdfEpoch,'-c',0.5);
+    consensusCluster(inputSDF,sdfTimes,'-e',sdfEpoch,'-ei',colorMapping,'-er',sdfEpoch,'-c',0);
 close all
 
 % Determine the number of clusters and initialize cluster storage
@@ -52,61 +52,34 @@ colormap(flipud(cbrewer2('PuBu')));
 xlabel('Unit Number'); set(gca,'YAxisLocation','Left');
 set(gca,'CLim',[-1 1])
 
-plot_lineclust_color = jet(nClusters_manual);
+plot_lineclust_color = cool(nClusters_manual);
 
 % FOR CLUSTER EVALUATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figuren('Renderer', 'painters', 'Position', [100 100 850 400]);
 % Generate SDF plots for each cluster
 for cluster_i = 1:nClusters_manual
-    a = subplot(3,3,cluster_i); hold on
+    a = subplot(3,4,cluster_i); hold on
     plot(sdfTimes{1},nanmean(inputSDF{1}(clusterNeurons{cluster_i},:),1),'Color',plot_lineclust_color(cluster_i,:));
-    vline([0], 'k-'); 
+    vline([0 563], 'k-'); 
     vline([413], 'k--'); 
-    xlim([-200 600])
+    xlim([-200 750])
     title(['Cluster ' int2str(cluster_i) ' - n: ' int2str(length(clusterNeurons{cluster_i}))])
 end
 
 % Assign clusters to neuron_class structure
 neuron_class.cluster1 = clusterNeurons{1};
-neuron_class.cluster2 = sort([clusterNeurons{2}; clusterNeurons{7}]);
-neuron_class.cluster3 = sort([clusterNeurons{3}; clusterNeurons{4}]);
-neuron_class.cluster4 = sort([clusterNeurons{5}; clusterNeurons{6}]);
-neuron_class.cluster5 = sort([clusterNeurons{8}; clusterNeurons{9}]);
-
-% Combine all clusters into one list
-neuron_class.clusterAll = sort([neuron_class.cluster1; neuron_class.cluster2;...
-    neuron_class.cluster3; neuron_class.cluster4; neuron_class.cluster5]);
-
-% Display the total number of clustered neurons
-length(neuron_class.clusterAll)
-
-neuron_class.cluster6 = find(~ismember(1:length(sig_neurons),neuron_class.clusterAll));
-% 
-% % Curate unsorted neurons into clusters
-% for neuron_i = 1:size(neuron_class.cluster6,2)
-%     figuren;
-%     plot(sdfTimes{1},inputSDF{1}(neuron_class.cluster6(neuron_i),:));
-%     axis normal; axis square; box off
-%     xlim([-180 600]); vline([0 563],'k'); vline([-150 413],'k--')
-%     title(['Neu' int2str(neuron_i)])
-% end
-
-neuron_class.cluster1 = sort([neuron_class.cluster1', neuron_class.cluster6([1 2 3 5 8 9 10 11 13 15 19 20 21 22 25 28 30 31 32 33 39])]);
-neuron_class.cluster2 = sort([neuron_class.cluster2', neuron_class.cluster6([4 6 14 34 35 36 37 38])]);
-neuron_class.cluster3 = sort([neuron_class.cluster3', neuron_class.cluster6([12 16 17 26 40])]);
-neuron_class.cluster4 = sort([neuron_class.cluster4', neuron_class.cluster6([7 18 23 29]), neuron_class.cluster5', neuron_class.cluster6([24 27])]);
-
-neuron_class.cluster5 = []; rmfield(neuron_class,'cluster5')
-neuron_class.cluster6 = []; rmfield(neuron_class,'cluster6')
-
-neuron_class.clusterAll = sort([neuron_class.cluster1, neuron_class.cluster2,...
-    neuron_class.cluster3, neuron_class.cluster4]);
+neuron_class.cluster2 = clusterNeurons{2};
+neuron_class.cluster3 = clusterNeurons{3};
+neuron_class.cluster4 = clusterNeurons{4};
+neuron_class.cluster5 = clusterNeurons{5};
+neuron_class.cluster6 = clusterNeurons{6};
+neuron_class.cluster7 = clusterNeurons{7};
 
 % Generate summary SDF plots for each cluster
-cluster_yaxis = {[-2 8], [-2 6], [-6 6], [-4 2]};
+cluster_yaxis = {[-5 10], [-4 2], [-2 7], [-6 2], [-1 7], [-4 8], [-3 5]};
 clear cluster_pop_average_sdf p_n_area n_area
 
-for cluster_i = 1:4
+for cluster_i = 1:7
     % Plot 1: Example neuron SDF plot
     cluster_pop_average_sdf(1, cluster_i) = gramm('x', ops.sound_sdf_window, 'y', inputSDF{1}(neuron_class.(['cluster' int2str(cluster_i)]),:));
     cluster_pop_average_sdf(1, cluster_i).stat_summary();
@@ -131,7 +104,7 @@ p_n_area(:,2) = n_area(:,2)./sum(n_area(:,2));
 figuren('Renderer', 'painters', 'Position', [200 200 200 350]); hold on;
 bar(p_n_area','stacked')
 xticks([1 2]); xticklabels({'Auditory','Frontal'})
-legend({'Transient','Ramping','Suppressed: Rebound','Suppressed: Onset'},'Location','southoutside')
+legend({'1','2','3','4','5','6','7'},'Location','southoutside')
 
 %% 
 
