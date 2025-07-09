@@ -214,7 +214,7 @@ time_win = [0:413];
 nBoots = 1000;
 
 for boot_i = 1:nBoots
-    fprintf('Iteration: %i of %i \n', boot_i, nBoots);
+    fprintf('Iteration: %i of %i \n', boot_i, nboot);
     clear signal_in_identity_auditory signal_in_identity_frontal signal_in_identity_auditory signal_in_identity_auditory
 
     % Extract SDF signal for identity decoding in auditory and frontal areas
@@ -251,14 +251,11 @@ for boot_i = 1:nBoots
                 pca_a = [data_in{cond_i}(1,:)',data_in{cond_i}(2,:)',data_in{cond_i}(3,:)'];
                 pca_b = [data_in{cond_j}(1,:)',data_in{cond_j}(2,:)',data_in{cond_j}(3,:)'];
 
-                [element_id_procrustes(cond_i,cond_j, boot_i,data_i), ~, ~] = procrustes(pca_a, pca_b);
+                [element_id_procrustes{data_in}(cond_i,cond_j, boot_i), ~, ~] = procrustes(pca_a, pca_b);
             end
         end
     end
 end
 
-figure
-for data_i = 1:4
-    subplot(1,4,data_i)
-    heatmap(nanmean(element_id_procrustes(:,:,:,data_i),3))
-end
+    figure
+    heatmap(nanmean(element_id_procrustes,3))
