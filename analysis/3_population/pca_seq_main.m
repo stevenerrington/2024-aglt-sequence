@@ -155,7 +155,7 @@ plot_bootstrap_distance.set_title('Inter-element onset distance');
 plot_bootstrap_distance.draw;
 
 % ANOVA
-
+[p, tbl, stats] = anova1(plot_distance_data_mu, plot_distance_label);
 
 %% Start-to-end distance
 
@@ -174,8 +174,6 @@ plot_bootstrap_distance(1,1).set_names('Y', 'Distance mean (a.u.)'); % Set the y
 plot_bootstrap_distance(1,1).no_legend;
 plot_bootstrap_distance.set_title('Start-end distance');
 plot_bootstrap_distance.draw;
-
-%% Inter-element procrustes
 
 
 

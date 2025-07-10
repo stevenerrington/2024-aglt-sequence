@@ -21,7 +21,7 @@ for trial_i = 1:size(sound_info_in_sdf,1)
 end
 
 window_size = 100;
-window_shift = 25;
+window_shift = 10;
 [window_sdf, window_time] = movaverage_sdf(z_sdf, window_size, window_shift);
 % 2023-08-26, 23h25: I tested this and it does the job correctly. The
 % z-scored profile looks exactly like the raw profile, and the movaverage
@@ -78,7 +78,7 @@ end
 
 %% Determine periods of significance
 
-signal_detect_length = 100;
+signal_detect_length = 50;
 signal_detect_wins = signal_detect_length/window_shift;
 
 % now ask whether this unit was significant with significance defined as at least
