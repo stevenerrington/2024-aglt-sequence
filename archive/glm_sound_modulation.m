@@ -1,4 +1,4 @@
-function [encoding_flag, glm_beta, glm_sig] = glm_sound_modulation(sound_info_in)
+function [encoding_flag, glm_beta, glm_sig, anova_pvalue, window_sdf, window_time] = glm_sound_modulation(sound_info_in)
 
 %% Extract: get relevant data for GLM table
 reg_tbl = table;
@@ -35,9 +35,10 @@ win_fr = nanmean(window_sdf(:,analysis_win_idx),2);
 
 reg_tbl.win_fr = win_fr; % Add the firing rate over this whole window to the GLM table
 
+
 %% Run GLM: trial type
 
-p_cutoff = 0.01;
+p_cutoff = 0.05;
 
 glm_output.trial_type.sig_times = [];
 glm_output.trial_type.beta_weights = [];
@@ -78,7 +79,7 @@ end
 
 %% Determine periods of significance
 
-signal_detect_length = 50;
+signal_detect_length = 100;
 signal_detect_wins = signal_detect_length/window_shift;
 
 % now ask whether this unit was significant with significance defined as at least

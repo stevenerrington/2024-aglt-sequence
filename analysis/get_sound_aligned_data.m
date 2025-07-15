@@ -1,5 +1,7 @@
 % Load data
 neuron_count = 0; lfp_count = 0; % Initialize counters for neurons and LFPs
+zero_offset = 1000;
+ops.sound_sdf_window = [-200:800];
 
 % Loop through each session in the ephysLog
 for session_i = 1:size(ephysLog,1)

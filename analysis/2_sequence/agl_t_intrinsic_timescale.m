@@ -23,7 +23,7 @@ parfor neuron_i = 1:size(spike_log,1)
 end
 
 clear spike_train
-spike_train = nanmean(seq_sdf_out(neuron_class.auditory.all,:));
+spike_train = nanmean(seq_sdf_out(neuron_class.frontal.all,:));
 
 bin_size = 50;  % Number of bins to average over
 num_bins = floor(length(spike_train) / bin_size);  % Total groups
