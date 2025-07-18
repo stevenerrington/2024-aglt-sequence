@@ -107,8 +107,8 @@ for boot_i = 1:nboot
     fprintf('Iteration: %i of %i \n', boot_i, nboot);
 
     clear pc_out_auditory pc_out_frontal
-    pc_out_auditory = perform_pca_and_plot(randsample(auditory_neuron_idx,100), pca_sdf_out);
-    pc_out_frontal = perform_pca_and_plot(randsample(frontal_neuron_idx,100), pca_sdf_out);
+    pc_out_auditory = perform_pca_and_plot(randsample(auditory_neuron_idx,100, true), pca_sdf_out);
+    pc_out_frontal = perform_pca_and_plot(randsample(frontal_neuron_idx,100, true), pca_sdf_out);
 
     clear pca_traj1 pca_traj2 pca1_z pca2_z
     pca_traj1 = [pc_out_auditory.obs.pcs(:,1), pc_out_auditory.obs.pcs(:,2), pc_out_auditory.obs.pcs(:,3)];
