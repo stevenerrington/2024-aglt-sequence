@@ -178,6 +178,7 @@ for data_i = 1:4
     grid off; box off
     colorbar('SouthOutside')  % Places the colorbar below the matrix
     clim([0 1]); colormap(colorscale_heatmap)
+    axis square
 end
 
 % Aggregate bootstrap results for bar plot
@@ -199,9 +200,9 @@ end
 
 % Plot bootstrap classification accuracy
 figure('Renderer', 'painters', 'Position', [100 100 500 500]);
-plot_bootstrap_acc(1,1) = gramm('x', plot_bootstrap_cond, 'y', plot_bootstrap_data, 'color', plot_bootstrap_area);
+plot_bootstrap_acc(1,1) = gramm('x', plot_bootstrap_area, 'y', plot_bootstrap_data, 'color', plot_bootstrap_cond);
 plot_bootstrap_acc(1,1).stat_summary('geom', {'bar', 'black_errorbar'}, 'dodge', 1, 'width', 0.5);
 plot_bootstrap_acc(1,1).geom_hline('yintercept',0.25,'style','-.');
-plot_bootstrap_acc(1,1).geom_hline('yintercept',0.3,'style','--');
+plot_bootstrap_acc(1,1).geom_hline('yintercept',0.33,'style','--');
 plot_bootstrap_acc(1,1).axe_property('YLim', [0 1]);
 plot_bootstrap_acc.draw;

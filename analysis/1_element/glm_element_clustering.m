@@ -55,7 +55,10 @@ for ir = 1:size(raw,1)
     end
 end
 imagesc(raw(outPerm,outPerm)); % Display similarity matrix
-colormap(flipud(cbrewer2('PuBu')));
+CT=cbrewer('div', 'Spectral', 100);
+CT(CT > 1) = 1;
+
+colormap(CT);
 xlabel('Unit Number'); set(gca,'YAxisLocation','Left');
 set(gca,'CLim',[-1 1])
 

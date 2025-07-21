@@ -58,3 +58,15 @@ title('Position')
 linkaxes([id_sub pos_sub],'xy')
 subplot(1,2,1); vline([0 563],'k'); vline([413],'k--');
 subplot(1,2,2); vline([0 563],'k'); vline([413],'k--');
+
+
+%%
+neuron_class.auditory.all = intersect(glm_sig_units,auditory_neuron_idx);
+neuron_class.frontal.all = intersect(glm_sig_units,frontal_neuron_idx);
+
+figuren('Renderer', 'painters', 'Position', [680,458,169,420]);
+subplot(2,1,1)
+donut([length(neuron_class.auditory.all) length(auditory_neuron_idx)-length(neuron_class.auditory.all)])
+
+subplot(2,1,2)
+donut([length(neuron_class.frontal.all) length(auditory_neuron_idx)-length(neuron_class.frontal.all)])

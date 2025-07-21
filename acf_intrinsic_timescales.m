@@ -111,15 +111,15 @@ for area_i = 1:2
 
     % ---------------- Fit Exponential Decay ----------------
     % Model: A * exp(-lag/tau) + C
-    expDecayOld = @(b,x) b(1)*exp(-x/b(2)) + b(3);
+    expDecay = @(b,x) b(1)*exp(-x/b(2)) + b(3);
     expDecayOffset = @(b,x) b(1) * (exp(-x/b(2)) + b(3));
 
     b0 = [0.5, 100, 0];  % Initial guess: amplitude=0.5, tau=100 ms, offset=0
     fitRange = lags >= 50 & lags <= 500;  % Fit only in this range
 
     % Perform nonlinear least squares fitting
-    b_fit = lsqcurvefit(expDecayOffset, b0, lags(fitRange), acf_input, [], []);
-    decay_fitted = expDecayOffset(b_fit, lags(fitRange));
+    b_fit = lsqcurvefit(expDecay, b0, lags(fitRange), acf_input, [], []);
+    decay_fitted = expDecay(b_fit, lags(fitRange));
 
 
     % -----------------
@@ -180,82 +180,5 @@ for area_i = 1:2
 end
 
 
-%% Bootstrap timescales
-nboot = 1000;
-nsamples = 250;
-
-for area_i = 1:2
-    switch area_i
-        case 1
-            area = 'auditory';
-            neurons_in = []; neurons_in = intersect(auditory_neuron_idx,nonzero_neurons);
-        case 2
-            area = 'frontal';
-            neurons_in = []; neurons_in = intersect(frontal_neuron_idx,nonzero_neurons);
-    end
-
-    for boot_i = 1:nboot
-        % ---------------- Aggregate Across Neurons ----------------
-        fitRange = lags >= 50 & lags <= 500;  % Use lags between 50 and 500 ms for fitting
-        acf_input = [];
-        acf_input = nanmean(acf_out(randsample(neurons_in,nsamples, true),fitRange)); % Average ACF for neuron class
-
-        % ---------------- Fit Exponential Decay ----------------
-        % Model: A * exp(-lag/tau) + C
-        expDecayOld = @(b,x) b(1)*exp(-x/b(2)) + b(3);
-        expDecayOffset = @(b,x) b(1) * (exp(-x/b(2)) + b(3));
-
-        b0 = [0.5, 100, 0];  % Initial guess: amplitude=0.5, tau=100 ms, offset=0
-        fitRange = lags >= 50 & lags <= 500;  % Fit only in this range
-
-        % Perform nonlinear least squares fitting
-        b_fit = lsqcurvefit(expDecayOffset, b0, lags(fitRange), acf_input, [], []);
-        decay_fitted = expDecayOffset(b_fit, lags(fitRange));
-
-        bootstrap_tau(boot_i,area_i) = b_fit(2);
-
-        SStot = sum((acf_input-mean(acf_input)).^2);                            % Total Sum-Of-Squares
-        SSres = sum((acf_input(:)-decay_fitted(:)).^2);                         % Residual Sum-Of-Squares
-        r2_intrinsic_timescale_bootstrap(boot_i,area_i) = 1-SSres/SStot;                                    % R^2
 
 
-    end
-end
-
-clear plot_intrinsic_timescale_bootstrap
-plot_intrinsic_timescale_bootstrap_label = [repmat({'auditory'},nboot,1);repmat({'frontal'},nboot,1)];
-plot_intrinsic_timescale_bootstrap_data = [bootstrap_tau(:,1); bootstrap_tau(:,2)];
-
-
-% Plot intrinsic timescale
-figure('Renderer', 'painters', 'Position', [100 100 400 300]);
-plot_intrinsic_timescale_bootstrap(1,1) = gramm('x', plot_intrinsic_timescale_bootstrap_label,...
-    'y', plot_intrinsic_timescale_bootstrap_data,...
-    'color',plot_intrinsic_timescale_bootstrap_label);
-plot_intrinsic_timescale_bootstrap(1,1).geom_jitter('alpha',0.1,'width',0.5);
-plot_intrinsic_timescale_bootstrap(1,1).stat_summary('geom',{'point','line','errorbar'},'type','95percentile');
-plot_intrinsic_timescale_bootstrap.axe_property('YLim',[0 500]);
-plot_intrinsic_timescale_bootstrap.draw;
-
-% Plot intrinsic timescale
-clear plot_intrinsic_timescale_bootstrap
-figure('Renderer', 'painters', 'Position', [100 100 400 300]);
-plot_intrinsic_timescale_bootstrap(1,1) = gramm('x', plot_intrinsic_timescale_bootstrap_data,...
-    'color',plot_intrinsic_timescale_bootstrap_label);
-plot_intrinsic_timescale_bootstrap(1,1).stat_bin('edges',[0:10:500],'width',2);
-plot_intrinsic_timescale_bootstrap(1,1).axe_property('XLim',[0 500], 'YLim',[0 250]);
-plot_intrinsic_timescale_bootstrap.draw;
-
-
-
-%% Statistical testing
-% Compute difference distribution
-diff_boot = bootstrap_tau(:,2) - bootstrap_tau(:,1);
-
-% Compute 95% CI
-ci = prctile(diff_boot,[2.5 97.5]);
-
-% p-value (two-tailed)
-p_value = 2 * min(mean(diff_boot > 0), mean(diff_boot < 0));
-
-fprintf('95%% CI for difference: [%.2f, %.2f], p=%.4f\n', ci(1), ci(2), p_value);
