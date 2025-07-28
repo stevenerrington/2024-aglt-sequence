@@ -104,6 +104,7 @@ for data_i = 1:length(pc_list_in)
     lda_model = fitcdiscr(scores(train_idx,:), labels(train_idx));
     preds = predict(lda_model, scores(test_idx,:));
     cv_accuracy = sum(preds' == labels(test_idx)) / sum(test_idx);
+    cv_accuracy_out(data_i) = cv_accuracy;
 
     % Normalize confusion matrix
     cm = confusionmat(labels(test_idx), preds);
@@ -206,3 +207,20 @@ plot_bootstrap_acc(1,1).geom_hline('yintercept',0.25,'style','-.');
 plot_bootstrap_acc(1,1).geom_hline('yintercept',0.33,'style','--');
 plot_bootstrap_acc(1,1).axe_property('YLim', [0 1]);
 plot_bootstrap_acc.draw;
+
+
+for data_i = 1:4
+    accuracy_lda_ci(data_i,:) = prctile(classifier_bootstrapAccuracy{data_i}, [2.5 50.0 97.5]);              % 95% CI for difference
+    
+    
+    switch data_i
+        case 1; threshold = 0.333;
+        case 2; threshold = 0.333;
+        case 3; threshold = 0.25; 
+        case 4; threshold = 0.25; 
+    end
+
+    p_val(data_i,:) = 2 * min(mean(classifier_bootstrapAccuracy{data_i} >= threshold), mean(classifier_bootstrapAccuracy{data_i} <= threshold));  % Two-tailed p-value
+
+end
+

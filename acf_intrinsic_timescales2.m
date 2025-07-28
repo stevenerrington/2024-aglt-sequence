@@ -145,8 +145,7 @@ else
 end
 
 %% Select neurons and fit ACF decay
-
-neurons_in = frontal_neuron_idx; % Default to frontal neurons
+nboot = 1000;
 
 for area_i = 1:2
     switch area_i
@@ -187,10 +186,16 @@ histogram(tau_test(:,2),0:10:500,'LineStyle','none')
 xlabel([char([0xD835 0xDF0F]) ' (ms)']) % Math font tau
 ylabel('N_{ bootstrap iterations}')
 
+%%
+
+ci_frontal = prctile(tau_test(:,2), [2.5 50.0 97.5]) % 95% CI for difference
+ci_auditory = prctile(tau_test(:,1), [2.5 50.0 97.5]) % 95% CI for difference
+
+
 %% Diff data: Compare auditory vs frontal taus
 
 tau_diff = tau_test(:,2)-tau_test(:,1);          % Difference distribution
-ci = prctile(tau_diff, [2.5 97.5]);              % 95% CI for difference
+ci = prctile(tau_diff, [2.5 50.0 97.5]);              % 95% CI for difference
 p_val = 2 * min(mean(tau_diff >= 0), mean(tau_diff <= 0));  % Two-tailed p-value
 
 % Plot difference distribution with jittered points and 95% percentile summary
@@ -203,3 +208,4 @@ fig_tau_diff.geom_hline(); % Zero line
 fig_tau_diff.set_names('y','Difference (ms)');
 fig_tau_diff.axe_property('YLim',[-100 300]);
 fig_tau_diff.draw();
+

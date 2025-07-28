@@ -119,60 +119,57 @@ for boot_i = 1:nboot
     fprintf('Iteration: %i of %i \n', boot_i, nboot);
 
     clear pc_out_auditory pc_out_frontal
-    pc_out_auditory = perform_pca_and_plot(randsample(auditory_neuron_idx, 100, true), pca_sdf_out);
-    pc_out_frontal = perform_pca_and_plot(randsample(frontal_neuron_idx, 100, true), pca_sdf_out);
+    pc_out_auditory = perform_pca_and_plot(randsample(auditory_neuron_idx, 200, true), pca_sdf_out);
+    pc_out_frontal = perform_pca_and_plot(randsample(frontal_neuron_idx, 200, true), pca_sdf_out);
 
     clear pca_traj1 pca_traj2 pca1_z pca2_z
     pca_traj1 = [pc_out_auditory.obs.pcs(:,1), pc_out_auditory.obs.pcs(:,2), pc_out_auditory.obs.pcs(:,3)];
     pca_traj2 = [pc_out_frontal.obs.pcs(:,1), pc_out_frontal.obs.pcs(:,2), pc_out_frontal.obs.pcs(:,3)];
 
-    pca1_z = zscore(pca_traj1);
-    pca2_z = zscore(pca_traj2);
+    pca1_z = zscore(pca_traj1,1,'all');
+    pca2_z = zscore(pca_traj2,1,'all');
 
-    for element_i = 3:5
-        onset_distances_auditory(boot_i,element_i-2) = euclidean_distance_3d(pca1_z(sound_times_idx(2),:), pca1_z(sound_times_idx(element_i),:));
-        onset_distances_frontal(boot_i,element_i-2) = euclidean_distance_3d(pca2_z(sound_times_idx(2),:), pca2_z(sound_times_idx(element_i),:));
-    end
+    metrics_auditory = quantify_trajectory_dynamics(pca1_z, -100:2750);
+    metrics_frontal = quantify_trajectory_dynamics(pca2_z, -100:2750);
 
-    startend_distances_auditory(boot_i,1) = euclidean_distance_3d(pca1_z(sound_times_idx(1),:), pca1_z(sound_times_idx(5),:));
-    startend_distances_frontal(boot_i,1) = euclidean_distance_3d(pca2_z(sound_times_idx(1),:), pca2_z(sound_times_idx(5),:));
+
+    traj_pathlength(boot_i, 1) = metrics_auditory.path_length;
+    traj_curvature(boot_i, 1) = nanmean(metrics_auditory.curvature);
+    traj_net_displacement(boot_i, 1) = metrics_auditory.net_displacement;
+    traj_efficiency(boot_i, 1) = metrics_auditory.efficiency;
+    traj_R_g(boot_i, 1) = metrics_auditory.R_g;
+    traj_tortuosity(boot_i, 1) = metrics_auditory.tortuosity;
+
+    traj_pathlength(boot_i, 2) = metrics_frontal.path_length;
+    traj_curvature(boot_i, 2) = nanmean(metrics_frontal.curvature);
+    traj_net_displacement(boot_i, 2) = metrics_frontal.net_displacement;
+    traj_efficiency(boot_i, 2) = metrics_frontal.efficiency;
+    traj_R_g(boot_i, 2) = metrics_frontal.R_g;
+    traj_tortuosity(boot_i, 2) = metrics_frontal.tortuosity;
+    
 
 end
 
-plot_distance_data_mu = [nanmean(onset_distances_auditory,2); nanmean(onset_distances_frontal,2)];
-plot_distance_data_var = [nanvar(onset_distances_auditory,[],2); nanvar(onset_distances_frontal,[],2)];
-plot_distance_label = [repmat({'Auditory'}, length(onset_distances_auditory),1); repmat({'Frontal'}, length(onset_distances_frontal),1)];
+
+clear plot_distance_data_mu plot_distance_label
+plot_distance_data_mu = [traj_curvature(:,1); traj_curvature(:,2)];
+plot_distance_label = [repmat({'Auditory'}, 1000,1); repmat({'Frontal'}, 1000,1)];
 
 % Plot bootstrap classification accuracy
-figure('Renderer', 'painters', 'Position', [100 100 600 300]);
+figure('Renderer', 'painters', 'Position', [100 100 400 300]);
 clear plot_bootstrap_distance
 plot_bootstrap_distance(1,1) = gramm('x', plot_distance_label, 'y', plot_distance_data_mu, 'color', plot_distance_label);
 plot_bootstrap_distance(1,1).geom_swarm('alpha',0.5,'point_size',0.5);
 plot_bootstrap_distance(1,1).stat_summary('dodge',0.7,'geom',{'black_point','black_errorbar'},'type','quartile');
-plot_bootstrap_distance(1,1).axe_property('YLim', [0 4]);
 plot_bootstrap_distance(1,1).set_names('X', 'Area'); % Set the x-axis label name
 plot_bootstrap_distance(1,1).set_names('Y', 'Distance mean (a.u.)'); % Set the y-axis label name
 plot_bootstrap_distance(1,1).no_legend;
-
-
-plot_bootstrap_distance(1,2) = gramm('x', plot_distance_label, 'y', plot_distance_data_var, 'color', plot_distance_label);
-plot_bootstrap_distance(1,2).geom_swarm('alpha',0.5,'point_size',0.5);
-plot_bootstrap_distance(1,2).stat_summary('dodge',0.7,'geom',{'black_point','black_errorbar'},'type','quartile');
-plot_bootstrap_distance(1,2).axe_property('YLim', [0 4]);
-plot_bootstrap_distance(1,2).set_names('X', 'Area'); % Set the x-axis label name
-plot_bootstrap_distance(1,2).set_names('Y', 'Distance variance (a.u.)'); % Set the y-axis label name
-plot_bootstrap_distance(1,2).no_legend;
-
-plot_bootstrap_distance.set_title('Inter-element onset distance');
 plot_bootstrap_distance.draw;
 
-% ANOVA
-[p, tbl, stats] = anova1(plot_distance_data_mu, plot_distance_label);
 
-
-onset_diff = nanmean(onset_distances_frontal,2)-nanmean(onset_distances_auditory,2);          % Difference distribution
+onset_diff = traj_curvature(:,2)-traj_curvature(:,1);          % Difference distribution
 ci = prctile(onset_diff, [2.5 97.5]);              % 95% CI for difference
-p_val = 2 * min(mean(onset_diff >= 0), mean(onset_diff <= 0));  % Two-tailed p-value
+p_val = 2 * min(mean(onset_diff >= 0), mean(onset_diff <= 0))  % Two-tailed p-value
 
 %% Start-to-end distance
 
@@ -191,4 +188,15 @@ plot_bootstrap_distance(1,1).set_names('Y', 'Distance mean (a.u.)'); % Set the y
 plot_bootstrap_distance(1,1).no_legend;
 plot_bootstrap_distance.set_title('Start-end distance');
 plot_bootstrap_distance.draw;
+
+
+%% Linearity of frontal PC1
+pc_out_auditory = perform_pca_and_plot(auditory_neuron_idx, pca_sdf_out);
+pc_out_frontal = perform_pca_and_plot(frontal_neuron_idx, pca_sdf_out);
+
+
+mdl = fitlm(-100:2750,pc_out_auditory.obs.pcs(:,2));
+
+figuren;
+plot(mdl)
 

@@ -27,3 +27,22 @@ for area_i = 1:2
         bic_diff(clu_i, area_i) = bic2-bic1;
     end
 end
+
+% Assume bic_diff is already computed (6x2 matrix)
+areas = {'aud', 'frontal'};
+clusters = 1:6;
+
+for area_i = 1:2
+    fprintf('--- Area: %s ---\n', areas{area_i});
+    for clu_i = clusters
+        diff_val = bic_diff(clu_i, area_i);
+        if diff_val > 0
+            fprintf('Cluster %d: POSITION model is better (BIC diff = %.2f)\n', clu_i, diff_val);
+        elseif diff_val < 0
+            fprintf('Cluster %d: IDENTITY model is better (BIC diff = %.2f)\n', clu_i, diff_val);
+        else
+            fprintf('Cluster %d: Both models are equal (BIC diff = 0)\n', clu_i);
+        end
+    end
+    fprintf('\n');
+end

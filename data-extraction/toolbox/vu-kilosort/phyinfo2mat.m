@@ -8,7 +8,11 @@ sp = loadKSdir(ops.rootZ);
 ks_contamPct = tdfread([ops.rootZ '\cluster_ContamPct.tsv']);
 ks_clusterAmp = tdfread([ops.rootZ '\cluster_Amplitude.tsv']);
 ks_classification = tdfread([ops.rootZ '\cluster_KSLabel.tsv']);
+try
 phy_classification = tdfread([ops.rootZ '\cluster_group.tsv']);
+catch
+    phy_classification = 'error';
+end
 
 
 %% Setup variable space for spike and waveform data

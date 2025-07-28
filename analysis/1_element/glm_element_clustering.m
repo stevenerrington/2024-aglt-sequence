@@ -136,6 +136,7 @@ neuron_class.cluster_idx.clu5 = sig_neurons(neuron_class.cluster5);
 neuron_class.cluster_idx.clu6 = sig_neurons(neuron_class.cluster6);
 
 %% 
+clustered_neurons = [];
 
 for clu_i = 1:6
 
@@ -146,4 +147,17 @@ for clu_i = 1:6
 
     n_clu_area(clu_i,1) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.auditory.all));
     n_clu_area(clu_i,2) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.frontal.all));
+
+    clustered_neurons = [clustered_neurons; neuron_class.cluster_idx.(['clu' int2str(clu_i)])];
 end
+
+p_clu_area(:,1) = n_clu_area(:,1)./length(neuron_class.auditory.all);
+p_clu_area(:,2) = n_clu_area(:,2)./length(neuron_class.frontal.all);
+
+%% 
+
+clustered_neurons = sort(clustered_neurons);
+unclustered_neurons = sig_neurons(find(~ismember(sig_neurons, clustered_neurons)));
+
+length(intersect(unclustered_neurons,auditory_neuron_idx))
+length(intersect(unclustered_neurons,frontal_neuron_idx))

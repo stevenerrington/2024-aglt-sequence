@@ -1,0 +1,47 @@
+
+
+clear glm_sig_count_table
+for area_i = 1:2
+    for clu_i = 1:6
+
+        neurons_in = [];
+        switch area_i
+            case 1
+            neurons_in = neuron_class.cluster_idx.(['clu' int2str(clu_i) '_aud']);
+            case 2
+            neurons_in = neuron_class.cluster_idx.(['clu' int2str(clu_i) '_frontal']);
+        end
+
+        % Logical masks
+        clear just_identity just_position both neither
+        just_identity = glm_encoding_flag(neurons_in,1) == 1 & glm_encoding_flag(neurons_in,2) == 0;
+        just_position = glm_encoding_flag(neurons_in,1) == 0 & glm_encoding_flag(neurons_in,2) == 1;
+        both = glm_encoding_flag(neurons_in,1) == 1 & glm_encoding_flag(neurons_in,2) == 1;
+        neither = glm_encoding_flag(neurons_in,1) == 0 & glm_encoding_flag(neurons_in,2) == 0; % optional
+
+        % Count neurons in each category
+        n_just_identity(clu_i, area_i) = sum(just_identity);
+        n_just_position(clu_i, area_i) = sum(just_position);
+        n_both(clu_i, area_i) = sum(both);
+        n_neither(clu_i, area_i) = sum(neither); % optional
+
+
+    end
+end
+
+glm_sig_count_table = [n_just_identity, n_just_position, n_both];
+glm_sig_count_table = glm_sig_count_table([1 3 5 2 4 6],:);
+
+
+glm_sig_count_table  = array2table(glm_sig_count_table, 'VariableNames',{'n_aud_identity','n_aud_order',...
+    'n_aud_both','n_frontal_identity','n_frontal_order','n_frontal_both'});
+
+glm_counts = sum(glm_sig_count_table);
+
+figuren;
+subplot(1,2,1)
+donut([glm_counts.n_aud_identity, glm_counts.n_aud_order, glm_counts.n_aud_both]);
+axis square; xlim
+subplot(1,2,2)
+donut([glm_counts.n_frontal_identity, glm_counts.n_frontal_order, glm_counts.n_frontal_both]);
+axis square
