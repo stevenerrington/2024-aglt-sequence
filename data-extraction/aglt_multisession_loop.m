@@ -85,8 +85,8 @@ for session_i = 1:size(ephysLog,1)
 
     session_allidx = find(strcmp(ephysLog.session{session_i},ephysLog_all.session));
         
-    area = [repmat(ephysLog_all.area_label_recA(session_allidx(1)),n_units_probe1,1);...
-        repmat(ephysLog_all.area_label_recA(session_allidx(2)),n_units_probe2,1)];
+    area = [repmat(ephysLog_all.area_label_sec(session_allidx(1)),n_units_probe1,1);...
+        repmat(ephysLog_all.area_label_sec(session_allidx(2)),n_units_probe2,1)];
 
     ml = repmat(ephysLog.nan_x(session_i),n_units_session,1);
     ap = repmat(ephysLog.nan_y(session_i),n_units_session,1);
