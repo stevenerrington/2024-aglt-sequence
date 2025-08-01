@@ -15,7 +15,7 @@ elseif ismac
     dirs.raw_data  = 'N/A';
     dirs.bin_data  = 'N/A';
     dirs.kilosort   = 'N/A';
-    dirs.mat_data = '/Users/stevenerrington/Desktop/Projects/2024-aglt-sequence/mat';
+    dirs.mat_data = '/Users/stevenerrington/Desktop/Data/2025_macaque_aglt';
     dirs.doc_data = '/Users/stevenerrington/Desktop/Projects/2024-aglt-sequence/data-extraction/doc';
     dirs.root = '/Users/stevenerrington/Desktop/Projects/2024-aglt-sequence/';
 
