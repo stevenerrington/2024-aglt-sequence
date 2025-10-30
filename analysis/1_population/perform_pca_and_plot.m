@@ -5,7 +5,7 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     clear sdf_in_regular sdf_in_shuffled
 
     % Define PCA window
-    pca_window = -100:2750;  % Can be overridden by input if needed
+    pca_window = -100:10:2750;  % Can be overridden by input if needed
     sdf_in_regular = pca_sdf_out(neurons_in, 1000 + pca_window);
 
     sdf_in_regular = rmmissing(sdf_in_regular, 1);
@@ -33,6 +33,8 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     pc_out.shuffled.latent = latent_shuffled;
     pc_out.shuffled.var_exp = var_exp_shuffled;
 
+    pc_out.window = pca_window;
+
     % Define color schemes for plotting
     pca_color = [162 13 30; 172 40 55; 183 67 80; 193 94 105; 203 121 130; 214 147 155; 224 174 180; 234 201 205] ./ 255;
     pca_color_shuff = [140 140 140; 153 153 153; 166 166 166; 178 178 178; 191 191 191; 204 204 204; 217 217 217] ./ 255;
@@ -46,7 +48,7 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     pc4 = pcs(:, 4); pc5 = pcs(:, 5); pc6 = pcs(:, 6);
 
     % Define onset time index
-    onset_time_idx = 1000;
+    onset_time_idx = find(pca_window == 0);
 
     % % Create figure for plotting
     % figuren('Renderer', 'painters', 'Position', [100 100 1000 250]); hold on;
@@ -73,7 +75,15 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     % 
     % % Define sound times
     % sound_times = [0, 563, 1126, 1689, 2252];
-    % sound_times_idx = sound_times + 100;
+    % 
+    % closest_vals = zeros(size(sound_times));
+    % closest_idx  = zeros(size(sound_times));
+    % 
+    % for i = 1:length(sound_times)
+    %     [~, idx] = min(abs(pca_window - sound_times(i)));
+    %     closest_vals(i) = pca_window(idx);
+    %     closest_idx(i)  = idx;
+    % end
     % 
     % % PCA x time plots for PC1, PC2, PC3
     % nsubplot(3, 10, [1], [4 5 6]); hold on
@@ -99,6 +109,6 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     % color_line3(pc1, pc2, pc3, pca_window, 'LineWidth', 2);
     % view(34.2409, 7.6800);
     % xlabel('PC1'); ylabel('PC2'); zlabel('PC3');
-    % scatter3(pc1(sound_times_idx), pc2(sound_times_idx), pc3(sound_times_idx), 100, [0 0 0], '^', 'filled');
+    % scatter3(pc1(closest_idx), pc2(closest_idx), pc3(closest_idx), 100, [0 0 0], '^', 'filled');
     % grid on;
 end

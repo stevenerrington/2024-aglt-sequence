@@ -2,16 +2,16 @@
 %% Run GLM
 % Parallel loop to perform GLM analysis for each neuron
 if ~exist(fullfile(dirs.root,'data','glm_modulation_data.mat'))
-    clear glm_encoding_flag
+    clear glm_encoding_flag glm_beta glm_sig anova_pvalue window_sdf window_time
     parfor neuron_i = 1:size(spike_log,1)
         fprintf('Neuron %i of %i \n', neuron_i, size(spike_log,1)); % Display progress for current neuron
 
         % Perform GLM analysis on sound-aligned SDF data for the current neuron
-        [glm_encoding_flag(neuron_i,:), glm_beta{neuron_i}, glm_sig{neuron_i}, anova_pvalue{neuron_i},...
+        [glm_encoding_flag(neuron_i,:), glm_beta{neuron_i}, glm_sig{neuron_i},...
             window_sdf{neuron_i,1}, window_time(neuron_i,:)] = glm_sound_modulation(sdf_soundAlign_data{neuron_i});
         [ttest_encoding_flag(neuron_i,:)] = ttest_sound_modulation(sdf_soundAlign_data{neuron_i});
     end
-    save(fullfile(dirs.root,'data','glm_modulation_data.mat'),'glm_encoding_flag','glm_beta','glm_sig','anova_pvalue','window_sdf','ttest_encoding_flag','-v7.3')
+    save(fullfile(dirs.root,'data','glm_modulation_data.mat'),'glm_encoding_flag','glm_beta','glm_sig','window_sdf','window_time','ttest_encoding_flag','-v7.3')
 else
     load(fullfile(dirs.root,'data','glm_modulation_data.mat'));
 end
@@ -20,7 +20,7 @@ end
 glm_sig_units = find(sum(glm_encoding_flag, 2) > 0); % Find neurons with significant encoding in any sound category
 
 % For future use: state the time windows for the GLM
-glm_timewin = -150:10:750; % Define the time window for plotting beta weights
+glm_timewin = window_time(1,:); % Define the time window for plotting beta weights
 analysis_win_idx = find(glm_timewin >= 0 & glm_timewin <= 413); % Find the relevant indicies for the timepoints of interest
 
 n_sig_neurons = length(glm_sig_units);
@@ -37,27 +37,27 @@ neuron_class.nhp.walt = find(strcmp(spike_log.monkey,'walt'));
 
 %%
 
+clear anova_id_sig glm_neuron_sigxtime_a glm_neuron_sigxtime_b
 for neuron_i = 1:size(spike_log,1)
-    anova_id_sig(neuron_i,:) = anova_pvalue{neuron_i}(1,:);
-    anova_pos_sig(neuron_i,:) = anova_pvalue{neuron_i}(2,:);
+    glm_neuron_sigxtime_a(neuron_i,:) = sum(glm_sig{neuron_i}([1:5],:)) > 0;
+    glm_neuron_sigxtime_b(neuron_i,:) = sum(glm_sig{neuron_i}([6:10],:)) > 0;
+    %glm_neuron_etaxtime_a(neuron_i,:) = anova_pvalue{neuron_i}(3,:);
+    %glm_neuron_etaxtime_b(neuron_i,:) = anova_pvalue{neuron_i}(4,:);
+
 end
 
-figuren('Renderer', 'painters', 'Position', [100 100 850 300]); hold on
-id_sub = subplot(1,2,1); hold on
-plot(glm_timewin,smooth(nanmean(anova_id_sig(neuron_class.auditory.all,:)),5))
-plot(glm_timewin,smooth(nanmean(anova_id_sig(neuron_class.frontal.all,:)),5))
-legend({'Auditory','Frontal'}); xlim([-100 600])
-title('Identity')
-ylabel('P(significant units active)')
-pos_sub = subplot(1,2,2); hold on
-plot(glm_timewin,smooth(nanmean(anova_pos_sig(neuron_class.auditory.all,:)),5))
-plot(glm_timewin,smooth(nanmean(anova_pos_sig(neuron_class.frontal.all,:)),5))
-legend({'Auditory','Frontal'}); xlim([-100 600])
-title('Position')
+figuren('Renderer', 'painters', 'Position', [100 100 400 300]); hold on
+id_sub = subplot(1,1,1); hold on
+plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_a(neuron_class.auditory.all,:)),5)','r-')
+plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_a(neuron_class.frontal.all,:)),5)','b-')
 
-linkaxes([id_sub pos_sub],'xy')
-subplot(1,2,1); vline([0 563],'k'); vline([413],'k--');
-subplot(1,2,2); vline([0 563],'k'); vline([413],'k--');
+plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_b(neuron_class.auditory.all,:)),5)','r--')
+plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_b(neuron_class.frontal.all,:)),5)','b--')
+
+
+legend({'Auditory','Frontal'}); xlim([-100 600])
+ylabel('P(significant units active)')
+vline([0 563],'k'); vline([413],'k--');
 
 
 %%
@@ -70,3 +70,18 @@ donut([length(neuron_class.auditory.all) length(auditory_neuron_idx)-length(neur
 
 subplot(2,1,2)
 donut([length(neuron_class.frontal.all) length(auditory_neuron_idx)-length(neuron_class.frontal.all)])
+
+%%
+
+metric = mean(normFR_in.norm_fr_soundAll(glm_sig_units, 200:613), 2);
+[~, sortIdx] = sort(metric);
+
+colorscale = abs(flipud(cbrewer2('seq', 'RdBu', 100)));
+
+figuren('Renderer', 'painters', 'Position', [680,458,250,420]);
+imagesc(-200:800,1:length(sortIdx),normFR_in.norm_fr_soundAll(glm_sig_units(sortIdx),:))
+xlim([-100 800]); ylim([1 length(sortIdx)]); clim([-3 3])
+vline([0 413],'k-')
+vline([563],'k--')
+colormap(colorscale)
+

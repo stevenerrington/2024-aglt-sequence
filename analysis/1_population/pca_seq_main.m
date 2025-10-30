@@ -77,8 +77,19 @@ pc_out_frontal = perform_pca_and_plot(frontal_neuron_idx, pca_sdf_out);
 %% Plot PCA
 % Time indices corresponding to sound events (in ms)
 sound_times = [0, 563, 1126, 1689, 2252];
-sound_times_idx = sound_times + 100; % Adjust index for plotting
-smooth_factor = 10;
+
+closest_vals = zeros(size(sound_times));
+closest_idx  = zeros(size(sound_times));
+
+for i = 1:length(sound_times)
+    [~, idx] = min(abs(pc_out_auditory.window - sound_times(i)));
+    closest_vals(i) = pc_out_auditory.window(idx);
+    closest_idx(i)  = idx;
+end
+
+
+sound_times_idx = closest_idx; % Adjust index for plotting
+smooth_factor = 1;
 
 aud_color = plasma;
 frontal_color =  plasma;
@@ -90,27 +101,21 @@ aud_color(aud_color > 1) = 1; frontal_color(frontal_color > 1) = 1;
 % Plot 3D PCA trajectory for auditory neurons
 figuren('Renderer', 'painters', 'Position', [200 200 1000 400]); hold on;
 subplot(1, 2, 1); hold on
-color_line3(smooth(pc_out_auditory.obs.pcs(:,1),smooth_factor), smooth(pc_out_auditory.obs.pcs(:,2), smooth_factor), smooth(pc_out_auditory.obs.pcs(:,3),smooth_factor), -100:2750, 'LineWidth', 1.5,'colormap',aud_color);
+color_line3(smooth(pc_out_auditory.obs.pcs(:,1),smooth_factor), smooth(pc_out_auditory.obs.pcs(:,2), smooth_factor), smooth(pc_out_auditory.obs.pcs(:,3),smooth_factor), pc_out_auditory.window, 'LineWidth', 1.5,'colormap',aud_color);
 view(4.014343807875683e+02,25.356041741482642);
 xlabel('PC1'); ylabel('PC2'); zlabel('PC3'); grid on
 scatter3(pc_out_auditory.obs.pcs(sound_times_idx,1), pc_out_auditory.obs.pcs(sound_times_idx,2), pc_out_auditory.obs.pcs(sound_times_idx,3), 100, [0 0 0], 'o', 'filled');
 
-
-
 % Plot 3D PCA trajectory for frontal neurons
 subplot(1, 2, 2); hold on
-color_line3(smooth(pc_out_frontal.obs.pcs(:,1), smooth_factor), smooth(pc_out_frontal.obs.pcs(:,2),smooth_factor), smooth(pc_out_frontal.obs.pcs(:,3),smooth_factor), -100:2750, 'LineWidth', 1.5,'colormap',frontal_color);
+color_line3(smooth(pc_out_frontal.obs.pcs(:,1), smooth_factor), smooth(pc_out_frontal.obs.pcs(:,2),smooth_factor), smooth(pc_out_frontal.obs.pcs(:,3),smooth_factor), pc_out_frontal.window, 'LineWidth', 1.5,'colormap',frontal_color);
 view(4.014343807875683e+02,25.356041741482642);
 xlabel('PC1'); ylabel('PC2'); zlabel('PC3'); grid on
 scatter3(pc_out_frontal.obs.pcs(sound_times_idx,1), pc_out_frontal.obs.pcs(sound_times_idx,2), pc_out_frontal.obs.pcs(sound_times_idx,3), 100, [0 0 0], 'o', 'filled');
-
-
 axis square
 
 %% Starting point
 % Time indices corresponding to sound events (in ms)
-sound_times = [0, 563, 1126, 1689, 2252];
-sound_times_idx = sound_times + 100; % Adjust index for plotting
 clear onset_distances_* startend_distances_*
 
 nboot = 1000;
@@ -173,8 +178,8 @@ p_val = 2 * min(mean(onset_diff >= 0), mean(onset_diff <= 0))  % Two-tailed p-va
 
 %% Start-to-end distance
 
-plot_startend_data_mu = [startend_distances_auditory; startend_distances_frontal];
-plot_startend_label = [repmat({'Auditory'}, length(startend_distances_auditory),1); repmat({'Frontal'}, length(startend_distances_frontal),1)];
+plot_startend_data_mu = [traj_pathlength(:,1); traj_pathlength(:,2)];
+plot_startend_label = [repmat({'Auditory'}, length(traj_pathlength(:,1)),1); repmat({'Frontal'}, length(traj_pathlength(:,2)),1)];
 
 % Plot bootstrap classification accuracy
 figure('Renderer', 'painters', 'Position', [100 100 200 300]);
@@ -190,12 +195,17 @@ plot_bootstrap_distance.set_title('Start-end distance');
 plot_bootstrap_distance.draw;
 
 
+onset_diff = traj_curvature(:,2)-traj_curvature(:,1);          % Difference distribution
+ci = prctile(onset_diff, [2.5 97.5]);              % 95% CI for difference
+p_val = 2 * min(mean(onset_diff >= 0), mean(onset_diff <= 0));  % Two-tailed p-value
+
+
 %% Linearity of frontal PC1
 pc_out_auditory = perform_pca_and_plot(auditory_neuron_idx, pca_sdf_out);
 pc_out_frontal = perform_pca_and_plot(frontal_neuron_idx, pca_sdf_out);
 
 
-mdl = fitlm(-100:2750,pc_out_auditory.obs.pcs(:,2));
+mdl = fitlm(pc_out_frontal.window,pc_out_frontal.obs.pcs(:,1));
 
 figuren;
 plot(mdl)

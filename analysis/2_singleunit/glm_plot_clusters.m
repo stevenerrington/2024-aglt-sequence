@@ -90,6 +90,7 @@ single_unit_fig.draw();
 % Define cluster labels for plotting purposes
 cluster_labels = {'onset','facilitated','biphasic', 'offset', 'suppressed', 'ramping'};
 
+n_area = n_area(order,:);
 % Calculate total neuron count per brain area
 sum(n_area)
 
@@ -101,7 +102,7 @@ p_n_area(:,2) = n_area(:,2)./sum(n_area(:,2));  % Frontal
 figuren('Renderer', 'painters', 'Position', [200 200 500 350]); hold on;
 bh = bar(p_n_area','stacked','LineStyle','none');  % Transpose to plot area as x-axis
 xticks([1 2]); xticklabels({'Auditory','Frontal'})  % Label x-axis
-legend(cluster_labels,'Location','eastoutside')  % Add legend for cluster types
+legend(cluster_labels(order),'Location','eastoutside')  % Add legend for cluster types
 
 % Apply cluster-specific colors to the bars
 set(bh, 'FaceColor', 'Flat')

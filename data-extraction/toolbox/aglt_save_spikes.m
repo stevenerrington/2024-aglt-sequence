@@ -14,7 +14,7 @@ for session_i = 1:size(ephysLog,1)
 
     % Adjust stimulus onset times based on session-specific audio latency measures
     for trial_i = 1:size(event_table,1)
-        event_table.stimulusOnset_ms(trial_i) = event_table.stimulusOnset_ms(trial_i) + session_audio_latency{session_i}(trial_i,1) - 20;
+        event_table.stimulusOnset_ms(trial_i) = event_table.stimulusOnset_ms(trial_i) + session_audio_latency{session_i}(trial_i,1);
     end
 
     % Create a violation alignment event for SDF based on condition value

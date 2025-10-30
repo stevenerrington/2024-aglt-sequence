@@ -32,7 +32,8 @@ for session_i = 1:size(ephysLog,1)
     clear trials*
     trials_viol = find(~isnan(aligntime) & strcmp(event_table.cond_label,'viol'));
     trials_nonviol = find(~isnan(aligntime) & strcmp(event_table.cond_label,'nonviol'));
-    trials_input = find(~isnan(aligntime));
+    %trials_input = find(~isnan(aligntime));
+    trials_input = []; trials_in = find(~isnan(event_table.stimulusOnset_ms) & ~isnan(event_table.rewardOnset_ms) & strcmp(event_table.cond_label,'nonviol'));
 
     % Run alignment algorithms
     ops.timewin = -1000:5000;

@@ -70,8 +70,8 @@ else
     load(fullfile(dirs.root,'data','sound_align','sdf_soundAlign_data.mat'));
     load(fullfile(dirs.root,'data','sound_align','normFR_in.mat'));
 end
-%% Population analysis
 
+%% Population analysis
 pca_seq_main
 pca_lda_id_position
 

@@ -22,8 +22,10 @@ dirs.raw_data = 'T:\EPHYS\RAWDATA\NHP\TDT\WALT\ephys\Tank\';
 clear tdt_data 
 tdtFun = @TDTbin2mat;
 
-for session_i = 1:14
-    tdt_data = tdtFun(fullfile(dirs.raw_data,ephysLog_hpc.data_folder{session_i}),'STORE', {'Audo','St1_'});
+for session_i = 32:79
+    fprintf('Session: %i of %i \n', session_i, 79);
+
+    tdt_data = tdtFun(fullfile(ephysLog.data_dir{session_i},ephysLog.file_n_agle{session_i}(1:end-1)),'STORE',{'Audo','St1_'});
 
     audio_data = tdt_data.streams.Audo.data;
     original_fs = tdt_data.streams.Audo.fs;
@@ -38,7 +40,7 @@ for session_i = 1:14
 
     % Behavioral data -------------------------------------------------------
     % Read in events
-    ops.dirs.raw_data = dirs.raw_data; ops.filename = ephysLog_hpc.data_folder{session_i};
+    ops.dirs.raw_data = dirs.raw_data; ops.filename = ephysLog.data_folder{session_i};
     event_table = get_agl_t_trials_tdt(tdt_data.epocs.St1_,ops);
 
     ops.timewin = [-1000:5000];
@@ -55,50 +57,8 @@ for session_i = 1:14
         end
     end
 
-
     session_audio_latency{session_i,1} = onset_latency;
 
 end
 
 
-% 
-% 
-% figure;
-% plot(onset_latency)
-% 
-% figure;
-% subplot(3,1,1)
-% plot(audio_aligned.lfp_1(1,:))
-% subplot(3,1,2)
-% plot(audio_aligned.lfp_1(90,:))
-% subplot(3,1,3)
-% plot(audio_aligned.lfp_1(150,:))
-% 
-% 
-% 
-% figuren; hold on
-% for sound_i = 1:6
-%     trials_in = [];
-%     trials_in = find(event_table.cond_value == sound_i);
-%     subplot(6,3,sound_i)
-%     plot(ops.timewin,nanmean(audio_aligned.lfp_1(trials_in,:)))
-%     vline(0,'k')
-% end
-% 
-% 
-% for sound_i = 7:12
-%     trials_in = [];
-%     trials_in = find(event_table.cond_value == sound_i);
-%     subplot(6,3,sound_i)
-%     plot(ops.timewin,nanmean(audio_aligned.lfp_1(trials_in,:)))
-%     vline(0,'k')
-% end
-% 
-% 
-% for sound_i = 13:16
-%     trials_in = [];
-%     trials_in = find(event_table.cond_value == sound_i);
-%     subplot(6,3,sound_i)
-%     plot(ops.timewin,nanmean(audio_aligned.lfp_1(trials_in,:)))
-%     vline(0,'k')
-% end
