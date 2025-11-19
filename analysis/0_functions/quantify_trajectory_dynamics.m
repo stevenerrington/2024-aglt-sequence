@@ -37,6 +37,11 @@ v_rms = sqrt(mean(speed.^2));
 a_rms = sqrt(mean(acc_mag.^2));
 j_rms = sqrt(mean(jerk_mag.^2));
 
+%% 5. Cosine similarity
+dotVV = sum(V(1:end-1,:) .* V(2:end,:), 2);
+normV = speed;
+cosine_sim = dotVV ./ (normV(1:end-1) .* normV(2:end) + eps);
+
 %% 5. Pack results
 metrics = struct();
 metrics.path_length = path_length;
@@ -50,7 +55,8 @@ metrics.j_rms = j_rms;
 metrics.V = V;
 metrics.A = A;
 metrics.J = J;
-
+metrics.cosine_similarity = cosine_sim;
+metrics.mean_cosine_similarity = mean(cosine_sim);
 
 %% Geometric Features
 net_displacement = norm(X(end,:) - X(1,:));

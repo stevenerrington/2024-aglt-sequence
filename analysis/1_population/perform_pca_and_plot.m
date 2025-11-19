@@ -5,7 +5,7 @@ function pc_out = perform_pca_and_plot(neurons_in, pca_sdf_out)
     clear sdf_in_regular sdf_in_shuffled
 
     % Define PCA window
-    pca_window = -100:10:2750;  % Can be overridden by input if needed
+    pca_window = -100:5:2750;  % Can be overridden by input if needed
     sdf_in_regular = pca_sdf_out(neurons_in, 1000 + pca_window);
 
     sdf_in_regular = rmmissing(sdf_in_regular, 1);

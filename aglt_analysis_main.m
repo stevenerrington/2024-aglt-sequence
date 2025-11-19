@@ -16,7 +16,6 @@ dirs = set_directories();
 ephysLog = clean_exp_map(ephysLog);
 spike_log = clean_spike_map(spike_log);
 load('session_audio_latency.mat')
-% Define common parameters
 
 % Set parameters
 ops.timewin = -1000:5000;
@@ -47,29 +46,31 @@ frontal_neuron_idx = find(ismember(spike_log.area, 'frontal'));
 [sum(strcmp(spike_log.monkey(auditory_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(auditory_neuron_idx),'walt'))];
 [sum(strcmp(spike_log.monkey(frontal_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(frontal_neuron_idx),'walt'))];
 
-% Extract & normalize sound aligned data
-% This code snippet is designed to manage the extraction and loading of sound-aligned 
+%% Extract element aligned data
+% This code snippet is designed to manage the extraction and loading of element-aligned 
 % spiking data data. The script first checks if a specific file, |sdf_soundAlign_data.mat|, 
 % already exists in a designated directory. If the file does not exist, the script 
 % triggers the extraction process by calling a function or script named |get_sound_aligned_data|, 
 % which generates and saves the SDF data. If the file is found, it simply loads 
 % the pre-existing data.
 
-% get_sound_aligned_data_table
-
-%% Extract sound aligned Spike Density Function (SDF)
 if ~exist(fullfile(dirs.root,'data','sound_align','sdf_soundAlign_data.mat'))
     fprintf('Extracting sound aligned data \n')
     get_sound_aligned_data
-
-    [normFR_in.norm_fr_soundA, normFR_in.norm_fr_soundC, normFR_in.norm_fr_soundG, normFR_in.norm_fr_soundF, normFR_in.norm_fr_soundD, normFR_in.norm_fr_soundAll] =...
-    element_extract_normSoundAlign(sdf_soundAlign_data, spike_log);
-    save(fullfile(dirs.root,'data','sound_align','normFR_in.mat'),'normFR_in','-v7.3')
+    save(fullfile(dirs.root,'data','sound_align'),'normFR_in','-v7.3')
 else
     fprintf('Loading sound aligned data \n')
     load(fullfile(dirs.root,'data','sound_align','sdf_soundAlign_data.mat'));
-    load(fullfile(dirs.root,'data','sound_align','normFR_in.mat'));
 end
+
+
+
+
+
+
+
+
+
 
 %% Population analysis
 pca_seq_main
@@ -80,6 +81,9 @@ pca_lda_id_position
 % GLM analysis and clustering
 glm_singleunit_analysis
 glm_element_clustering
+
+glm_element_clustering_old
+
 glm_plot_clusters
 
 % Association with identity and position
