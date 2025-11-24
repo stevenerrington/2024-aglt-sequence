@@ -31,7 +31,7 @@ colorMapping = [1, 1, 1, 1, 1];
     consensusCluster(inputSDF,sdfTimes,'-e',sdfEpoch,'-ei',colorMapping,'-er',sdfEpoch,'-mn',35);
 
 % Set number of clusters manually from clustering output
-nClusters_manual = myK; 
+nClusters_manual = 6; 
 clusterNeurons = [];
 
 % Assign neuron indices to their respective clusters
@@ -133,12 +133,12 @@ clustered_neurons = [];
 for clu_i = 1:6
 
     neuron_class.cluster_idx.(['clu' int2str(clu_i) '_aud']) =...
-        intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.auditory.all);
+        intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),auditory_neuron_idx);
     neuron_class.cluster_idx.(['clu' int2str(clu_i) '_frontal']) =...
-        intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.frontal.all);
+        intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),frontal_neuron_idx);
 
-    n_clu_area(clu_i,1) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.auditory.all));
-    n_clu_area(clu_i,2) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),neuron_class.frontal.all));
+    n_clu_area(clu_i,1) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),auditory_neuron_idx));
+    n_clu_area(clu_i,2) = length(intersect(neuron_class.cluster_idx.(['clu' int2str(clu_i)]),frontal_neuron_idx));
 
     clustered_neurons = [clustered_neurons; neuron_class.cluster_idx.(['clu' int2str(clu_i)])];
 end

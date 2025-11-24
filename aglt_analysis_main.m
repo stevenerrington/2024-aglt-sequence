@@ -37,14 +37,12 @@ color_pal.auditory_clu = [46 17 45; 84 0 50; 130 3 51; 201 40 62]./255;
 color_pal.frontal_clu = [15 45 64; 25 71 89; 41 107 115; 62 140 132]./255;
 
 %% Recording information
-% Count neurons
-
 % Define indices for neurons in specific brain regions
 auditory_neuron_idx = find(ismember(spike_log.area, 'auditory'));
 frontal_neuron_idx = find(ismember(spike_log.area, 'frontal'));
 
-[sum(strcmp(spike_log.monkey(auditory_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(auditory_neuron_idx),'walt'))];
-[sum(strcmp(spike_log.monkey(frontal_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(frontal_neuron_idx),'walt'))];
+disp([sum(strcmp(spike_log.monkey(auditory_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(auditory_neuron_idx),'walt'))]);
+disp([sum(strcmp(spike_log.monkey(frontal_neuron_idx),'troy')), sum(strcmp(spike_log.monkey(frontal_neuron_idx),'walt'))]);
 
 %% Extract element aligned data
 % This code snippet is designed to manage the extraction and loading of element-aligned 
@@ -64,14 +62,6 @@ else
 end
 
 
-
-
-
-
-
-
-
-
 %% Population analysis
 pca_seq_main
 pca_lda_id_position
@@ -80,8 +70,6 @@ pca_lda_id_position
 
 % GLM analysis and clustering
 glm_singleunit_analysis
-glm_element_clustering
-
 glm_element_clustering_old
 
 glm_plot_clusters

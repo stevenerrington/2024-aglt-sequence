@@ -35,29 +35,6 @@ neuron_class.nhp.walt = find(strcmp(spike_log.monkey,'walt'));
 [sum(strcmp(spike_log.monkey(neuron_class.auditory.all),'troy')), sum(strcmp(spike_log.monkey(neuron_class.auditory.all),'walt'))]
 [sum(strcmp(spike_log.monkey(neuron_class.frontal.all),'troy')), sum(strcmp(spike_log.monkey(neuron_class.frontal.all),'walt'))]
 
-%%
-
-clear anova_id_sig glm_neuron_sigxtime_a glm_neuron_sigxtime_b
-for neuron_i = 1:size(spike_log,1)
-    glm_neuron_sigxtime_a(neuron_i,:) = sum(glm_sig{neuron_i}([1:5],:)) > 0;
-    glm_neuron_sigxtime_b(neuron_i,:) = sum(glm_sig{neuron_i}([6:10],:)) > 0;
-    %glm_neuron_etaxtime_a(neuron_i,:) = anova_pvalue{neuron_i}(3,:);
-    %glm_neuron_etaxtime_b(neuron_i,:) = anova_pvalue{neuron_i}(4,:);
-
-end
-
-figuren('Renderer', 'painters', 'Position', [100 100 400 300]); hold on
-id_sub = subplot(1,1,1); hold on
-plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_a(neuron_class.auditory.all,:)),5)','r-')
-plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_a(neuron_class.frontal.all,:)),5)','b-')
-
-plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_b(neuron_class.auditory.all,:)),5)','r--')
-plot(glm_timewin,smooth(nanmean(glm_neuron_sigxtime_b(neuron_class.frontal.all,:)),5)','b--')
-
-
-legend({'Auditory','Frontal'}); xlim([-100 600])
-ylabel('P(significant units active)')
-vline([0 563],'k'); vline([413],'k--');
 
 
 %%
@@ -72,7 +49,7 @@ subplot(2,1,2)
 donut([length(neuron_class.frontal.all) length(auditory_neuron_idx)-length(neuron_class.frontal.all)])
 
 %%
-
+load('normFR_in.mat')
 metric = mean(normFR_in.norm_fr_soundAll(glm_sig_units, 200:613), 2);
 [~, sortIdx] = sort(metric);
 
@@ -80,7 +57,7 @@ colorscale = abs(flipud(cbrewer2('seq', 'RdBu', 100)));
 
 figuren('Renderer', 'painters', 'Position', [680,458,250,420]);
 imagesc(-200:800,1:length(sortIdx),normFR_in.norm_fr_soundAll(glm_sig_units(sortIdx),:))
-xlim([-100 800]); ylim([1 length(sortIdx)]); clim([-3 3])
+xlim([-100 800]); ylim([1 length(sortIdx)]); clim([-5 5])
 vline([0 413],'k-')
 vline([563],'k--')
 colormap(colorscale)
