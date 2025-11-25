@@ -305,3 +305,10 @@ for data_i = 1:4
     p_val(data_i,:) = 2 * min( mean(classifier_bootstrapAccuracy{data_i} >= threshold), ...
                                mean(classifier_bootstrapAccuracy{data_i} <= threshold) );
 end
+
+
+
+
+disp('Aud pos x identity'); [p_val, ci] = bootstrap_compare(classifier_bootstrapAccuracy{1}, classifier_bootstrapAccuracy{3});
+
+disp('Frontal pos x identity'); [p_val, ci] = bootstrap_compare(classifier_bootstrapAccuracy{2}, classifier_bootstrapAccuracy{4});

@@ -23,4 +23,13 @@ function [p_val, ci, diff_dist] = bootstrap_compare(obs_vals, shuf_vals)
     % Two-sided bootstrap p-value
     p_val = 2 * min( mean(diff_dist >= 0), mean(diff_dist <= 0) );
 
+    % Ensure p-value always prints 3 decimals (with 0.000 for p<0.0005)
+    p_str = sprintf('%.3f', p_val);
+    
+    % Compose final text
+    txt = sprintf('%.4f%% [CI: %.4f to %.4f%%], p = %s', ...
+                  ci(2), ci(1), ci(3), p_str);
+
+    disp(txt);
+
 end

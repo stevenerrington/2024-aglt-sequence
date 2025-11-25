@@ -34,38 +34,59 @@ end
 %% Run cluster average autocorrelation
 
 % Compute population-averaged autocorrelation for auditory and frontal neurons
-[acorr_aud_pos, lags] = xcorr(nanmean(seq_sdf_out(neuron_class.auditory.all,acorr_time)), 'coeff');
-[acorr_frontal_pos, lags] = xcorr(nanmean(seq_sdf_out(neuron_class.frontal.all,acorr_time)), 'coeff');
+[acorr_aud_pos, lags] = xcorr(nanmean(seq_sdf_out(auditory_neuron_idx,acorr_time)), 'coeff');
+[acorr_frontal_pos, lags] = xcorr(nanmean(seq_sdf_out(frontal_neuron_idx,acorr_time)), 'coeff');
 
 
-figuren
+figuren;
 plot(lags, acorr_aud_pos)
 plot(lags, acorr_frontal_pos)
 xlim([-1000 1000])
 
-
 %%
-maxLag = 2000; % in ms or samples
-x = nanmean(seq_sdf_out(neuron_class.auditory.all,acorr_time));
-y = nanmean(seq_sdf_out(neuron_class.frontal.all,acorr_time));
 
-[C,lags] = xcorr(x-mean(x), y-mean(y), maxLag, 'coeff'); % normalized
+nboot = 1000;
+nSample = 500;
 
-numShuffles = 100;
-% Optional: trial shuffle control
-C_shuffle = nan(numShuffles, length(lags));
-for s = 1:numShuffles
-    y_shuff = y(randperm(length(y))); % shuffle trials
-    C_shuffle(s,:) = xcorr(x-mean(x), y_shuff-mean(y_shuff), maxLag, 'coeff');
+
+for boot_i = 1:nboot
+
+    [acorr_aud_pos_boot] = xcorr(nanmean(seq_sdf_out(randsample(auditory_neuron_idx, nSample, true),acorr_time)), 'coeff');
+    [acorr_frontal_pos_boot] = xcorr(nanmean(seq_sdf_out(randsample(frontal_neuron_idx, nSample, true),acorr_time)), 'coeff');
+
+    clear peak_idx_aud peak_idx_frontal
+    [~,peak_idx_aud] = findpeaks(acorr_aud_pos_boot,'MinPeakProminence',0.20);
+    [~,peak_idx_frontal] = findpeaks(acorr_frontal_pos_boot,'MinPeakProminence',0.20);
+
+    try
+        peak_autocorr(boot_i,1) = lags(peak_idx_aud(find(lags(peak_idx_aud) > 0,1)));
+    catch
+        peak_autocorr(boot_i,1) = NaN;
+    end
+
+    try
+        peak_autocorr(boot_i,2) = lags(peak_idx_frontal(find(lags(peak_idx_frontal) > 0,1)));
+    catch
+        peak_autocorr(boot_i,2) = NaN;
+    end
+
+
 end
-C_corrected = C - mean(C_shuffle,1); % shift predictor
+
 
 figuren;
-plot(lags,C)
+histogram(peak_autocorr(:,1),0:10:750,'LineStyle','None')
+histogram(peak_autocorr(:,2),0:10:750,'LineStyle','None')
 
-CI = prctile(C_shuffle, [2.5 97.5], 1);
-figure;
-plot(lags,C_corrected); hold on;
-plot(lags, CI(1,:), '--r');
-plot(lags, CI(2,:), '--r');
-xlabel('Lag (samples)'); ylabel('Cross-corr'); title('Auditory ↔ Frontal');
+disp(100-(sum(isnan(peak_autocorr(:,1)))./length(peak_autocorr))*100)
+disp(100-(sum(isnan(peak_autocorr(:,2)))./length(peak_autocorr))*100)
+
+
+mode(peak_autocorr(:,1))
+mode(peak_autocorr(:,2))
+
+mode(peak_autocorr(peak_autocorr(:,1) < 500,1))
+mode(peak_autocorr(peak_autocorr(:,2) < 500,1))
+
+
+%%

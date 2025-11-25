@@ -63,23 +63,44 @@ end
 
 
 %% Population analysis
+% This code snippet is designed to perform population-level analyses on neural 
+% data. The first script, |pca_seq_main|, executes a principal component analysis 
+% (PCA) on sequential neural recordings to reduce dimensionality and identify 
+% dominant patterns in the population activity. 
+
 pca_seq_main
+
+% The second script, |pca_lda_id_position|, combines PCA with linear discriminant 
+% analysis (LDA) to classify neural responses according to position-related 
+% information. It leverages the reduced-dimensionality data from the PCA step 
+% to improve discriminative power while minimizing noise.
+
 pca_lda_id_position
 
 %% Single-unit analysis
+% This code snippet is designed to perform detailed analyses on single-neuron 
+% activity. The analyses are divided into three major components:
+%
+% 1. GLM analysis and clustering:
+%    - |glm_singleunit_analysis| applies a Generalized Linear Model (GLM) to 
+%      each neuron's spiking activity to quantify the relationship between 
+%      neural firing and task-related predictors.
 
-% GLM analysis and clustering
 glm_singleunit_analysis
-glm_element_clustering_old
 
-glm_plot_clusters
+%- |glm_clustering| groups neurons based on their GLM-derived response 
+%      patterns, enabling identification of functionally similar cell types.
 
-% Association with identity and position
+glm_clustering
 
+% 2. Sequence and periodicity analysis:
+%    - |seq_autocorr| computes the autocorrelation of spike trains to assess 
+%      sequential firing patterns and rhythmicity at the single-neuron level.
 
-% Sequence & Periodicity
 seq_autocorr
 
-% Intrinsic timescales
+% 3. Intrinsic timescales:
+%    - |acf_intrinsic_timescales| estimates the decay of autocorrelations over 
+%      time to quantify the intrinsic temporal dynamics of individual neurons.
+
 acf_intrinsic_timescales
-acf_intrinsic_timescales2
