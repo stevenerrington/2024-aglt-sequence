@@ -35,6 +35,8 @@ zero_offset = abs(ops.timewin(1));
 % Set colors
 color_pal.auditory_clu = [46 17 45; 84 0 50; 130 3 51; 201 40 62]./255;
 color_pal.frontal_clu = [15 45 64; 25 71 89; 41 107 115; 62 140 132]./255;
+color_pal.identity = [4 169 150; 0 139 151; 0 108 141; 24 77 118; 41 47 86]./255;
+color_pal.position = [211 113 187; 212 81 147; 205 49 102; 190 15 55; 164 0 0]./255;
 
 %% Recording information
 % Define indices for neurons in specific brain regions
@@ -91,7 +93,7 @@ glm_singleunit_analysis
 %- |glm_clustering| groups neurons based on their GLM-derived response 
 %      patterns, enabling identification of functionally similar cell types.
 
-glm_clustering
+glm_element_clustering
 
 % 2. Sequence and periodicity analysis:
 %    - |seq_autocorr| computes the autocorrelation of spike trains to assess 

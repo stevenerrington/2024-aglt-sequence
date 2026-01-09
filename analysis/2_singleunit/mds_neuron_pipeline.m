@@ -18,11 +18,12 @@ addParameter(p,'SmoothWin',10,@(x) isnumeric(x) && x>=1);
 addParameter(p,'Distance','corr',@(s) ismember(s,{'corr','euclidean','cosine','cityblock'}));
 addParameter(p,'MDSmethod','classic',@(s) ismember(s,{'classic','nonmetric'}));
 addParameter(p,'Dims',5,@(x) isnumeric(x) && x>=1);
-addParameter(p,'MaxK',10,@(x) isnumeric(x) && x>=2);
+addParameter(p,'MaxK',20,@(x) isnumeric(x) && x>=2);
 parse(p,sdf,varargin{:});
 opts = p.Results;
 
 [nNeurons, nSamples] = size(sdf);
+rng(1,"twister"); % Set random number generator seed for reproducibility using 'twister' algorithm
 
 %% 1) Preprocess
 data = double(sdf);

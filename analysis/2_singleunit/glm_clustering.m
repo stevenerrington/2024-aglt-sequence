@@ -16,8 +16,8 @@ inputSDF = {normFR_in.norm_fr_soundAll(sig_neurons,:)};
 
 % Smooth SDF for clustering and plotting
 for neuron_i = 1:size(inputSDF{1},1)
-    inputSDF{1}(neuron_i,:) = smooth(inputSDF{1}(neuron_i,:),10);   % Light smoothing for clustering
-    inputSDF_plot{1}(neuron_i,:) = smooth(inputSDF{1}(neuron_i,:),50); % Heavier smoothing for plotting
+    inputSDF{1}(neuron_i,:) = smooth(inputSDF{1}(neuron_i,:),25);   % Light smoothing for clustering
+    inputSDF_plot{1}(neuron_i,:) = smooth(inputSDF{1}(neuron_i,:),25); % Heavier smoothing for plotting
 end
 
 % Split SDF by sound conditions
@@ -41,7 +41,7 @@ colorMapping = [1, 1, 1, 1, 1];
 %% ===============================
 
 [sortIDs, idxDist, raw, respSumStruct, rawLink, myK] = ...
-    consensusCluster(inputSDF, sdfTimes, '-e', sdfEpoch, '-ei', colorMapping, '-er', sdfEpoch, '-mn', 35);
+    consensusCluster(inputSDF, sdfTimes, '-e', sdfEpoch, '-ei', colorMapping, '-er', sdfEpoch, '-mn', 25, '-c', 0.25);
 
 nClusters_manual = myK;
 clusterNeurons = [];
@@ -72,13 +72,13 @@ for ir = 1:size(raw,1)
     end
 end
 imagesc(raw(outPerm, outPerm));
-CT = cbrewer('div', 'Spectral', 100); CT(CT>1) = 1;
-colormap(CT);
+CT = cbrewer('seq', 'PuBuGn', 100); CT(CT>1) = 1; CT(CT<0) = 0;
+colormap(flipud(CT));
 xlabel('Unit Number'); set(gca,'YAxisLocation','Left');
 set(gca,'CLim', [-1 1])
 
 % Define color palette for cluster SDF plots
-plot_lineclust_color = cool(nClusters_manual);
+plot_lineclust_color = turbo(nClusters_manual);
 
 %% ===============================
 %% 5. Cluster Evaluation: Average SDF
@@ -87,7 +87,7 @@ plot_lineclust_color = cool(nClusters_manual);
 figuren('Renderer', 'painters', 'Position', [100 100 850 400]);
 
 for cluster_i = 1:nClusters_manual
-    subplot(3,5,cluster_i); hold on
+    subplot(2,5,cluster_i); hold on
     plot(sdfTimes{1}, nanmean(inputSDF_plot{1}(clusterNeurons{cluster_i},:),1), ...
         'Color', plot_lineclust_color(cluster_i,:));
     vline([0 563], 'k-');   % Stimulus window
@@ -100,46 +100,16 @@ end
 %% 6. Manual Cluster Curation
 %% ===============================
 
-% Assign clusters to neuron_class structure
-neuron_class.cluster1 = clusterNeurons{2};
-neuron_class.cluster2 = clusterNeurons{3};
-neuron_class.cluster3 = clusterNeurons{6};
-neuron_class.cluster4 = clusterNeurons{1};
-neuron_class.cluster5 = clusterNeurons{4};
-neuron_class.cluster6 = clusterNeurons{5};
-
 % Combine all clustered neurons
 neuron_class.clusterAll = [];
-for cluster_i = 1:myK
+for cluster_i = 1:nClusters_manual
+    neuron_class.(['cluster' int2str(cluster_i)]) = clusterNeurons{cluster_i};
     neuron_class.clusterAll = [neuron_class.clusterAll; clusterNeurons{cluster_i}];
 end
 neuron_class.clusterAll = sort(neuron_class.clusterAll);
 
 % Identify unclustered neurons
 neuron_class.unclustered = find(~ismember(1:size(sig_neurons), neuron_class.clusterAll));
-
-%% ===============================
-%% 7. Summary SDF Plots per Cluster (Gramm)
-%% ===============================
-
-cluster_yaxis = {[-3 3], [-5 15], [-8 5], [-4 8], [-10 4], [-5 5]};
-clear cluster_pop_average_sdf p_n_area n_area
-
-for cluster_i = 1:6
-    cluster_pop_average_sdf(1, cluster_i) = gramm('x', ops.sound_sdf_window, ...
-        'y', inputSDF_plot{1}(neuron_class.(['cluster' int2str(cluster_i)]),:));
-    cluster_pop_average_sdf(1, cluster_i).stat_summary();
-    cluster_pop_average_sdf(1, cluster_i).axe_property('XLim', [-150 600], 'YLim', cluster_yaxis{cluster_i});
-    cluster_pop_average_sdf(1, cluster_i).geom_vline('xintercept',[0 413 563]);
-
-    % Count neurons per brain area
-    n_area(cluster_i,1) = length(intersect(sig_neurons(neuron_class.(['cluster' int2str(cluster_i)])), auditory_neuron_idx));
-    n_area(cluster_i,2) = length(intersect(sig_neurons(neuron_class.(['cluster' int2str(cluster_i)])), frontal_neuron_idx));
-end
-
-% Draw gramm plots
-figure('Renderer', 'painters', 'Position', [100 100 1250 250]);
-cluster_pop_average_sdf.draw();
 
 %% ===============================
 %% 8. Assign Cluster Indices and Compute Area-Specific Counts
@@ -169,9 +139,9 @@ unclustered_neurons = sig_neurons(~ismember(sig_neurons, clustered_neurons));
 %% 9. Example Neuron Plots per Cluster
 %% ===============================
 
-clu_exp_neurons = [18 9 8 12 2 30];
-plot_ylim_example = {[2 8], [0 10], [0 50], [0 15], [6 14], [30 50]};
-plot_ylim_pop = {[-4 4], [-5 20], [-10 5], [-2 8], [-10 4], [-3 6]};
+clu_exp_neurons = [29 70 8 12 32 30];
+plot_ylim_example = {[0 12], [0 10], [0 50], [0 15], [0 5], [30 50]};
+plot_ylim_pop = {[-2 10], [-5 5], [-2 5], [-6 4], [-4 2], [-2 4]};
 plot_startxpos = [0.1 0.25 0.4 0.55 0.7 0.85];
 order = 1:6;
 
@@ -204,7 +174,7 @@ for cluster_i = 1:6
 
     % Smooth individual trial SDF
     for trial_i = 1:size(example_sdf_in,1)
-        example_sdf_in(trial_i,:) = smooth(example_sdf_in(trial_i,:),100)';
+        example_sdf_in(trial_i,:) = smooth(example_sdf_in(trial_i,:),50)';
     end
 
     % Raster plot
