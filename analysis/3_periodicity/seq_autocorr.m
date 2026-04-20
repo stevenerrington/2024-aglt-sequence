@@ -127,11 +127,12 @@ xlim([-1000 1000]); ylim([-0.4 1]); box off; axis square
 subplot(2,1,2)
 plot(lags, acorr_frontal_pos)
 xlim([-1000 1000]); ylim([-0.4 1]); box off; axis square
+legend
 
 %%
 
 nboot = 1000;
-nSample = 100;
+nSample = 20;
 
 for g = 1:4
     clear peak_autocorr
@@ -194,4 +195,3 @@ comp_bootstrap_fixedvalue(cluster_autocorr{2}(:,1), 563)
 
 disp('Frontal - suppressed')
 comp_bootstrap_fixedvalue(cluster_autocorr{2}(:,2), 563)
-
