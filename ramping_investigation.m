@@ -226,3 +226,4 @@ session_i = 10;
 datafile = ephysLog.session{session_i};
 data_in = load(fullfile(dirs.mat_data,datafile))
 fprintf('Session %i of %i | %s \n', session_i, size(ephysLog,1), datafile)
+
