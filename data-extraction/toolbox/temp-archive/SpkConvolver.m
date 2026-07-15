@@ -24,5 +24,9 @@ S2(SpkData) = 1;
 SessionSDF = conv(S2, R2use, 'same')*1000;
 
 
+if strcmp(ConvType, 'PSP') == 1
+    SessionSDF = smooth(SessionSDF, 50);
+end
+
 
 
