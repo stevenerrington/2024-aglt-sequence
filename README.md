@@ -127,8 +127,3 @@ If you use this repository in your research, please cite:
 
 This repository accompanies an active research project. Feel free to open an issue if you encounter problems or have questions about the analysis pipeline.
 
----
-
-## 📜 License
-
-See the `LICENSE` file for licensing information.
