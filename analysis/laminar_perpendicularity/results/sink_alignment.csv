@@ -1,0 +1,186 @@
+session,probe,monkey,area,verdict,sink_contact,sink_ms,sink_z
+troy-agl_t-2021-06-25,1,troy,auditory,probable,14,194,-4.947594597895898
+troy-agl_t-2021-06-25,2,troy,frontal,no laminar signature,3,147,-2.8819355951947636
+troy-agl_t-2021-06-28,1,troy,auditory,probable,3,176,-5.54780956837951
+troy-agl_t-2021-06-28,2,troy,frontal,no laminar signature,3,198,-2.2072137866220225
+troy-agl_t-2021-07-01,1,troy,auditory,no laminar signature,4,159,-1.9679526924327158
+troy-agl_t-2021-07-01,2,troy,frontal,no laminar signature,12,112,-2.358006241140192
+troy-agl_t-2021-07-05,1,troy,auditory,no laminar signature,12,191,-3.1265130145812967
+troy-agl_t-2021-07-05,2,troy,frontal,no laminar signature,14,121,-6.113714050728151
+troy-agl_t-2021-07-07,1,troy,auditory,perpendicular,12,186,-6.284024069165591
+troy-agl_t-2021-07-07,2,troy,frontal,no laminar signature,4,154,-5.127601561416746
+troy-agl_t-2021-07-08,1,troy,auditory,no laminar signature,12,119,-2.2486796547118346
+troy-agl_t-2021-07-08,2,troy,frontal,no laminar signature,3,189,-5.320509035237313
+troy-agl_t-2021-07-12,1,troy,auditory,no laminar signature,11,46,-4.119483832728518
+troy-agl_t-2021-07-12,2,troy,frontal,no laminar signature,15,187,-4.807935221221398
+troy-agl_t-2021-07-14,1,troy,auditory,no laminar signature,15,128,-12.699824747789963
+troy-agl_t-2021-07-14,2,troy,frontal,no laminar signature,15,130,-3.4805836989858068
+troy-agl_t-2021-07-19,1,troy,auditory,no laminar signature,16,126,-3.772433035087038
+troy-agl_t-2021-07-19,2,troy,frontal,no laminar signature,14,151,-9.613598561554543
+troy-agl_t-2021-07-21,1,troy,auditory,no laminar signature,15,186,-2.8731346965407147
+troy-agl_t-2021-07-21,2,troy,frontal,no laminar signature,3,198,-8.638509337011644
+troy-agl_t-2021-07-28,1,troy,auditory,perpendicular,10,110,-6.035403324166554
+troy-agl_t-2021-07-28,2,troy,frontal,no laminar signature,15,130,-3.9001789246709655
+troy-agl_t-2021-08-02,1,troy,auditory,no laminar signature,11,139,-3.6800934717179823
+troy-agl_t-2021-08-02,2,troy,frontal,no laminar signature,13,179,-10.416788077439023
+troy-agl_t-2021-08-09,1,troy,auditory,no laminar signature,7,129,-7.960283662289065
+troy-agl_t-2021-08-09,2,troy,frontal,no laminar signature,14,97,-6.53144487436417
+troy-agl_t-2021-08-23,1,troy,auditory,no laminar signature,9,196,-3.720645301209776
+troy-agl_t-2021-08-23,2,troy,frontal,no laminar signature,10,144,-13.014278179663236
+troy-agl_t-2021-08-25,1,troy,auditory,no laminar signature,13,175,-2.767714305586298
+troy-agl_t-2021-08-25,2,troy,frontal,no laminar signature,13,144,-10.176430555524984
+troy-agl_t-2021-08-27,1,troy,auditory,no laminar signature,11,199,-6.428994424345431
+troy-agl_t-2021-08-27,2,troy,frontal,no laminar signature,14,174,-14.801252242706207
+troy-agl_t-2021-09-01,1,troy,auditory,no laminar signature,7,188,-3.425344082645839
+troy-agl_t-2021-09-01,2,troy,frontal,no laminar signature,13,171,-5.621051302115647
+troy-agl_t-2021-09-03,1,troy,auditory,no laminar signature,14,197,-8.417840056858504
+troy-agl_t-2021-09-03,2,troy,frontal,no laminar signature,12,108,-4.339761248436172
+troy-agl_t-2021-09-06,1,troy,auditory,no laminar signature,9,55,-2.826843591883476
+troy-agl_t-2021-09-06,2,troy,frontal,probable,12,180,-3.7589919721558935
+troy-agl_t-2021-09-08,1,troy,auditory,no laminar signature,16,47,-4.305928045585473
+troy-agl_t-2021-09-08,2,troy,frontal,no laminar signature,13,21,-6.208688747359755
+troy-agl_t-2021-09-09,1,troy,auditory,no laminar signature,14,188,-4.68311500968199
+troy-agl_t-2021-09-09,2,troy,frontal,no laminar signature,12,59,-3.725353297834977
+troy-agl_t-2021-09-15,1,troy,auditory,no laminar signature,14,81,-7.281758626299065
+troy-agl_t-2021-09-15,2,troy,frontal,no laminar signature,14,122,-6.426467244601175
+troy-agl_t-2021-09-17,1,troy,auditory,inverted motif (check),4,137,-2.7405882348691892
+troy-agl_t-2021-09-17,2,troy,frontal,no laminar signature,13,147,-5.573111487984464
+troy-agl_t-2021-09-22,1,troy,auditory,perpendicular,14,187,-4.5781043293658685
+troy-agl_t-2021-09-22,2,troy,frontal,no laminar signature,14,158,-11.253176576751226
+troy-agl_t-2021-09-24,1,troy,auditory,no laminar signature,13,85,-1.3555111745469797
+troy-agl_t-2021-09-24,2,troy,frontal,no laminar signature,14,117,-3.192644916305704
+troy-agl_t-2021-09-27,1,troy,auditory,no laminar signature,7,102,-1.7894079980739561
+troy-agl_t-2021-09-27,2,troy,frontal,no laminar signature,10,143,-2.7134723441394137
+troy-agl_t-2021-10-04,1,troy,auditory,no laminar signature,1,178,-7.530154419920273
+troy-agl_t-2021-10-04,2,troy,frontal,no laminar signature,14,31,-4.135278362494841
+troy-agl_t-2021-10-08,1,troy,auditory,no laminar signature,14,145,-1.3287933739329894
+troy-agl_t-2021-10-08,2,troy,frontal,no laminar signature,10,160,-9.039582411789867
+troy-agl_t-2021-10-15,1,troy,auditory,perpendicular,9,138,-4.105674522252468
+troy-agl_t-2021-10-15,2,troy,frontal,no laminar signature,1,198,-4.3918576710756705
+troy-agl_t-2021-10-18,1,troy,auditory,no laminar signature,7,157,-4.397771467475329
+troy-agl_t-2021-10-18,2,troy,frontal,no laminar signature,15,125,-2.793034244123333
+troy-agl_t-2021-11-01,1,troy,auditory,inverted motif (check),3,64,-3.465178271651238
+troy-agl_t-2021-11-01,2,troy,frontal,no laminar signature,11,135,-4.014041859082123
+troy-agl_t-2021-11-04,1,troy,auditory,inverted motif (check),7,158,-1.5334574531056513
+troy-agl_t-2021-11-04,2,troy,frontal,probable,2,115,-3.2302415491311236
+troy-agl_t-2021-11-05,1,troy,auditory,probable,6,119,-2.970943029031839
+troy-agl_t-2021-11-05,2,troy,frontal,no laminar signature,4,198,-4.1611117667052
+troy-agl_t-2021-11-08,1,troy,auditory,no laminar signature,3,149,-1.05383451226614
+troy-agl_t-2021-11-08,2,troy,frontal,no laminar signature,3,121,-5.015088794447268
+troy-agl_t-2021-11-15,1,troy,auditory,no laminar signature,16,177,-2.579914732392688
+troy-agl_t-2021-11-15,2,troy,frontal,no laminar signature,3,195,-18.888634776545796
+walt-agl_t-2020-08-05,1,walt,auditory,no laminar signature,9,158,-7.221682637044991
+walt-agl_t-2020-08-05,2,walt,frontal,no laminar signature,8,43,-2.241692359738504
+walt-agl_t-2020-08-10,1,walt,auditory,no laminar signature,1,42,-6.3404741065187284
+walt-agl_t-2020-08-10,2,walt,frontal,no laminar signature,10,78,-5.067316899381841
+walt-agl_t-2020-08-12,1,walt,auditory,no laminar signature,11,63,-6.0157193988124735
+walt-agl_t-2020-08-12,2,walt,frontal,no laminar signature,13,74,-1.2674897142804933
+walt-agl_t-2020-08-14,1,walt,auditory,no laminar signature,15,69,-6.46876929674461
+walt-agl_t-2020-08-14,2,walt,frontal,no laminar signature,8,76,-3.3663147142819634
+walt-agl_t-2020-08-21,1,walt,auditory,inverted motif (check),11,126,-6.433046863386959
+walt-agl_t-2020-08-21,2,walt,frontal,no laminar signature,4,22,-1.7975534001708402
+walt-agl_t-2020-08-26,2,walt,frontal,no laminar signature,1,198,-1.0537917586027719
+walt-agl_t-2020-09-02,1,walt,auditory,no laminar signature,10,1,-2.402179059205569
+walt-agl_t-2020-09-02,2,walt,frontal,no laminar signature,12,47,-4.19228452357659
+walt-agl_t-2020-09-09b,1,walt,auditory,no laminar signature,6,42,-9.850004071774448
+walt-agl_t-2020-09-09b,2,walt,frontal,no laminar signature,3,119,-3.195588037099853
+walt-agl_t-2020-09-11,1,walt,auditory,inverted motif (check),15,41,-10.422983163186277
+walt-agl_t-2020-09-11,2,walt,frontal,no laminar signature,9,3,-3.179453010123924
+walt-agl_t-2020-09-14,1,walt,auditory,no laminar signature,5,74,-2.7802950219152085
+walt-agl_t-2020-09-14,2,walt,frontal,no laminar signature,15,58,-1.6256535800006913
+walt-agl_t-2020-09-16,1,walt,auditory,no laminar signature,5,168,-5.286732014185609
+walt-agl_t-2020-09-16,2,walt,frontal,no laminar signature,13,93,-0.8931482501425527
+walt-agl_t-2020-09-21a,1,walt,auditory,no laminar signature,10,23,-6.313660710166275
+walt-agl_t-2020-09-21a,2,walt,frontal,no laminar signature,14,187,-2.4444287228998984
+walt-agl_t-2020-09-21b,1,walt,auditory,no laminar signature,10,49,-10.610740678323149
+walt-agl_t-2020-09-21b,2,walt,frontal,no laminar signature,11,38,-2.33780125918811
+walt-agl_t-2020-09-23a,1,walt,auditory,no laminar signature,1,118,-3.8745734477216685
+walt-agl_t-2020-09-23a,2,walt,frontal,no laminar signature,12,43,-1.9830166383757062
+walt-agl_t-2020-09-24a,1,walt,auditory,no laminar signature,2,167,-9.09187564380247
+walt-agl_t-2020-09-24a,2,walt,frontal,no laminar signature,6,121,-1.847889909541857
+walt-agl_t-2020-09-24b,1,walt,auditory,probable,2,193,-5.829938347774803
+walt-agl_t-2020-09-24b,2,walt,frontal,no laminar signature,6,134,-2.2424832639641257
+walt-agl_t-2020-09-25a,1,walt,auditory,no laminar signature,6,49,-4.141181029853975
+walt-agl_t-2020-09-25a,2,walt,frontal,no laminar signature,10,166,-5.284937232624986
+walt-agl_t-2020-09-25b,1,walt,auditory,no laminar signature,13,80,-4.55709797089611
+walt-agl_t-2020-09-25b,2,walt,frontal,probable,10,10,-4.255144643205531
+walt-agl_t-2020-09-28,1,walt,auditory,probable,2,126,-4.793359418122375
+walt-agl_t-2020-09-28,2,walt,frontal,no laminar signature,10,55,-3.213038895257061
+walt-agl_t-2020-09-30a,1,walt,frontal,no laminar signature,15,66,-1.5066230563225507
+walt-agl_t-2020-09-30a,2,walt,auditory,no laminar signature,10,25,-3.610800579347382
+walt-agl_t-2020-09-30b,1,walt,frontal,probable,8,45,-1.9127782822589587
+walt-agl_t-2020-09-30b,2,walt,auditory,no laminar signature,10,55,-3.918294370380483
+walt-agl_t-2020-10-01a,1,walt,frontal,probable,7,185,-9.017098306050155
+walt-agl_t-2020-10-01a,2,walt,auditory,probable,14,134,-2.540540658028204
+walt-agl_t-2020-10-01b,1,walt,frontal,no laminar signature,7,199,-9.941468529782032
+walt-agl_t-2020-10-01b,2,walt,auditory,no laminar signature,8,95,-3.4674765257794244
+walt-agl_t-2020-10-05,1,walt,frontal,no laminar signature,3,180,-4.389557628766386
+walt-agl_t-2020-10-05,2,walt,auditory,no laminar signature,4,14,-1.9397450581068487
+walt-agl_t-2020-10-12,1,walt,auditory,no laminar signature,1,30,0.025602127580397736
+walt-agl_t-2020-10-12,2,walt,frontal,no laminar signature,1,17,-0.002729764622428966
+walt-agl_t-2020-10-14,1,walt,auditory,no laminar signature,2,24,-4.691716464268858
+walt-agl_t-2020-10-14,2,walt,frontal,probable,2,63,-2.311486867131648
+walt-agl_t-2020-10-15,1,walt,auditory,no laminar signature,15,15,-3.3064556823648155
+walt-agl_t-2020-10-15,2,walt,frontal,no laminar signature,6,191,-1.284981169615199
+walt-agl_t-2020-10-16a,1,walt,auditory,probable,6,67,-7.161606945845516
+walt-agl_t-2020-10-16a,2,walt,frontal,probable,8,39,-2.356627775496446
+walt-agl_t-2020-10-16b,1,walt,auditory,probable,5,42,-3.8742850907151656
+walt-agl_t-2020-10-16b,2,walt,frontal,inverted motif (check),14,82,-1.700193500635231
+walt-agl_t-2020-10-20,1,walt,auditory,probable,2,59,-8.605491071797848
+walt-agl_t-2020-10-20,2,walt,frontal,no laminar signature,10,151,-2.2395713825455212
+walt-agl_t-2020-10-21,1,walt,auditory,no laminar signature,1,61,-0.029198041374738314
+walt-agl_t-2020-10-21,2,walt,frontal,no laminar signature,1,63,-0.0004230935200778224
+walt-agl_t-2020-10-22,1,walt,auditory,probable,2,32,-4.736788478302731
+walt-agl_t-2020-10-22,2,walt,frontal,no laminar signature,11,116,-2.808170048587532
+walt-agl_t-2020-10-23a,1,walt,auditory,probable,6,18,-6.032250556457643
+walt-agl_t-2020-10-23a,2,walt,frontal,no laminar signature,9,110,-2.3980395977559996
+walt-agl_t-2020-10-23b,1,walt,auditory,probable,6,19,-5.525228345451272
+walt-agl_t-2020-10-23b,2,walt,frontal,perpendicular,5,10,-3.383571289408304
+walt-agl_t-2020-10-26,1,walt,auditory,no laminar signature,3,49,-20.823715964609185
+walt-agl_t-2020-10-26,2,walt,frontal,probable,9,90,-5.280462068359435
+walt-agl_t-2020-10-28,1,walt,auditory,no laminar signature,10,24,-3.6538574843072484
+walt-agl_t-2020-10-28,2,walt,frontal,inverted motif (check),10,5,-5.056676688897807
+walt-agl_t-2020-10-29,1,walt,auditory,no laminar signature,13,50,-4.180745616646236
+walt-agl_t-2020-10-29,2,walt,frontal,no laminar signature,11,94,-2.7799366709595588
+walt-agl_t-2020-10-30,1,walt,auditory,probable,6,101,-5.200034825325314
+walt-agl_t-2020-10-30,2,walt,frontal,no laminar signature,13,5,-3.738408238586169
+walt-agl_t-2020-11-02,1,walt,auditory,no laminar signature,4,62,-9.189341563047735
+walt-agl_t-2020-11-02,2,walt,frontal,no laminar signature,10,24,-5.365582294505213
+walt-agl_t-2020-11-03a,1,walt,auditory,probable,2,103,-3.372851303650679
+walt-agl_t-2020-11-03a,2,walt,frontal,no laminar signature,11,180,-2.21257123852925
+walt-agl_t-2020-11-03b,1,walt,auditory,no laminar signature,4,86,-7.3394497265135445
+walt-agl_t-2020-11-03b,2,walt,frontal,probable,2,147,-2.976356710912799
+walt-agl_t-2020-11-04a,1,walt,auditory,no laminar signature,10,81,-4.854705344166599
+walt-agl_t-2020-11-04a,2,walt,frontal,no laminar signature,8,15,-3.11022121874693
+walt-agl_t-2020-11-04b,1,walt,auditory,no laminar signature,3,84,-4.7073262762831805
+walt-agl_t-2020-11-04b,2,walt,frontal,no laminar signature,14,59,-2.892933357844058
+walt-agl_t-2020-11-05a,1,walt,auditory,no laminar signature,6,73,-12.423683881457022
+walt-agl_t-2020-11-05a,2,walt,frontal,no laminar signature,7,136,-2.6427003643168296
+walt-agl_t-2020-11-05b,1,walt,auditory,no laminar signature,6,26,-14.706528294688757
+walt-agl_t-2020-11-05b,2,walt,frontal,no laminar signature,13,170,-0.411961079666727
+walt-agl_t-2020-11-06a,1,walt,auditory,no laminar signature,6,98,-6.035028068128453
+walt-agl_t-2020-11-06a,2,walt,frontal,no laminar signature,2,45,-2.3638254101600165
+walt-agl_t-2020-11-06b,1,walt,auditory,no laminar signature,9,107,-5.462343691624861
+walt-agl_t-2020-11-06b,2,walt,frontal,no laminar signature,6,44,-2.4311545110282147
+walt-agl_t-2020-11-09a,1,walt,auditory,probable,10,0,-4.705745845513389
+walt-agl_t-2020-11-09a,2,walt,frontal,no laminar signature,13,16,-1.7969362244627807
+walt-agl_t-2020-11-09b,1,walt,auditory,probable,10,51,-5.959820555894344
+walt-agl_t-2020-11-09b,2,walt,frontal,probable,7,144,-3.078125487049403
+walt-agl_t-2020-11-12a,1,walt,auditory,no laminar signature,2,57,-13.448864608485623
+walt-agl_t-2020-11-12a,2,walt,frontal,no laminar signature,7,106,-2.2187726526612446
+walt-agl_t-2020-11-12b,1,walt,auditory,no laminar signature,2,49,-12.981594514371496
+walt-agl_t-2020-11-12b,2,walt,frontal,no laminar signature,5,133,-1.0007370902066648
+walt-agl_t-2020-11-13a,1,walt,auditory,probable,6,146,-7.241658152809135
+walt-agl_t-2020-11-13a,2,walt,frontal,probable,3,21,-2.496378305377804
+walt-agl_t-2020-11-13b,1,walt,auditory,probable,6,156,-8.37994968835607
+walt-agl_t-2020-11-13b,2,walt,frontal,no laminar signature,5,41,-4.038362061113892
+walt-agl_t-2020-11-16,1,walt,auditory,no laminar signature,2,121,-7.604310954063259
+walt-agl_t-2020-11-16,2,walt,frontal,no laminar signature,10,12,-3.1552015009724346
+walt-agl_t-2020-11-19,2,walt,frontal,no laminar signature,14,84,-1.8578514860424111
+walt-agl_t-2020-11-23,2,walt,frontal,no laminar signature,10,87,-3.1275906193655696
+walt-agl_t-2020-11-25a,2,walt,frontal,no laminar signature,7,48,-4.468310789502466
+walt-agl_t-2020-11-25b,2,walt,frontal,perpendicular,7,4,-4.192075567870391
+walt-agl_t-2020-11-26,2,walt,frontal,no laminar signature,14,42,-2.5477959612622807
+walt-agl_t-2020-11-27a,2,walt,frontal,no laminar signature,9,87,-4.107646802031216
+walt-agl_t-2020-11-27b,2,walt,frontal,no laminar signature,2,198,-3.0572276854171454
+walt-agl_t-2020-11-30,2,walt,frontal,no laminar signature,13,20,-3.509004471303163
